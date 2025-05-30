@@ -3,38 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Counter - Login/Signup</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <title>Document</title>
+    <link rel="stylesheet" href="../styles/base.css">
     <link rel="stylesheet" href="../styles/auth.css">
     <script src="../scripts/auth.js" defer></script>
 </head>
 <body>
-    <div class="body-container">
-        <main class="login-form shad">
-            <img src="./assets/auth/Hero.svg" alt="">
-            <section class="content">
-                <h1 class="flex jc-cntr fs-40 fw-b">Counter</h1>
-                <h2 class="flex jc-cntr fs-48 fw-b">Signup or Login</h2>
+    <div class="body">
+        <div class="container">
+            <img src="../assets/auth/hero.svg" alt="">
+            <!-- <div class="hero"></div> -->
+            <div class="content">
+                <h1 class="fs-40 txt-ntrl-70">Counter</h1>
+                <h2 class="fs-48 px-3">Signup or Login</h2>
                 <form>
-                    <div class="grid gap-1">
-                        <div class="flex-col">
-                            <label for="username" class="txt-ntrl-gray">Username</label>
+                    <div class="grid gap-6">
+                        <div class="input">
+                            <label for="username">Username</label>
                             <input type="text" name="username" id="username" placeholder="john_fitness" required>
                         </div>
-                        <div class="flex-col">
-                            <label for="password" class="txt-ntrl-gray">Password</label>
-                            <input type="password" name="password" id="password" placeholder="example" required>
+                        <div>
+                            <div class="input">
+                                <label for="password">Password</label>
+                                <input type="password" name="password" id="password" placeholder="password123" required>
+                            </div>
+                            <p id="error_message" class="fs-14 txt-prim-red"></p>
                         </div>
-                        <div class="flex ai-cntr jc-btwn fw-b">
-                            <button type="button" data-action="/api/auth/signup" class="bg-prim-blue px-4 py-2">Sign Up</button>
-                            <button type="button" data-action="/api/auth/login" class="bg-prim-green px-5 py-2">Log In</button>
+                        <div class="flex jc-btwn">
+                            <button type="button" data-action="/signup" class="bg-prim-blue">Sign Up</button>
+                            <button type="button" data-action="/login" class="bg-prim-green">Log In</button>
                         </div>
                     </div>
                 </form>
-            </section>
-        </main>
+            </div>
+        </div>
     </div>
 </body>
 </html>

@@ -1,32 +1,30 @@
-const authForm = document.forms[0];
+const form = document.forms[0];
+const error_message = document.getElementById("error_message");
 
-authForm.addEventListener("click", async (e) => {
-
-    let action = e.target.dataset.action
-
+form.addEventListener("click", async e => {
+    let action = e.target.dataset.action;
     if (!action) {
+        return;
+    }
+
+    if (!form.checkValidity()) {
+        form.reportValidity();
         return;
     }
 
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    if (!authForm.checkValidity()) {
-        authForm.reportValidity();
-        return;
-    }
-
-    const res = await fetch(action, {
-       method: "POST",
-       headers: { "Content-Type" : "application/json" },
-       body: JSON.stringify({ username, password }),
+    const res = await fetch(`/api/auth${action}`, {
+        method: "POST",
+        headers: { "Content-Type" : "application/json" },
+        body: JSON.stringify({ username, password })
     });
-
+   
     const data = await res.json();
     if (data.success) {
-        window.location.href = data.redirectURL;
+        window.location.href = data.redirect;
     } else {
-        alert(data.message);
-        // TODO: replace this with something else down the line
+        error_message.textContent = data.errmsg;
     }
 });

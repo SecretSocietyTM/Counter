@@ -1,46 +1,40 @@
 const express = require("express");
 const router  = express.Router();
-const path    = require("path");
-const db      = require("../../database.js");
+const db      = require("../../database/database.js");
 
 
-// handles all URLS with localhost:3000/api/auth
 router.post("/signup", async (req, res) => {
     const { username, password } = req.body;
-    let query_res;
+    let user;
 
     try {
-        query_res = await db.addUser(username, password);
+        user = await db.addUser(username, password);
     } catch (err) {
-        const message = err.message.includes("UNIQUE constraint failed")
+        const errmsg = err.message.includes("UNIQUE constraint failed")
             ? "Username already taken"
             : "Something went wrong, please try again";
-            return res.json({ success: false, message });
+            return res.json({ success: false, errmsg });
     }
-
-    req.session.user = { id: query_res.user_id, username: query_res.username, cal_goal: query_res.calorie_goal };
-
-    return res.json({ success: true, redirectURL: "/dashboard"})
+    req.session.user = { id: user.user_id }
+    return res.json({ success: true, redirect: "/dashboard" })
 });
 
 router.post("/login", async (req, res) => {
     const { username, password } = req.body;
-    let query_res;
+    let user;
 
     try {
-        query_res = await db.authUser(username, password);
+        user = await db.authUser(username, password);
     } catch (err) {
-        console.log(err);
-        return res.json({ success: false, message: "Something went wrong, please try again" });
+        return res.json({success: false, errmsg: "Something went wrong, please try again" });
     }
 
-    if (query_res) {
-        req.session.user = { id: query_res.user_id, username: query_res.username, cal_goal: query_res.calorie_goal };
-        return res.json({ success: true, redirectURL: "/dashboard" });
+    if (user) {
+        req.session.user = { id: user.user_id };
+        return res.json({ success: true, redirect: "/dashboard" });
     } else {
-        return res.json({ succces: false, message: "Username or password invalid, try agian" });
+        return res.json({ success: false, errmsg: "Username or password invalid, try again" });
     }
 });
-
 
 module.exports = router;
