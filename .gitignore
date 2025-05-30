@@ -1,0 +1,8 @@
+# Ignore VS Code settings
+.vscode/
+
+# Ignore node dependencies
+node_modules/
+
+# Ignore SQLite database files
+*.db
