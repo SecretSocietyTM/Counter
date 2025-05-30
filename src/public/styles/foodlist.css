@@ -1,0 +1,143 @@
+.body {
+    display: grid;
+    grid-template-columns: 13% auto;
+    padding: 0.5rem 0.75rem;
+    gap: 0.5rem;
+
+    width: 100%;
+    height: 100%;
+
+    /* experimenting */
+    gap: 1rem;
+    /* background-color: var(--clr-accent-lightblue); */
+}
+
+.main {
+    padding: 2rem;
+    border-radius: 1.2rem;
+    background-color: var(--clr-neutral-20);
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-block-start: 2rem;
+
+    gap: 2rem;
+}
+
+.searchbar {
+    position: relative;
+    display: flex;
+    padding: 0.8rem 1.5rem 0.8rem 0.5rem;
+    
+    width: 50%;
+
+    border-radius: 2rem;
+    background-color: var(--clr-neutral-80);
+
+    .searchbar__icon {
+        position: absolute;
+        left: 1.2rem;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+
+    input {
+        flex: 1;
+        padding-inline-start: 3rem;
+        margin-inline-end: 1.5rem;
+
+        outline: none;
+        border: none;
+
+        font-size: var(--fs-20);
+        font-weight: var(--fw-light);
+        color: var(--clr-neutral-50);
+
+        background-color: transparent;
+    }
+
+    input::placeholder {
+        color: var(--clr-neutral-50);
+    }
+
+    input:focus {
+        color: var(--clr-neutral-80);
+    }
+}
+
+#foodlist {
+    width: 70%;
+    height: 75vh;
+    overflow-y: auto;
+    list-style-type: none;
+}
+
+.item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0.9rem 1.5rem;
+    margin-block-end: 0.5rem;
+
+    border-radius: 1rem;
+    background-color: var(--clr-neutral-10);
+
+    .item__info {
+        display: flex;
+        gap: 5rem;
+    }
+
+    .info__numbers {
+        display: flex;
+        gap: 1.5rem;
+
+        font-size: var(--fs-14);
+        color: var(--clr-neutral-40);
+    }
+}
+
+.servsize, .dot, .cal, .fat, .carb, .prot {
+    font-size: var(--fs-16);
+    font-weight: var(--fw-bold);
+}
+
+.servsize {
+    color: var(--clr-neutral-80);
+}
+
+.dot {
+    color: var(--clr-neutral-80);
+}
+
+.cal {
+    color: var(--clr-primary-green);
+}
+
+.fat {
+    color: var(--clr-accent-yellow);
+}
+
+.carb {
+    color: var(--clr-accent-lightblue);
+}
+
+.prot {
+    color: var(--clr-accent-purple);
+}
+
+
+/* transitions */
+.searchbar {
+    transition: 300ms;
+    background-color: var(--clr-neutral-80);
+}
+
+.searchbar:hover {
+    transition: 300ms;
+    background-color: var(--clr-neutral-30);
+}

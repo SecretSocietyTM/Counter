@@ -135,14 +135,6 @@ input, button, textarea, select {
 
 
 /* background colors */
-.bg-prim-blue {
-    background-color: var(--clr-primary-blue);
-}
-
-.bg-prim-green {
-    background-color: var(--clr-primary-green);
-}
-
 .bg-ntrl-10 {
     background-color: var(--clr-neutral-10);
 }
@@ -173,6 +165,34 @@ input, button, textarea, select {
 
 .bg-ntrl-80 {
     background-color: var(--clr-neutral-80);
+}
+
+.bg-prim-blue {
+    background-color: var(--clr-primary-blue);
+}
+
+.bg-prim-green {
+    background-color: var(--clr-primary-green);
+}
+
+.bg-prim-red {
+    background-color: var(--clr-primary-red);
+}
+
+.bg-acnt-yellow {
+    background-color: var(--clr-accent-yellow);
+}
+
+.bg-acnt-lblue {
+    background-color: var(--clr-accent-lightblue);
+}
+
+.bg-acnt-purple {
+    background-color: var(--clr-accent-purple);
+}
+
+.bg-acnt-orange {
+    background-color: var(--clr-accent-orange);
 }
 
 
@@ -304,4 +324,19 @@ input, button, textarea, select {
 
 .px-5 {
     padding-inline: 3rem;
+}
+
+
+/* box shadow */
+.shadow {
+    box-shadow: 0px 0px 0.5rem 0 rgba(0, 0, 0, 0.26);
+}
+
+
+/* button reset for icons */
+.icon_button {
+    background: none;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
 }

@@ -3,40 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Counter - Signup or Login</title>
     <link rel="stylesheet" href="../styles/base.css">
     <link rel="stylesheet" href="../styles/auth.css">
     <script src="../scripts/auth.js" defer></script>
 </head>
 <body>
-    <div class="body">
-        <div class="container">
-            <img src="../assets/auth/hero.svg" alt="">
-            <!-- <div class="hero"></div> -->
-            <div class="content">
-                <h1 class="fs-40 txt-ntrl-70">Counter</h1>
-                <h2 class="fs-48 px-3">Signup or Login</h2>
-                <form>
-                    <div class="grid gap-6">
-                        <div class="input">
-                            <label for="username">Username</label>
-                            <input type="text" name="username" id="username" placeholder="john_fitness" required>
-                        </div>
-                        <div>
-                            <div class="input">
-                                <label for="password">Password</label>
-                                <input type="password" name="password" id="password" placeholder="password123" required>
-                            </div>
-                            <p id="error_message" class="fs-14 txt-prim-red"></p>
-                        </div>
-                        <div class="flex jc-btwn">
-                            <button type="button" data-action="/signup" class="bg-prim-blue">Sign Up</button>
-                            <button type="button" data-action="/login" class="bg-prim-green">Log In</button>
-                        </div>
+<div class="body">
+    <div class="container shadow">
+        <img src="../assets/auth/hero.svg" alt="">
+        <!-- <div class="hero"></div> -->
+        <div class="content">
+            <h1 class="fs-40 txt-ntrl-70">Counter</h1>
+            <h2 class="fs-48 px-3">Signup or Login</h2>
+            <form>
+                <div class="grid gap-6">
+                    <div class="input">
+                        <label for="username">Username</label>
+                        <input type="text" name="username" id="username" placeholder="john_fitness" required>
                     </div>
-                </form>
-            </div>
+                    <div>
+                        <div class="input">
+                            <label for="password">Password</label>
+                            <input type="password" name="password" id="password" placeholder="password123" required>
+                        </div>
+                        <p id="error_message" class="fs-14 txt-prim-red"></p>
+                    </div>
+                    <div class="flex jc-btwn">
+                        <button type="button" data-action="/signup" class="bg-prim-blue">Sign Up</button>
+                        <button type="button" data-action="/login" class="bg-prim-green">Log In</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 </body>
 </html>
