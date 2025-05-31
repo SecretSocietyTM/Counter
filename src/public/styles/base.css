@@ -340,3 +340,8 @@ input, button, textarea, select {
     border-radius: 0;
     cursor: pointer;
 }
+
+.input-label {
+    display: grid;
+    gap: 0.5rem;
+}

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Counter - Signup or Login</title>
     <link rel="stylesheet" href="../styles/base.css">
+    <link rel="stylesheet" href="../styles/components.css">
     <link rel="stylesheet" href="../styles/auth.css">
     <script src="../scripts/auth.js" defer></script>
 </head>
@@ -18,20 +19,20 @@
             <h2 class="fs-48 px-3">Signup or Login</h2>
             <form>
                 <div class="grid gap-6">
-                    <div class="input">
+                    <div class="input-label">
                         <label for="username">Username</label>
-                        <input type="text" name="username" id="username" placeholder="john_fitness" required>
+                        <input type="text" name="username" id="username" placeholder="john_fitness" required class="input-1">
                     </div>
                     <div>
-                        <div class="input">
+                        <div class="input-label">
                             <label for="password">Password</label>
-                            <input type="password" name="password" id="password" placeholder="password123" required>
+                            <input type="password" name="password" id="password" placeholder="password123" required class="input-1">
                         </div>
                         <p id="error_message" class="fs-14 txt-prim-red"></p>
                     </div>
                     <div class="flex jc-btwn">
-                        <button type="button" data-action="/signup" class="bg-prim-blue">Sign Up</button>
-                        <button type="button" data-action="/login" class="bg-prim-green">Log In</button>
+                        <button type="button" data-action="/signup" class="button-1 bg-prim-blue">Sign Up</button>
+                        <button type="button" data-action="/login" class="button-1 bg-prim-green">Log In</button>
                     </div>
                 </div>
             </form>

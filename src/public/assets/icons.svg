@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="line-divider" viewBox="0 0 100 1" preserveAspectRatio="none">
+        <line x1="0" y1="1" x2="100" y2="1" stroke="currentColor" stroke-width="2" />
+    </symbol>
+</svg>

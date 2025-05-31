@@ -49,3 +49,49 @@
     font-weight: var(--fw-bold);
     letter-spacing: 0.1rem;
 }
+
+.dialog-title {
+    font-size: var(--fs-24);
+    font-weight: var(--fw-bold);
+}
+
+.input-1 {
+    padding: 0.65rem 1rem;
+
+    border: 2px solid var(--clr-neutral-50);
+    border-radius: 1rem;
+    background-color: var(--clr-neutral-20);
+}
+
+.button-1 {
+    padding-block: 0.8rem;
+
+    width: 40%;
+
+    border-radius: 1.25rem 0 1.25rem 0;
+    border: none;
+
+    font-weight: var(--fw-bold);
+    color: var(--clr-neutral-10);
+
+    cursor: pointer;
+}
+
+
+.input-1:focus {
+    transition: 200ms;
+    outline: none;
+    border: 2px solid var(--clr-primary-green);
+}
+
+.button-1:hover, 
+.button-1:focus-visible {
+    transition: 500ms;
+    /* background-color: var(--clr-neutral-80); old style */ 
+    color: var(--clr-neutral-80);
+    background-color: var(--clr-neutral-10);
+}
+
+.button-1 {
+    transition: 200ms;
+}

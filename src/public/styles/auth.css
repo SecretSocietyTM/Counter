@@ -35,37 +35,10 @@ form {
     width: 100%;
 }
 
-.input {
-    display: grid;
-    gap: 0.5rem;
-}
-
-input {
-    padding: 0.65rem 1rem;
-
-    border: 2px solid var(--clr-neutral-50);
-    border-radius: 1rem;
-    background-color: var(--clr-neutral-20);
-}
-
-input:focus {
+/* input:focus {
     transition: 200ms;
     outline: none;
     border: 2px solid var(--clr-primary-green);
-}
-
-button {
-    padding-block: 0.8rem;
-
-    width: 40%;
-
-    border-radius: 1.25rem 0 1.25rem 0;
-    border: none;
-
-    font-weight: var(--fw-bold);
-    color: var(--clr-neutral-10);
-
-    cursor: pointer;
 }
 
 button:hover, 
@@ -73,4 +46,4 @@ button:focus-visible {
     transition: 500ms;
     outline: none;
     background-color: var(--clr-neutral-80);
-}
+} */

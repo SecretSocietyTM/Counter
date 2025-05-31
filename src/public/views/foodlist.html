@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../styles/base.css">
     <link rel="stylesheet" href="../styles/components.css">
     <link rel="stylesheet" href="../styles/foodlist.css">
+    <script src="../scripts/foodlist.js" defer></script>
 </head>
 <body>
 <div class="body">
@@ -39,16 +40,16 @@
 
 
     <div class="main shadow">
-        <h2 class="section-title">My Food List</h2>
+        <p class="section-title">My Food List</p>
         <div class="content">
             <div class="searchbar">
                 <img class="searchbar__icon" src="../assets/shared/icons/search.png" alt="">
-                <input type="text" placeholder="Search your foods">
-                <button type="button" class="icon_button">
-                    <img src="../assets/shared/icons/plus.svg" alt="">
+                <input type="text" placeholder="Search your foods" id="searchbar_input">
+                <button type="button" id="addfood_btn" class="icon_button">
+                    <img src="../assets/shared/icons/add.svg" alt="">
                 </button>
             </div>
-            <ul id="foodlist">
+            <ul id="foodlist" class="foodlist">
                 <li class="item" data-id="-1">
                     <p class="name">mcdonalds egg sandwich</p>
                     <div class="item__info">
@@ -62,7 +63,7 @@
                             <p><span class="carb">15</span>g</p>
                             <p><span class="prot">2</span>g</p>
                         </div>
-                        <button type="button" class="icon_button">
+                        <button type="button" class="editfood_btn icon_button">
                             <img src="../assets/shared/icons/edit.svg" alt="">
                         </button>
                     </div>
@@ -80,259 +81,7 @@
                             <p><span class="carb">18</span>g</p>
                             <p><span class="prot">1</span>g</p>
                         </div>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/shared/icons/edit.svg" alt="">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">mcdonalds egg sandwich</p>
-                    <div class="item__info">
-                        <div class="info__numbers">
-                            <p>
-                                <span class="servsize">28</span><span class="unit">g</span>
-                            </p>
-                            <p class="dot">&#9679;</p>
-                            <p><span class="cal">260</span>cal</p>
-                            <p><span class="fat">14</span>g</p>
-                            <p><span class="carb">15</span>g</p>
-                            <p><span class="prot">2</span>g</p>
-                        </div>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/shared/icons/edit.svg" alt="">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-2">
-                    <p class="name">simpletruth frozen pineapple</p>
-                    <div class="item__info">
-                        <div class="info__numbers">
-                            <p>
-                                <span class="servsize">141</span><span class="unit">g</span>
-                            </p>
-                            <p class="dot">&#9679;</p>
-                            <p><span class="cal">70</span>cal</p>
-                            <p><span class="fat">0</span>g</p>
-                            <p><span class="carb">18</span>g</p>
-                            <p><span class="prot">1</span>g</p>
-                        </div>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/shared/icons/edit.svg" alt="">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">mcdonalds egg sandwich</p>
-                    <div class="item__info">
-                        <div class="info__numbers">
-                            <p>
-                                <span class="servsize">28</span><span class="unit">g</span>
-                            </p>
-                            <p class="dot">&#9679;</p>
-                            <p><span class="cal">260</span>cal</p>
-                            <p><span class="fat">14</span>g</p>
-                            <p><span class="carb">15</span>g</p>
-                            <p><span class="prot">2</span>g</p>
-                        </div>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/shared/icons/edit.svg" alt="">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-2">
-                    <p class="name">simpletruth frozen pineapple</p>
-                    <div class="item__info">
-                        <div class="info__numbers">
-                            <p>
-                                <span class="servsize">141</span><span class="unit">g</span>
-                            </p>
-                            <p class="dot">&#9679;</p>
-                            <p><span class="cal">70</span>cal</p>
-                            <p><span class="fat">0</span>g</p>
-                            <p><span class="carb">18</span>g</p>
-                            <p><span class="prot">1</span>g</p>
-                        </div>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/shared/icons/edit.svg" alt="">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">mcdonalds egg sandwich</p>
-                    <div class="item__info">
-                        <div class="info__numbers">
-                            <p>
-                                <span class="servsize">28</span><span class="unit">g</span>
-                            </p>
-                            <p class="dot">&#9679;</p>
-                            <p><span class="cal">260</span>cal</p>
-                            <p><span class="fat">14</span>g</p>
-                            <p><span class="carb">15</span>g</p>
-                            <p><span class="prot">2</span>g</p>
-                        </div>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/shared/icons/edit.svg" alt="">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-2">
-                    <p class="name">simpletruth frozen pineapple</p>
-                    <div class="item__info">
-                        <div class="info__numbers">
-                            <p>
-                                <span class="servsize">141</span><span class="unit">g</span>
-                            </p>
-                            <p class="dot">&#9679;</p>
-                            <p><span class="cal">70</span>cal</p>
-                            <p><span class="fat">0</span>g</p>
-                            <p><span class="carb">18</span>g</p>
-                            <p><span class="prot">1</span>g</p>
-                        </div>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/shared/icons/edit.svg" alt="">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">mcdonalds egg sandwich</p>
-                    <div class="item__info">
-                        <div class="info__numbers">
-                            <p>
-                                <span class="servsize">28</span><span class="unit">g</span>
-                            </p>
-                            <p class="dot">&#9679;</p>
-                            <p><span class="cal">260</span>cal</p>
-                            <p><span class="fat">14</span>g</p>
-                            <p><span class="carb">15</span>g</p>
-                            <p><span class="prot">2</span>g</p>
-                        </div>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/shared/icons/edit.svg" alt="">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-2">
-                    <p class="name">simpletruth frozen pineapple</p>
-                    <div class="item__info">
-                        <div class="info__numbers">
-                            <p>
-                                <span class="servsize">141</span><span class="unit">g</span>
-                            </p>
-                            <p class="dot">&#9679;</p>
-                            <p><span class="cal">70</span>cal</p>
-                            <p><span class="fat">0</span>g</p>
-                            <p><span class="carb">18</span>g</p>
-                            <p><span class="prot">1</span>g</p>
-                        </div>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/shared/icons/edit.svg" alt="">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">mcdonalds egg sandwich</p>
-                    <div class="item__info">
-                        <div class="info__numbers">
-                            <p>
-                                <span class="servsize">28</span><span class="unit">g</span>
-                            </p>
-                            <p class="dot">&#9679;</p>
-                            <p><span class="cal">260</span>cal</p>
-                            <p><span class="fat">14</span>g</p>
-                            <p><span class="carb">15</span>g</p>
-                            <p><span class="prot">2</span>g</p>
-                        </div>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/shared/icons/edit.svg" alt="">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-2">
-                    <p class="name">simpletruth frozen pineapple</p>
-                    <div class="item__info">
-                        <div class="info__numbers">
-                            <p>
-                                <span class="servsize">141</span><span class="unit">g</span>
-                            </p>
-                            <p class="dot">&#9679;</p>
-                            <p><span class="cal">70</span>cal</p>
-                            <p><span class="fat">0</span>g</p>
-                            <p><span class="carb">18</span>g</p>
-                            <p><span class="prot">1</span>g</p>
-                        </div>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/shared/icons/edit.svg" alt="">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">mcdonalds egg sandwich</p>
-                    <div class="item__info">
-                        <div class="info__numbers">
-                            <p>
-                                <span class="servsize">28</span><span class="unit">g</span>
-                            </p>
-                            <p class="dot">&#9679;</p>
-                            <p><span class="cal">260</span>cal</p>
-                            <p><span class="fat">14</span>g</p>
-                            <p><span class="carb">15</span>g</p>
-                            <p><span class="prot">2</span>g</p>
-                        </div>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/shared/icons/edit.svg" alt="">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-2">
-                    <p class="name">simpletruth frozen pineapple</p>
-                    <div class="item__info">
-                        <div class="info__numbers">
-                            <p>
-                                <span class="servsize">141</span><span class="unit">g</span>
-                            </p>
-                            <p class="dot">&#9679;</p>
-                            <p><span class="cal">70</span>cal</p>
-                            <p><span class="fat">0</span>g</p>
-                            <p><span class="carb">18</span>g</p>
-                            <p><span class="prot">1</span>g</p>
-                        </div>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/shared/icons/edit.svg" alt="">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">mcdonalds egg sandwich</p>
-                    <div class="item__info">
-                        <div class="info__numbers">
-                            <p>
-                                <span class="servsize">28</span><span class="unit">g</span>
-                            </p>
-                            <p class="dot">&#9679;</p>
-                            <p><span class="cal">260</span>cal</p>
-                            <p><span class="fat">14</span>g</p>
-                            <p><span class="carb">15</span>g</p>
-                            <p><span class="prot">2</span>g</p>
-                        </div>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/shared/icons/edit.svg" alt="">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-2">
-                    <p class="name">simpletruth frozen pineapple</p>
-                    <div class="item__info">
-                        <div class="info__numbers">
-                            <p>
-                                <span class="servsize">141</span><span class="unit">g</span>
-                            </p>
-                            <p class="dot">&#9679;</p>
-                            <p><span class="cal">70</span>cal</p>
-                            <p><span class="fat">0</span>g</p>
-                            <p><span class="carb">18</span>g</p>
-                            <p><span class="prot">1</span>g</p>
-                        </div>
-                        <button type="button" class="icon_button">
+                        <button type="button" class="editfood_btn icon_button">
                             <img src="../assets/shared/icons/edit.svg" alt="">
                         </button>
                     </div>
@@ -341,5 +90,70 @@
         </div>
     </div>
 </div>
+
+    
+<dialog class="shadow">
+    <div class="flex ai-cntr jc-btwn">
+        <p id="dialog_title" class="dialog-title">Add New Food</p>
+        <button type="button" id="cancel_btn" class="icon_button">
+            <img src="../assets/shared/icons/cancel.svg" alt="">
+        </button>
+    </div>
+    <form class="addform">
+        <div class="input-label">
+            <label for="name">Food Name</label>
+            <input type="text" name="name" id="name" placeholder="apple" required class="input-1">
+        </div>
+        <div class="flex jc-cntr gap-4">
+            <div class="input-label">
+                <label for="servsize">Serving Size</label>
+                <input type="number" name="servsize" id="servsize" placeholder="150" step="0.01" required class="input-1">
+            </div>
+            <div class="input-label">
+                <label for="unit">Unit</label>
+                <select name="unit" id="unit" class="input-1">
+                    <option value="g">grams(g)</option>
+                    <option value="x">quantity(x)</option>
+                    <option value="oz">ounces(oz)</option>
+                    <option value="ml">milliliters(mL)</option>
+                </select>
+            </div>
+        </div>
+        <div class="cardsection">
+            <div class="card-cal txt-prim-green">
+                <label for="cal" class="card__title">Calories</label>
+                <svg width="100%" height="2">
+                    <use href="../assets/icons.svg#line-divider"/>
+                </svg>
+                <input type="text" name="cal" id="cal" placeholder="0" step="0.01" required class="card__input">
+            </div>
+            <div class="card txt-acnt-yellow">
+                <label for="fat" class="card__title">Fat</label>
+                <svg width="100%" height="2">
+                    <use href="../assets/icons.svg#line-divider"/>
+                </svg>
+                <input type="text" name="fat" id="fat" placeholder="0" step="0.01" required class="card__input">
+            </div>
+            <div class="card txt-acnt-lightblue">
+                <label for="carb" class="card__title">Carbs</label>
+                <svg width="100%" height="2">
+                    <use href="../assets/icons.svg#line-divider"/>
+                </svg>
+                <input type="text" name="carb" id="carb" placeholder="0" step="0.01" required class="card__input">
+            </div>
+            <div class="card txt-acnt-purple">
+                <label for="prot" class="card__title">Protein</label>
+                <svg width="100%" height="2">
+                    <use href="../assets/icons.svg#line-divider"/>
+                </svg>
+                <input type="text" name="prot" id="prot" placeholder="0" step="0.01" required class="card__input">
+            </div>
+        </div>
+        <div class="flex jc-btwn">
+            <button type="button" id="delete_btn" class="delete_btn button-1 bg-prim-red">Delete</button>
+            <button type="button" class="button-1 bg-prim-green">Add Food</button>
+        </div>
+    </form>
+</dialog>
 </body>
 </html>
