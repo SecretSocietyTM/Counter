@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../styles/base.css">
     <link rel="stylesheet" href="../styles/components.css">
     <link rel="stylesheet" href="../styles/foodlist.css">
-    <script src="../scripts/foodlist.js" defer></script>
+    <script type="module" src="../scripts/foodlist.js" defer></script>
 </head>
 <body>
 <div class="body">
@@ -91,7 +91,6 @@
     </div>
 </div>
 
-    
 <dialog class="shadow">
     <div class="flex ai-cntr jc-btwn">
         <p id="dialog_title" class="dialog-title">Add New Food</p>
@@ -125,28 +124,28 @@
                 <svg width="100%" height="2">
                     <use href="../assets/icons.svg#line-divider"/>
                 </svg>
-                <input type="text" name="cal" id="cal" placeholder="0" step="0.01" required class="card__input">
+                <input type="number" name="cal" id="cal" placeholder="0" step="0.01" required class="card__input">
             </div>
             <div class="card txt-acnt-yellow">
                 <label for="fat" class="card__title">Fat</label>
                 <svg width="100%" height="2">
                     <use href="../assets/icons.svg#line-divider"/>
                 </svg>
-                <input type="text" name="fat" id="fat" placeholder="0" step="0.01" required class="card__input">
+                <input type="number" name="fat" id="fat" placeholder="0" step="0.01" required class="card__input">
             </div>
             <div class="card txt-acnt-lightblue">
                 <label for="carb" class="card__title">Carbs</label>
                 <svg width="100%" height="2">
                     <use href="../assets/icons.svg#line-divider"/>
                 </svg>
-                <input type="text" name="carb" id="carb" placeholder="0" step="0.01" required class="card__input">
+                <input type="number" name="carb" id="carb" placeholder="0" step="0.01" required class="card__input">
             </div>
             <div class="card txt-acnt-purple">
                 <label for="prot" class="card__title">Protein</label>
                 <svg width="100%" height="2">
                     <use href="../assets/icons.svg#line-divider"/>
                 </svg>
-                <input type="text" name="prot" id="prot" placeholder="0" step="0.01" required class="card__input">
+                <input type="number" name="prot" id="prot" placeholder="0" step="0.01" required class="card__input">
             </div>
         </div>
         <div class="flex jc-btwn">

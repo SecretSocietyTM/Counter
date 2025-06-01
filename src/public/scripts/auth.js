@@ -3,9 +3,7 @@ const error_message = document.getElementById("error_message");
 
 form.addEventListener("click", async e => {
     let action = e.target.dataset.action;
-    if (!action) {
-        return;
-    }
+    if (!action) return;
 
     if (!form.checkValidity()) {
         form.reportValidity();
