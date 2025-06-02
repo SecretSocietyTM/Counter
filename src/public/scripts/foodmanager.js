@@ -3,25 +3,25 @@ export class FoodManager {
         this.foods = [];
     }
 
-    addFood(food) {
+    add(food) {
         this.foods.push(food);
     }
 
-    deleteFood(id) {
-        const index = this.foods.findIndex(item => item.id == id);
+    delete(id) {
+        const index = this.foods.findIndex(item => item.food_id == id);
         if (index !== -1) {
             this.foods.splice(1, index);
         }
     }
 
     getFoodById(id) {
-        return this.foods.find(item => item.id == id);
+        return this.foods.find(item => item.food_id == id);
     }
 
     updateFood(id, data) {
-        const index = this.foods.findIndex(item => item.id == id);
+        const index = this.foods.findIndex(item => item.food_id == id);
         if (index !== -1) {
-            this.food[index] = data;
+            this.foods[index] = data;
         } 
     }
 

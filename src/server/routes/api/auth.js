@@ -10,13 +10,14 @@ router.post("/signup", async (req, res) => {
     try {
         user = await db.addUser(username, password);
     } catch (err) {
+        console.log(err);
         const errmsg = err.message.includes("UNIQUE constraint failed")
             ? "Username already taken"
             : "Something went wrong, please try again";
             return res.json({ success: false, errmsg });
     }
     req.session.user = { id: user.user_id }
-    return res.json({ success: true, redirect: "/dashboard" })
+    return res.json({ success: true, redirect: "/foodlist" /* "/dashboard" */ })
 });
 
 router.post("/login", async (req, res) => {
@@ -26,12 +27,13 @@ router.post("/login", async (req, res) => {
     try {
         user = await db.authUser(username, password);
     } catch (err) {
+        console.log(err);
         return res.json({success: false, errmsg: "Something went wrong, please try again" });
     }
 
     if (user) {
         req.session.user = { id: user.user_id };
-        return res.json({ success: true, redirect: "/dashboard" });
+        return res.json({ success: true, redirect: "/foodlist" /* "/dashboard" */ });
     } else {
         return res.json({ success: false, errmsg: "Username or password invalid, try again" });
     }

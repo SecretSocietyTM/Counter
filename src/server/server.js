@@ -5,6 +5,7 @@ const path     = require("path");
 // import routes
 const pagesRouter = require("./routes/pages.js");
 const authRouter  = require("./routes/api/auth.js");
+const foodlistRouter = require("./routes/api/foodlist.js");
 
 
 const app = express();
@@ -24,6 +25,7 @@ app.use(session({
 // use routes
 app.use("/", pagesRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/foodlist", foodlistRouter);
 
 
 // run server

@@ -26,10 +26,57 @@ async function authUser(username, password) {
     return result;
 }
 
+async function addNewFood(uid, item) {
+    const db = await connectDB();
+    const result = await db.get(`INSERT INTO foods 
+        (user_id, name, serving_size, unit, calories, fat, carbs, protein) VALUES 
+        (?, ?, ?, ?, ?, ?, ?, ?) RETURNING *`,
+        [uid, item.name, item.servsize, item.unit,
+        item.cal, item.fat, item.carb, item.prot]);
+    await db.close();
+    return result;
+}
 
+async function getNFoods(uid, last_fid, n = 10) {
+    const db = await connectDB();
+    let results = [];
+    let fid = last_fid;
+    for (let i = 0; i < n; i++) {
+        let result = await db.get("SELECT * FROM foods WHERE user_id=? AND food_id>?", [uid, fid]);
+        if(!result) break;
+        fid = result.food_id;
+        results.push(result);
+    }
+    let count = await db.get("SELECT COUNT(*) AS x FROM foods WHERE user_id=?", [uid]);
+    await db.close();
+    return { results, count: count.x };
+}
+
+async function editFood(uid, fid, item) {
+    const db = await connectDB();
+    const result = await db.get(`UPDATE foods 
+        SET name=?, serving_size=?, unit=?, calories=?, fat=?, carbs=?, protein=?
+        WHERE user_id=? AND food_id=? 
+        RETURNING *`,
+        [item.name, item.servsize, item.unit, item.cal,
+        item.fat, item.carb, item.prot, uid, fid]);
+    await db.close();
+    return result;
+}
+
+async function deleteFood(uid, fid) {
+    const db = await connectDB();
+    const result = await db.get(`DELETE FROM foods WHERE user_id=? AND food_id=? RETURNING food_id`, [uid, fid]);
+    await db.close();
+    return result;
+}
 
 module.exports = { 
     connectDB,
     addUser,
     authUser,
+    addNewFood,
+    getNFoods,
+    editFood,
+    deleteFood
 };

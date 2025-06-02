@@ -166,7 +166,7 @@ dialog {
     visibility: hidden;
 }
 
-.addform {
+.foodform {
     display: grid;
     margin-block-start: 2rem;
     gap: 1.5rem;

@@ -50,42 +50,6 @@
                 </button>
             </div>
             <ul id="foodlist" class="foodlist">
-                <li class="item" data-id="-1">
-                    <p class="name">mcdonalds egg sandwich</p>
-                    <div class="item__info">
-                        <div class="info__numbers">
-                            <p>
-                                <span class="servsize">28</span><span class="unit">g</span>
-                            </p>
-                            <p class="dot">&#9679;</p>
-                            <p><span class="cal">260</span>cal</p>
-                            <p><span class="fat">14</span>g</p>
-                            <p><span class="carb">15</span>g</p>
-                            <p><span class="prot">2</span>g</p>
-                        </div>
-                        <button type="button" class="editfood_btn icon_button">
-                            <img src="../assets/shared/icons/edit.svg" alt="">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-2">
-                    <p class="name">simpletruth frozen pineapple</p>
-                    <div class="item__info">
-                        <div class="info__numbers">
-                            <p>
-                                <span class="servsize">141</span><span class="unit">g</span>
-                            </p>
-                            <p class="dot">&#9679;</p>
-                            <p><span class="cal">70</span>cal</p>
-                            <p><span class="fat">0</span>g</p>
-                            <p><span class="carb">18</span>g</p>
-                            <p><span class="prot">1</span>g</p>
-                        </div>
-                        <button type="button" class="editfood_btn icon_button">
-                            <img src="../assets/shared/icons/edit.svg" alt="">
-                        </button>
-                    </div>
-                </li>
             </ul>
         </div>
     </div>
@@ -98,7 +62,8 @@
             <img src="../assets/shared/icons/cancel.svg" alt="">
         </button>
     </div>
-    <form class="addform">
+    <form id="foodform" class="foodform">
+        <input type="hidden" name="id">
         <div class="input-label">
             <label for="name">Food Name</label>
             <input type="text" name="name" id="name" placeholder="apple" required class="input-1">
@@ -148,9 +113,10 @@
                 <input type="number" name="prot" id="prot" placeholder="0" step="0.01" required class="card__input">
             </div>
         </div>
+        <p id="error_message" class="fs-14 txt-prim-red"></p>
         <div class="flex jc-btwn">
             <button type="button" id="delete_btn" class="delete_btn button-1 bg-prim-red">Delete</button>
-            <button type="button" class="button-1 bg-prim-green">Add Food</button>
+            <button type="button" id="submit_btn" data-method="" class="button-1 bg-prim-green">Add Food</button>
         </div>
     </form>
 </dialog>

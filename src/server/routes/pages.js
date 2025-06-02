@@ -14,5 +14,10 @@ router.get("/accounts", (req, res) => {
     return res.sendFile(path.join(viewsdir, "auth.html"));
 });
 
+router.get("/foodlist", (req, res) => {
+    if (!req.session.user) return res.redirect("/accounts");
+    return res.sendFile(path.join(viewsdir, "foodlist.html"));
+});
+
 
 module.exports = router;
