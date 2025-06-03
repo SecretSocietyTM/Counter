@@ -4,9 +4,8 @@ import * as FoodUI from "./ui/foodUI.js";
 
 const foodlist_array = new FoodManager()
 let total_foodcount;
-let prev_index = 0;
-
-let cur_item;
+let cur_foodcount = 0;
+let cur_listitem;
 
 // buttons
 const addfood_btn = document.getElementById("addfood_btn");
@@ -22,8 +21,21 @@ const delete_btn = document.getElementById("delete_btn");
 const submit_btn = document.getElementById("submit_btn");
 const foodform = document.getElementById("foodform");
 
+const searchbar = document.getElementById("searchbar");
+
 
 const error_message = document.getElementById("error_message");
+
+const observer = new IntersectionObserver(entries => {
+    const last_listitem = entries[0];
+    if (!last_listitem.isIntersecting || (cur_foodcount >= total_foodcount)) return;
+    console.log("THE EVENT HAS BEEN TRIGGERED");
+    fetchMoreFood();
+    observer.unobserve(last_listitem.target);
+    if (cur_foodcount !== total_foodcount) {
+        observer.observe(foodlist.lastElementChild);
+    }
+});
 
 /* icon button events */
 addfood_btn.addEventListener("click", () => {
@@ -43,23 +55,17 @@ foodlist.addEventListener("click", (e) => {
         submit_btn.dataset.method = "PATCH";
 
         const li = e.target.closest("li");
-        cur_item = li;
         const item = foodlist_array.getFoodById(li.dataset.id);
+        cur_listitem = li;
         /* foodform.querySelector("[name='id']").value = item.food_id; */
-        foodform.querySelector("[name='name']").value = item.name;
-        foodform.querySelector("[name='servsize']").value = item.serving_size;
-        foodform.querySelector("[name='unit']").value = item.unit;
-        foodform.querySelector("[name='cal']").value = item.calories;
-        foodform.querySelector("[name='fat']").value = item.fat;
-        foodform.querySelector("[name='carb']").value = item.carbs;
-        foodform.querySelector("[name='prot']").value = item.protein;
+        FoodUI.updateForm(foodform, item);
         dialog.showModal();
     }
 });
 
 cancel_btn.addEventListener("click", () => {
     dialog.close();
-    dialog.querySelector("form").reset();
+    foodform.reset();
     error_message.textContent = "";
     addfood_btn.blur();
 });
@@ -69,9 +75,8 @@ cancel_btn.addEventListener("click", () => {
 submit_btn.addEventListener("click", async (e) => {
     const method = submit_btn.dataset.method;
     let endpoint = "api/foodlist/food";
-    const id = cur_item.dataset.id;
 
-    if (method == "PATCH") endpoint += `/${id}`
+    if (method == "PATCH") endpoint += `/${cur_listitem.dataset.id}`
 
     const form_data = new FormData(foodform);
     const form_obj = Object.fromEntries(form_data.entries());
@@ -91,14 +96,17 @@ submit_btn.addEventListener("click", async (e) => {
 
         if (data.success) {
             if (method == "POST") {
-                foodlist_array.add(data.item);
-                foodlist.appendChild(FoodUI.createItem(data.item));
+                if (cur_foodcount >= total_foodcount) {
+                    foodlist_array.add(data.item);
+                    foodlist.appendChild(FoodUI.createListItem(data.item));
+                }
             } 
             else if (method == "PATCH") {
                 foodlist_array.updateFood(data.item.food_id, data.item);
-                FoodUI.updateItem(data.item, cur_item);
+                FoodUI.updateListItem(data.item, cur_listitem);
             }
             dialog.close();
+            addfood_btn.blur();
             foodform.reset();
         } else {
             error_message.textContent = data.errmsg;
@@ -113,11 +121,27 @@ async function fetchFoodList() {
     if (data.success) {
         for (let i = 0; i < data.items.length; i++) {
             foodlist_array.add(data.items[i]);
-            foodlist.appendChild(FoodUI.createItem(data.items[i]));
+            foodlist.appendChild(FoodUI.createListItem(data.items[i]));
         }
-        /* observer.observe(document.querySelector(".food-list").lastElementChild); */
+        observer.observe(foodlist.lastElementChild);
         total_foodcount = data.count;
-        prev_index = data.items.length;
+        cur_foodcount = foodlist_array.foods.length;
+    } else {
+        alert(data.errmsg);
+    }
+}
+
+async function fetchMoreFood() {
+    let last_listitem = foodlist_array.foods[cur_foodcount - 1];
+    const res = await fetch(`api/foodlist/food?last_item=${last_listitem.food_id}`);
+    const data = await res.json();
+
+    if (data.success) {
+        for (let i = 0; i < data.items.length; i++) {
+            foodlist_array.add(data.items[i]);
+            foodlist.appendChild(FoodUI.createListItem(data.items[i]));
+        }
+        cur_foodcount = foodlist_array.foods.length;
     } else {
         alert(data.errmsg);
     }
@@ -125,7 +149,7 @@ async function fetchFoodList() {
 
 delete_btn.addEventListener("click", async () => {
     /* const id = foodform.querySelector("[name='id']").value; */
-    const id = cur_item.dataset.id;
+    const id = cur_listitem.dataset.id;
 
     const res = await fetch(`/api/foodlist/food/${id}`, {
         method: "DELETE"   
@@ -135,8 +159,9 @@ delete_btn.addEventListener("click", async () => {
 
     if (data.success) {
         foodlist_array.delete(data.id);
-        cur_item.remove();
+        cur_listitem.remove();
         dialog.close();
+        foodform.reset();
     } else {
         alert(data.errmsg);
     }

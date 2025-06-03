@@ -1,4 +1,4 @@
-function createItem(item) {
+function createListItem(item) {
     const li = document.createElement("li");
     li.className = "item";
     li.dataset.id = item.food_id;
@@ -64,16 +64,28 @@ function createMacro(value, unit = "g", span_classes = []) {
 }
 
 
-function updateItem(item, li_item) {
-    li_item.querySelector(".name").textContent = item.name;
-    li_item.querySelector(".servsize").textContent = item.serving_size;
-    li_item.querySelector(".unit").textContent = item.unit;
-    li_item.querySelector(".cal").textContent = item.calories;
-    li_item.querySelector(".fat").textContent = item.fat;
-    li_item.querySelector(".carb").textContent = item.carbs;
-    li_item.querySelector(".prot").textContent = item.protein;
+function updateListItem(item, listitem) {
+    listitem.querySelector(".name").textContent = item.name;
+    listitem.querySelector(".servsize").textContent = item.serving_size;
+    listitem.querySelector(".unit").textContent = item.unit;
+    listitem.querySelector(".cal").textContent = item.calories;
+    listitem.querySelector(".fat").textContent = item.fat;
+    listitem.querySelector(".carb").textContent = item.carbs;
+    listitem.querySelector(".prot").textContent = item.protein;
 }
+
+function updateForm(form, item) {
+    foodform.querySelector("[name='name']").value = item.name;
+    foodform.querySelector("[name='servsize']").value = item.serving_size;
+    foodform.querySelector("[name='unit']").value = item.unit;
+    foodform.querySelector("[name='cal']").value = item.calories;
+    foodform.querySelector("[name='fat']").value = item.fat;
+    foodform.querySelector("[name='carb']").value = item.carbs;
+    foodform.querySelector("[name='prot']").value = item.protein;
+}
+
 export { 
-    createItem,
-    updateItem
+    createListItem,
+    updateListItem,
+    updateForm
 }

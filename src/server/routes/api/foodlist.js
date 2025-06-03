@@ -11,7 +11,7 @@ router.route("/food")
         try {
             result = await db.getNFoods(uid, last_fid);
         } catch (err) {
-            console.log(err);
+            console.err(err);
             return res.json({ success: false, errmsg: "Something went wrong, please try again" });
         }
 
@@ -25,7 +25,7 @@ router.route("/food")
         try {
             result = await db.addNewFood(uid, item);
         } catch (err) {
-            console.log(err);
+            console.err(err);
             return res.json({ success: false, errmsg: "Something went wrong, please try again" });
         }
 
@@ -43,7 +43,7 @@ router.route("/food/:id")
         try {
             result = await db.editFood(uid, fid, item);
         } catch (err) {
-            console.log(err);
+            console.err(err);
             return res.json({ success: false, errmsg: "Something went wrong, please try again" });
         }
 
@@ -57,11 +57,10 @@ router.route("/food/:id")
         try {
             result = await db.deleteFood(uid, fid);
         } catch (err) {
-            console.log(err);
+            console.err(err);
             return res.json({ success: false, errmsg: "Something went wrong, please try again "});
         }
 
-        console.log(result);
         return res.json({ success: true, id: result.food_id })
     });
 

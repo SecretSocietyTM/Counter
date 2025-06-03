@@ -10,7 +10,7 @@ router.post("/signup", async (req, res) => {
     try {
         user = await db.addUser(username, password);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         const errmsg = err.message.includes("UNIQUE constraint failed")
             ? "Username already taken"
             : "Something went wrong, please try again";
@@ -27,7 +27,7 @@ router.post("/login", async (req, res) => {
     try {
         user = await db.authUser(username, password);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         return res.json({success: false, errmsg: "Something went wrong, please try again" });
     }
 

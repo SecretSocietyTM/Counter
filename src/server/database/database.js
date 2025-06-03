@@ -37,7 +37,7 @@ async function addNewFood(uid, item) {
     return result;
 }
 
-async function getNFoods(uid, last_fid, n = 10) {
+async function getNFoods(uid, last_fid, n = 15) {
     const db = await connectDB();
     let results = [];
     let fid = last_fid;

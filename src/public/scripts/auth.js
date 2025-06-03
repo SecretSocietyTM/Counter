@@ -1,7 +1,7 @@
 const form = document.forms[0];
 const error_message = document.getElementById("error_message");
 
-form.addEventListener("click", async e => {
+form.addEventListener("click", async (e) => {
     let action = e.target.dataset.action;
     if (!action) return;
 
