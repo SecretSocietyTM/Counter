@@ -28,4 +28,8 @@ export class FoodManager {
     getAllFoods() {
         return this.foods;
     }
+
+    deleteAll() {
+        this.foods.length = 0;
+    }
 }

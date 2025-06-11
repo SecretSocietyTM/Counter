@@ -37,17 +37,31 @@ async function addNewFood(uid, item) {
     return result;
 }
 
-async function getNFoods(uid, last_fid, n = 15) {
+async function getNFoods(uid, last_fid, n = 15, str=undefined) {
     const db = await connectDB();
     let results = [];
     let fid = last_fid;
+    console.log("value of str: ", str);
     for (let i = 0; i < n; i++) {
-        let result = await db.get("SELECT * FROM foods WHERE user_id=? AND food_id>?", [uid, fid]);
+        let result;
+        if (!str) {
+            console.log("no string provided");
+            result = await db.get("SELECT * FROM foods WHERE user_id=? AND food_id>?", [uid, fid]);
+        } else {
+            console.log("a string was provided");
+            result = await db.get("SELECT * FROM foods WHERE user_id=? AND food_id>? AND name LIKE ?", [uid, fid, `%${str}%`]);
+        }
         if(!result) break;
         fid = result.food_id;
         results.push(result);
     }
-    let count = await db.get("SELECT COUNT(*) AS x FROM foods WHERE user_id=?", [uid]);
+    let count;
+    if (!str) {
+        count = await db.get("SELECT COUNT(*) AS x FROM foods WHERE user_id=?", [uid]);
+    } else {
+        count = await db.get("SELECT COUNT(*) AS x FROM foods WHERE user_id=? AND name LIKE ?", [uid, `%${str}%`]);
+    }
+    
     await db.close();
     return { results, count: count.x };
 }
