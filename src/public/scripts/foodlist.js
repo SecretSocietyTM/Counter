@@ -216,37 +216,6 @@ delete_btn.addEventListener("click", async () => {
     }
 });
 
-
-/* // searchbar
-searchbar.addEventListener("keyup", async (e) => {
-    let searchterm = e.target.value;
-    glob_searchterm = searchterm;
-    foodlist.replaceChildren();
-    sfoodlist_array.deleteAll();
-    if (searchterm.length == 0) { // resets state of page to "init" state
-        console.log("limit testing");
-        for (let i = 0; i < foodlist_array.foods.length; i++) {
-            foodlist.appendChild(FoodUI.createListItem(foodlist_array.foods[i]));
-        }
-        observer.observe(foodlist.lastElementChild);
-        return;
-    }
-    if (searchterm.length < 2) {
-        return;
-    }
-    const res = await fetch(`/api/foodlist/food?last_item=0&query=${searchterm}`); 
-    const data = await res.json();
-
-    if (data.success) {
-        for (let i = 0; i < data.items.length; i++) {
-            sfoodlist_array.add(data.items[i]);
-            foodlist.appendChild(FoodUI.createListItem(data.items[i]));
-        }
-    } else {
-        alert(data.errmsg);
-    }
-}); */
-
 search_input.addEventListener("input", async (e) => {
     let searchterm = e.target.value;
     glob_searchterm = searchterm;
