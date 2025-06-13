@@ -67,7 +67,6 @@ const observer = new IntersectionObserver(async entries => {
     observer.unobserve(last_listitem.target);
     await fetchMoreFood();
     if (cur_foodcount !== total_foodcount) {
-        console.log(foodlist.lastElementChild);
         observer.observe(foodlist.lastElementChild);
     }
 });
@@ -101,7 +100,7 @@ foodlist.addEventListener("click", (e) => {
         submit_btn.dataset.method = "PATCH";
 
         const li = e.target.closest("li");
-        const item = getActiveFoodList();
+        const item = getActiveFoodList().getFoodById(li.dataset.id);
         cur_listitem = li;
         FoodUI.updateForm(foodform, item);
         dialog.showModal();
@@ -125,7 +124,6 @@ submit_btn.addEventListener("click", async (e) => {
 
     const form_data = new FormData(foodform);
     const form_obj = Object.fromEntries(form_data.entries());
-    /* console.log(form_obj); */
 
     if (!foodform.checkValidity()) {
         foodform.reportValidity();
@@ -150,7 +148,8 @@ submit_btn.addEventListener("click", async (e) => {
                 }
             } 
             else if (method == "PATCH") {
-                getActiveFoodList.updateFood(data.item.food_id, data.item)
+                getActiveFoodList().updateFood(data.item.food_id, data.item);
+                if (foodlist_array.getFoodById(data.item.food_id)) foodlist_array.updateFood(data.item.food_id, data.item);
                 FoodUI.updateListItem(data.item, cur_listitem);
             }
             dialog.close();
@@ -171,7 +170,6 @@ async function fetchInitFood() {
             foodlist_array.add(data.items[i]);
             foodlist.appendChild(FoodUI.createListItem(data.items[i]));
         }
-        console.log(foodlist.lastElementChild);
         observer.observe(foodlist.lastElementChild);
         total_foodcount = data.count;
         cur_foodcount = foodlist_array.foods.length;
@@ -181,7 +179,6 @@ async function fetchInitFood() {
 }
 
 async function fetchMoreFood(str = undefined) {
-    console.log("FETCHING MORE FOOD");
     let activelist = getActiveFoodList();
     let last_listitem = activelist.foods[cur_foodcount - 1];
     const res = await fetch(`api/foodlist/food?last_item=${last_listitem.food_id}&query=${str}`);
@@ -208,7 +205,21 @@ delete_btn.addEventListener("click", async () => {
     let data = await res.json();
 
     if (data.success) {
-        getActiveFoodList().delete(data.id);
+        let cur_count = getCurrentCount();
+        let tot_count = getTotalCount(); 
+
+        let active = getActiveFoodList();
+        /* getActiveFoodList().delete(data.id); */
+        active.delete(data.id);
+        if (flag_searching) {
+            if (foodlist_array.getFoodById(data.id)) {
+                foodlist_array.delete(data.id);
+                cur_foodcount--;
+                total_foodcount--;
+            }
+        }
+        cur_count--;
+        tot_count--;
         cur_listitem.remove();
         dialog.close();
         foodform.reset();

@@ -10,7 +10,7 @@ export class FoodManager {
     delete(id) {
         const index = this.foods.findIndex(item => item.food_id == id);
         if (index !== -1) {
-            this.foods.splice(1, index);
+            this.foods.splice(index, 1);
         }
     }
 
