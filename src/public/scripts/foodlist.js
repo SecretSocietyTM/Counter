@@ -260,4 +260,17 @@ search_input.addEventListener("input", async (e) => {
     }
 });
 
+dialog.addEventListener("click", (e) => {
+    const dialog_dimensions = dialog.getBoundingClientRect();
+    if (
+        e.clientX < dialog_dimensions.left  ||
+        e.clientX > dialog_dimensions.right ||
+        e.clientY < dialog_dimensions.top   ||
+        e.clientY > dialog_dimensions.bottom
+    ) {
+        dialog.close();
+        addfood_btn.blur();
+    }
+});
+
 fetchInitFood();
