@@ -272,5 +272,6 @@ dialog.addEventListener("click", (e) => {
         addfood_btn.blur();
     }
 });
+// test
 
 fetchInitFood();
