@@ -63,7 +63,6 @@ function createMacro(value, unit = "g", span_classes = []) {
     return p;
 }
 
-
 function updateListItem(item, listitem) {
     listitem.querySelector(".name").textContent = item.name;
     listitem.querySelector(".servsize").textContent = item.serving_size;
@@ -75,13 +74,13 @@ function updateListItem(item, listitem) {
 }
 
 function updateForm(form, item) {
-    foodform.querySelector("[name='name']").value = item.name;
-    foodform.querySelector("[name='servsize']").value = item.serving_size;
-    foodform.querySelector("[name='unit']").value = item.unit;
-    foodform.querySelector("[name='cal']").value = item.calories;
-    foodform.querySelector("[name='fat']").value = item.fat;
-    foodform.querySelector("[name='carb']").value = item.carbs;
-    foodform.querySelector("[name='prot']").value = item.protein;
+    form.querySelector("[name='name']").value = item.name;
+    form.querySelector("[name='servsize']").value = item.serving_size;
+    form.querySelector("[name='unit']").value = item.unit;
+    form.querySelector("[name='cal']").value = item.calories;
+    form.querySelector("[name='fat']").value = item.fat;
+    form.querySelector("[name='carb']").value = item.carbs;
+    form.querySelector("[name='prot']").value = item.protein;
 }
 
 export { 

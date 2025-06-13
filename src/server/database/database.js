@@ -41,14 +41,11 @@ async function getNFoods(uid, last_fid, n = 15, str=undefined) {
     const db = await connectDB();
     let results = [];
     let fid = last_fid;
-    console.log("value of str: ", str);
     for (let i = 0; i < n; i++) {
         let result;
         if (!str) {
-            console.log("no string provided");
             result = await db.get("SELECT * FROM foods WHERE user_id=? AND food_id>?", [uid, fid]);
         } else {
-            console.log("a string was provided");
             result = await db.get("SELECT * FROM foods WHERE user_id=? AND food_id>? AND name LIKE ?", [uid, fid, `%${str}%`]);
         }
         if(!result) break;

@@ -34,24 +34,6 @@ router.route("/food")
         return res.json({ success: true, item: result });
     });
 
-/* 
-router.get("/food/search", async (req, res) => {
-    const last_fid = parseInt(req.query.last_item);
-    const food_query = req.query.query;
-    console.log("Value of food_query: ", food_query)
-    const uid = req.session.user.id;
-    let result;
-
-    try {
-        result = await db.getNFoods(uid, last_fid, undefined, food_query);
-    } catch (err) {
-        console.err(err);
-        return res.json({ success: false, errmsg: "Something went wrong, please try again" });
-    }
-
-    return res.json( {success: true, items: result.results, count: result.count });
-});
- */
 
 router.route("/food/:id")
     .patch(async (req, res) => {
