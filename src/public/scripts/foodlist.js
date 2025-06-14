@@ -8,7 +8,8 @@ const s_foodlist_array = new FoodManager()
 let total_count;
 let s_total_count;
 
-let cur_listitem;
+let cur_listitem = null;
+let cur_observed_listitem = null;
 let glob_searchterm;
 
 // flags
@@ -41,24 +42,20 @@ function getActiveTotalCount() {
     return flag_searching ? s_total_count : total_count;
 }
 
+
 const observer = new IntersectionObserver(async entries => {
-    const last_listitem = entries[0];
-    if (!last_listitem.isIntersecting || (foodlist_array.size() == total_count)) return;
-    observer.unobserve(last_listitem.target);
-    await fetchMoreFood();
-    if (foodlist_array.size() !== total_count) {
-        observer.observe(foodlist.lastElementChild);
-    }
-});
+    const last_entry = entries[0];
+    const active_foodlist_array = getActiveFoodList();
 
+    if (!last_entry.isIntersecting || (active_foodlist_array.size() == getActiveTotalCount())) return;
 
-const observer2 = new IntersectionObserver(async entries => {
-    const last_listitem = entries[0];
-    if (!last_listitem.isIntersecting || (s_foodlist_array.size() == s_total_count)) return;
-    observer2.unobserve(last_listitem.target);
+    observer.unobserve(last_entry.target);
+    cur_observed_listitem = null;
+
     await fetchMoreFood(glob_searchterm);
-    if (s_foodlist_array.size() !== s_total_count) {
-        observer2.observe(foodlist.lastElementChild);
+    if (active_foodlist_array.size() !== getActiveTotalCount()) {
+        observer.observe(foodlist.lastElementChild);
+        cur_observed_listitem = foodlist.lastElementChild;
     }
 });
 
@@ -198,6 +195,7 @@ async function fetchInitFood() {
             foodlist.appendChild(FoodUI.createListItem(data.items[i]));
         }
         observer.observe(foodlist.lastElementChild);
+        cur_observed_listitem = foodlist.lastElementChild;
         total_count = data.count;
     } else {
         alert(data.errmsg);
@@ -224,32 +222,38 @@ search_input.addEventListener("input", async (e) => {
     let searchterm = e.target.value;
     glob_searchterm = searchterm;
     foodlist.replaceChildren();
+    if (cur_observed_listitem) {
+        observer.unobserve(cur_observed_listitem);
+        cur_observed_listitem = null;
+    }
     s_foodlist_array.deleteAll();
-    
+
     if (searchterm.length == 0) { // resets state of page to "init" state
         flag_searching = false;
+        glob_searchterm = undefined;
         for (let i = 0; i < foodlist_array.foods.length; i++) {
             foodlist.appendChild(FoodUI.createListItem(foodlist_array.foods[i]));
         }
         observer.observe(foodlist.lastElementChild);
+        cur_observed_listitem = foodlist.lastElementChild;
         foodlist.scrollTop = 0;
-        return;
-    }
+    } else {
+        const res = await fetch(`/api/foodlist/food?last_item=0&query=${searchterm}`); 
+        const data = await res.json();
 
-    const res = await fetch(`/api/foodlist/food?last_item=0&query=${searchterm}`); 
-    const data = await res.json();
-
-    if (data.success) {
-        if (data.count == 0) return;
+        if (data.success) {
+            if (data.count == 0) return;
             flag_searching = true;
             for (let i = 0; i < data.items.length; i++) {
                 s_foodlist_array.add(data.items[i]);
                 foodlist.appendChild(FoodUI.createListItem(data.items[i]));
             }
-            observer2.observe(foodlist.lastElementChild);
+            observer.observe(foodlist.lastElementChild);
+            cur_observed_listitem = foodlist.lastElementChild;
             s_total_count = data.count;
-    } else {
-        alert(data.errmsg);
+        } else {
+            alert(data.errmsg);
+        }
     }
 });
 
