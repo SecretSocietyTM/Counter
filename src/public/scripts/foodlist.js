@@ -3,13 +3,10 @@ import * as FoodUI from "./ui/foodUI.js";
 
 
 const foodlist_array = new FoodManager()
-const sfoodlist_array = new FoodManager() // s stands for search
+const s_foodlist_array = new FoodManager()
 
-let total_foodcount;
-let total_sfoodcount;
-
-let cur_foodcount = 0;
-let cur_sfoodcount = 0;
+let total_count;
+let s_total_count;
 
 let cur_listitem;
 let glob_searchterm;
@@ -37,36 +34,19 @@ const error_message = document.getElementById("error_message");
 
 
 function getActiveFoodList() {
-    return flag_searching ? sfoodlist_array : foodlist_array;
+    return flag_searching ? s_foodlist_array : foodlist_array;
 }
 
-// TODO: use or remove
-function getCurrentCount() {
-    return flag_searching ? cur_sfoodcount : cur_foodcount;
-}
-
-function setCurrentCount(count) {
-    if (flag_searching) cur_sfoodcount = count;
-    else cur_foodcount = count;
-}
-
-// TODO: use or remove
-function getTotalCount(count) {
-    return flag_searching ? total_sfoodcount : total_foodcount;
-}
-
-// TODO: use or remove;
-function setTotalCount(count) {
-    if (flag_searching) total_sfoodcount = count;
-    else cur_foodcount = count;
+function getActiveTotalCount() {
+    return flag_searching ? s_total_count : total_count;
 }
 
 const observer = new IntersectionObserver(async entries => {
     const last_listitem = entries[0];
-    if (!last_listitem.isIntersecting || (cur_foodcount >= total_foodcount)) return;
+    if (!last_listitem.isIntersecting || (foodlist_array.size() == total_count)) return;
     observer.unobserve(last_listitem.target);
     await fetchMoreFood();
-    if (cur_foodcount !== total_foodcount) {
+    if (foodlist_array.size() !== total_count) {
         observer.observe(foodlist.lastElementChild);
     }
 });
@@ -74,15 +54,16 @@ const observer = new IntersectionObserver(async entries => {
 
 const observer2 = new IntersectionObserver(async entries => {
     const last_listitem = entries[0];
-    if (!last_listitem.isIntersecting || (cur_sfoodcount >= total_sfoodcount)) return;
+    if (!last_listitem.isIntersecting || (s_foodlist_array.size() == s_total_count)) return;
     observer2.unobserve(last_listitem.target);
     await fetchMoreFood(glob_searchterm);
-    if (cur_sfoodcount !== total_sfoodcount) {
+    if (s_foodlist_array.size() !== s_total_count) {
         observer2.observe(foodlist.lastElementChild);
     }
 });
 
 /* icon button events */
+// add food button event
 addfood_btn.addEventListener("click", () => {
     dlg_title.textContent = "Add New Food";
     delete_btn.style.visibility = "hidden";
@@ -91,6 +72,7 @@ addfood_btn.addEventListener("click", () => {
     dialog.showModal();
 });
 
+// edit button event
 foodlist.addEventListener("click", (e) => {
     const editfood_btn = e.target.closest(".editfood_btn");
     if (editfood_btn) {
@@ -107,6 +89,7 @@ foodlist.addEventListener("click", (e) => {
     }
 });
 
+// cancel dialog event (cancel button)
 cancel_btn.addEventListener("click", () => {
     dialog.close();
     foodform.reset();
@@ -114,6 +97,21 @@ cancel_btn.addEventListener("click", () => {
     addfood_btn.blur();
 });
 
+// cancel dialog event (click outside of dialog)
+dialog.addEventListener("click", (e) => {
+    const dialog_dimensions = dialog.getBoundingClientRect();
+    if (
+        e.clientX < dialog_dimensions.left  ||
+        e.clientX > dialog_dimensions.right ||
+        e.clientY < dialog_dimensions.top   ||
+        e.clientY > dialog_dimensions.bottom
+    ) {
+        dialog.close();
+        foodform.reset();
+        error_message.textContent = "";
+        addfood_btn.blur();
+    }
+});
 
 /* form button events */
 submit_btn.addEventListener("click", async (e) => {
@@ -135,65 +133,30 @@ submit_btn.addEventListener("click", async (e) => {
         headers: { "Content-Type" : "application/json" },
         body: JSON.stringify(form_obj)
     });
-
     const data = await res.json();
 
-        if (data.success) {
-            if (method == "POST") {
-                if (!flag_searching) {
-                    if (cur_foodcount >= total_foodcount) {
-                        foodlist_array.add(data.item);
-                        foodlist.appendChild(FoodUI.createListItem(data.item));
-                    }
+    if (data.success) {
+        if (method == "POST") {
+            if (!flag_searching) {
+                if (foodlist_array.size() == total_count) {
+                    foodlist_array.add(data.item);
+                    foodlist.appendChild(FoodUI.createListItem(data.item));
+                    total_count++;
                 }
-            } 
-            else if (method == "PATCH") {
-                getActiveFoodList().updateFood(data.item.food_id, data.item);
-                if (foodlist_array.getFoodById(data.item.food_id)) foodlist_array.updateFood(data.item.food_id, data.item);
-                FoodUI.updateListItem(data.item, cur_listitem);
             }
-            dialog.close();
-            addfood_btn.blur();
-            foodform.reset();
-        } else {
-            error_message.textContent = data.errmsg;
+        } 
+        else if (method == "PATCH") {
+            getActiveFoodList().updateFood(data.item.food_id, data.item);
+            if (foodlist_array.getFoodById(data.item.food_id)) foodlist_array.updateFood(data.item.food_id, data.item);
+            FoodUI.updateListItem(data.item, cur_listitem);
         }
+        dialog.close();
+        addfood_btn.blur();
+        foodform.reset();
+    } else {
+        error_message.textContent = data.errmsg;
+    }
 })
-
-
-async function fetchInitFood() {
-    const res = await fetch("/api/foodlist/food?last_item=0");
-    const data = await res.json();
-
-    if (data.success) {
-        for (let i = 0; i < data.items.length; i++) {
-            foodlist_array.add(data.items[i]);
-            foodlist.appendChild(FoodUI.createListItem(data.items[i]));
-        }
-        observer.observe(foodlist.lastElementChild);
-        total_foodcount = data.count;
-        cur_foodcount = foodlist_array.foods.length;
-    } else {
-        alert(data.errmsg);
-    }
-}
-
-async function fetchMoreFood(str = undefined) {
-    let activelist = getActiveFoodList();
-    let last_listitem = activelist.foods[cur_foodcount - 1];
-    const res = await fetch(`api/foodlist/food?last_item=${last_listitem.food_id}&query=${str}`);
-    const data = await res.json();
-
-    if (data.success) {
-        for (let i = 0; i < data.items.length; i++) {
-            activelist.add(data.items[i]);
-            foodlist.appendChild(FoodUI.createListItem(data.items[i]));
-        }
-        setCurrentCount(activelist.foods.length);
-    } else {
-        alert(data.errmsg);
-    }
-}
 
 delete_btn.addEventListener("click", async () => {
     const id = cur_listitem.dataset.id;
@@ -205,40 +168,71 @@ delete_btn.addEventListener("click", async () => {
     let data = await res.json();
 
     if (data.success) {
-        let cur_count = getCurrentCount();
-        let tot_count = getTotalCount(); 
+        let total = getActiveTotalCount(); 
 
-        let active = getActiveFoodList();
-        /* getActiveFoodList().delete(data.id); */
-        active.delete(data.id);
+        getActiveFoodList().delete(data.id);
         if (flag_searching) {
             if (foodlist_array.getFoodById(data.id)) {
                 foodlist_array.delete(data.id);
-                cur_foodcount--;
-                total_foodcount--;
+                total_count--;
             }
         }
-        cur_count--;
-        tot_count--;
+        total--;
         cur_listitem.remove();
         dialog.close();
         foodform.reset();
     } else {
-        alert(data.errmsg);
+        error_message.textContent = data.errmsg;
     }
 });
+
+
+// fetch food 
+async function fetchInitFood() {
+    const res = await fetch("/api/foodlist/food?last_item=0");
+    const data = await res.json();
+
+    if (data.success) {
+        for (let i = 0; i < data.items.length; i++) {
+            foodlist_array.add(data.items[i]);
+            foodlist.appendChild(FoodUI.createListItem(data.items[i]));
+        }
+        observer.observe(foodlist.lastElementChild);
+        total_count = data.count;
+    } else {
+        alert(data.errmsg);
+    }
+}
+
+async function fetchMoreFood(str = undefined) {
+    let activelist = getActiveFoodList();
+    let last_listitem = activelist.foods[activelist.size() - 1];
+    const res = await fetch(`api/foodlist/food?last_item=${last_listitem.food_id}&query=${str}`);
+    const data = await res.json();
+
+    if (data.success) {
+        for (let i = 0; i < data.items.length; i++) {
+            activelist.add(data.items[i]);
+            foodlist.appendChild(FoodUI.createListItem(data.items[i]));
+        }
+    } else {
+        alert(data.errmsg);
+    }
+}
 
 search_input.addEventListener("input", async (e) => {
     let searchterm = e.target.value;
     glob_searchterm = searchterm;
     foodlist.replaceChildren();
-    sfoodlist_array.deleteAll();
+    s_foodlist_array.deleteAll();
+    
     if (searchterm.length == 0) { // resets state of page to "init" state
         flag_searching = false;
         for (let i = 0; i < foodlist_array.foods.length; i++) {
             foodlist.appendChild(FoodUI.createListItem(foodlist_array.foods[i]));
         }
         observer.observe(foodlist.lastElementChild);
+        foodlist.scrollTop = 0;
         return;
     }
 
@@ -249,29 +243,14 @@ search_input.addEventListener("input", async (e) => {
         if (data.count == 0) return;
             flag_searching = true;
             for (let i = 0; i < data.items.length; i++) {
-                sfoodlist_array.add(data.items[i]);
+                s_foodlist_array.add(data.items[i]);
                 foodlist.appendChild(FoodUI.createListItem(data.items[i]));
             }
             observer2.observe(foodlist.lastElementChild);
-            total_sfoodcount = data.count;
-            cur_sfoodcount = sfoodlist_array.foods.length;
+            s_total_count = data.count;
     } else {
         alert(data.errmsg);
     }
 });
-
-dialog.addEventListener("click", (e) => {
-    const dialog_dimensions = dialog.getBoundingClientRect();
-    if (
-        e.clientX < dialog_dimensions.left  ||
-        e.clientX > dialog_dimensions.right ||
-        e.clientY < dialog_dimensions.top   ||
-        e.clientY > dialog_dimensions.bottom
-    ) {
-        dialog.close();
-        addfood_btn.blur();
-    }
-});
-// test
 
 fetchInitFood();
