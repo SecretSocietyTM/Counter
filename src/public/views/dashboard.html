@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Dashboard - Counter</title>
+    <link rel="stylesheet" href="../styles/shared/base.css">
+    <link rel="stylesheet" href="../styles/shared/components.css">
+    <link rel="stylesheet" href="../styles/dashboard.css">
+</head>
+<body>
+<div class="body">
+    <div class="sidebar">
+        <div class="sidebar__logo">
+            <img src="../assets/shared/logos/logo.svg" alt="">
+            <h1 class="fs-24 txt-ntrl-10">Counter</h1>
+        </div>
+        <ul class="sidebar__list">
+            <li class="bg-acnt-yellow">
+                <a href="/dashboard">
+                    <img src="../assets/shared/sidebar/dashboard.svg" alt="">
+                    <p class=>Dashboard</p>
+                </a>
+            </li>
+            <li class="bg-acnt-lblue">
+                <a href="/foodlist">
+                    <img src="../assets/shared/sidebar/foodlist.svg" alt="">
+                    <p>Food List</p>
+                </a>
+            </li>
+            <li class="bg-acnt-purple">
+                <a href="/recipes">
+                    <img src="../assets/shared/sidebar/recipes.svg" alt="">
+                    <p>Recipes</p>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="left">
+        <div>
+            <div class="section-title">
+                <p>Today</p>
+                <p class="section-title__subtitle">Feb 11, 2025</p>
+                <button type="button" id="addfood_btn" class="icon_button">
+                    <svg width="24px" height="24px">
+                        <use href="../assets/icons.svg#chevron-down"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="section top">
+                <div class="subsection top_a">
+                    <p class="subsection-title">Calories</p>
+                    <span class="cal-value txt-prim-green">0</span>
+                </div>
+                <div class="subsection top_b">
+                    <p class="subsection-title">Today's Calorie Info</p>
+                    <div class="flex gap-5">
+                        <div>
+                            <div class="flex gap-1">
+                                <p class="txt-ntrl-40">Your Goal</p>
+                                <button type="button" id="addfood_btn" class="icon_button">
+                                    <img src="../assets/shared/icons/edit.svg" alt="">
+                                </button>
+                            </div>
+                            <span class="cal-value txt-prim-blue">0</span>
+                        </div>
+                        <div class="flex-col ai-cntr">
+                            <p class="txt-ntrl-40">Remaining</p>
+                            <span class="cal-value txt-acnt-orange">0</span>
+                        </div>
+                        <div class="flex-col ai-cntr">
+                            <p class="txt-ntrl-40">Over</p>
+                            <span class="cal-value txt-prim-red">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="subsection top_c">
+                    <p class="subsection-title">Today's Macros</p>
+                    <div class="cardsection">
+                        <div class="card txt-acnt-yellow">
+                            <label for="fat" class="card__title">Fat</label>
+                            <svg width="100%" height="2">
+                                <use href="../assets/icons.svg#line-divider"/>
+                            </svg>
+                            <span class="card__value">0</span>
+                        </div>
+                        <div class="card txt-acnt-lightblue">
+                            <label for="carb" class="card__title">Carbs</label>
+                            <svg width="100%" height="2">
+                                <use href="../assets/icons.svg#line-divider"/>
+                            </svg>
+                            <span class="card__value">0</span>
+                        </div>
+                        <div class="card txt-acnt-purple">
+                            <label for="prot" class="card__title">Protein</label>
+                            <svg width="100%" height="2">
+                                <use href="../assets/icons.svg#line-divider"/>
+                            </svg>
+                            <span class="card__value">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>   
+        <div>
+            <div class="section-title">
+                <p>My week</p>
+                <p class="section-title__subtitle">Feb 9 - Feb 15</p>
+            </div>
+            <div class="section bot">
+                <div class="subsection a">
+                    <p class="subsection-title">Calories</p>
+                    <div>
+                        <div>
+                            <p class="txt-ntrl-40">This Week's Average</p>
+                            <span class="cal-value txt-prim-green">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="subsection b">
+                    <p class="subsection-title">Macros</p>              
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="right">
+        <div class="meal-section">
+            <div class="meal-header">
+                <div class="flex gap-2">
+                    <button type="button" id="addfood_btn" class="icon_button">
+                        <img src="../assets/shared/icons/add.svg" alt="">
+                    </button>
+                    <p class="meal-title">Breakfast</p>
+                </div>
+                <div class="meal__numbers">
+                    <p><span class="fs-24">0</span>cal</p>
+                    <p><span class="fs-24">0</span>g</p>
+                    <p><span class="fs-24">0</span>g</p>
+                    <p><span class="fs-24">0</span>g</p>
+                </div>
+            </div>
+            <ul class="foodlist">
+                <li class="item" data-id="-1">
+                    <p class="name">Trader Joe's Salsa Authentica</p>
+                    <div class="item__info">
+                        <p><span class="servsize">56</span><span class="unit">g</span></p>
+                        <button type="button" class="icon_button">
+                            <img src="../assets/dashboard/trash.svg">
+                        </button>
+                    </div>
+                </li>
+                <li class="item" data-id="-1">
+                    <p class="name">Trader Joe's Salsa Authentica</p>
+                    <div class="item__info">
+                        <p><span class="servsize">56</span><span class="unit">g</span></p>
+                        <button type="button" class="icon_button">
+                            <img src="../assets/dashboard/trash.svg">
+                        </button>
+                    </div>
+                </li>
+                <li class="item" data-id="-1">
+                    <p class="name">Trader Joe's Salsa Authentica</p>
+                    <div class="item__info">
+                        <p><span class="servsize">56</span><span class="unit">g</span></p>
+                        <button type="button" class="icon_button">
+                            <img src="../assets/dashboard/trash.svg">
+                        </button>
+                    </div>
+                </li>
+                <li class="item" data-id="-1">
+                    <p class="name">Trader Joe's Salsa Authentica</p>
+                    <div class="item__info">
+                        <p><span class="servsize">56</span><span class="unit">g</span></p>
+                        <button type="button" class="icon_button">
+                            <img src="../assets/dashboard/trash.svg">
+                        </button>
+                    </div>
+                </li>
+                <li class="item" data-id="-1">
+                    <p class="name">Trader Joe's Salsa Authentica</p>
+                    <div class="item__info">
+                        <p><span class="servsize">56</span><span class="unit">g</span></p>
+                        <button type="button" class="icon_button">
+                            <img src="../assets/dashboard/trash.svg">
+                        </button>
+                    </div>
+                </li>
+                <li class="item" data-id="-1">
+                    <p class="name">Trader Joe's Salsa Authentica</p>
+                    <div class="item__info">
+                        <p><span class="servsize">56</span><span class="unit">g</span></p>
+                        <button type="button" class="icon_button">
+                            <img src="../assets/dashboard/trash.svg">
+                        </button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="meal-section">
+            <div class="meal-header">
+                <div class="flex gap-2">
+                    <button type="button" id="addfood_btn" class="icon_button">
+                        <img src="../assets/shared/icons/add.svg" alt="">
+                    </button>
+                    <p class="meal-title">Lunch</p>
+                </div>
+                <div class="meal__numbers">
+                    <p><span class="fs-24">0</span>cal</p>
+                    <p><span class="fs-24">0</span>g</p>
+                    <p><span class="fs-24">0</span>g</p>
+                    <p><span class="fs-24">0</span>g</p>
+                </div>
+            </div>
+            <ul class="foodlist">
+                <li class="item" data-id="-1">
+                    <p class="name">Trader Joe's Salsa Authentica</p>
+                    <div class="item__info">
+                        <p><span class="servsize">56</span><span class="unit">g</span></p>
+                        <button type="button" class="icon_button">
+                            <img src="../assets/dashboard/trash.svg">
+                        </button>
+                    </div>
+                </li>
+                <li class="item" data-id="-1">
+                    <p class="name">Trader Joe's Salsa Authentica</p>
+                    <div class="item__info">
+                        <p><span class="servsize">56</span><span class="unit">g</span></p>
+                        <button type="button" class="icon_button">
+                            <img src="../assets/dashboard/trash.svg">
+                        </button>
+                    </div>
+                </li>
+                <li class="item" data-id="-1">
+                    <p class="name">Trader Joe's Salsa Authentica</p>
+                    <div class="item__info">
+                        <p><span class="servsize">56</span><span class="unit">g</span></p>
+                        <button type="button" class="icon_button">
+                            <img src="../assets/dashboard/trash.svg">
+                        </button>
+                    </div>
+                </li>
+                <li class="item" data-id="-1">
+                    <p class="name">Trader Joe's Salsa Authentica</p>
+                    <div class="item__info">
+                        <p><span class="servsize">56</span><span class="unit">g</span></p>
+                        <button type="button" class="icon_button">
+                            <img src="../assets/dashboard/trash.svg">
+                        </button>
+                    </div>
+                </li>
+                <li class="item" data-id="-1">
+                    <p class="name">Trader Joe's Salsa Authentica</p>
+                    <div class="item__info">
+                        <p><span class="servsize">56</span><span class="unit">g</span></p>
+                        <button type="button" class="icon_button">
+                            <img src="../assets/dashboard/trash.svg">
+                        </button>
+                    </div>
+                </li>
+                <li class="item" data-id="-1">
+                    <p class="name">Trader Joe's Salsa Authentica</p>
+                    <div class="item__info">
+                        <p><span class="servsize">56</span><span class="unit">g</span></p>
+                        <button type="button" class="icon_button">
+                            <img src="../assets/dashboard/trash.svg">
+                        </button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="meal-section">
+            <div class="meal-header">
+                <div class="flex gap-2">
+                    <button type="button" id="addfood_btn" class="icon_button">
+                        <img src="../assets/shared/icons/add.svg" alt="">
+                    </button>
+                    <p class="meal-title">Dinner</p>
+                </div>
+                <div class="meal__numbers">
+                    <p><span class="fs-24">0</span>cal</p>
+                    <p><span class="fs-24">0</span>g</p>
+                    <p><span class="fs-24">0</span>g</p>
+                    <p><span class="fs-24">0</span>g</p>
+                </div>
+            </div>
+            <ul class="foodlist">
+                                <li class="item" data-id="-1">
+                    <p class="name">Trader Joe's Salsa Authentica</p>
+                    <div class="item__info">
+                        <p><span class="servsize">56</span><span class="unit">g</span></p>
+                        <button type="button" class="icon_button">
+                            <img src="../assets/dashboard/trash.svg">
+                        </button>
+                    </div>
+                </li>
+                <li class="item" data-id="-1">
+                    <p class="name">Trader Joe's Salsa Authentica</p>
+                    <div class="item__info">
+                        <p><span class="servsize">56</span><span class="unit">g</span></p>
+                        <button type="button" class="icon_button">
+                            <img src="../assets/dashboard/trash.svg">
+                        </button>
+                    </div>
+                </li>
+                <li class="item" data-id="-1">
+                    <p class="name">Trader Joe's Salsa Authentica</p>
+                    <div class="item__info">
+                        <p><span class="servsize">56</span><span class="unit">g</span></p>
+                        <button type="button" class="icon_button">
+                            <img src="../assets/dashboard/trash.svg">
+                        </button>
+                    </div>
+                </li>
+                <li class="item" data-id="-1">
+                    <p class="name">Trader Joe's Salsa Authentica</p>
+                    <div class="item__info">
+                        <p><span class="servsize">56</span><span class="unit">g</span></p>
+                        <button type="button" class="icon_button">
+                            <img src="../assets/dashboard/trash.svg">
+                        </button>
+                    </div>
+                </li>
+                <li class="item" data-id="-1">
+                    <p class="name">Trader Joe's Salsa Authentica</p>
+                    <div class="item__info">
+                        <p><span class="servsize">56</span><span class="unit">g</span></p>
+                        <button type="button" class="icon_button">
+                            <img src="../assets/dashboard/trash.svg">
+                        </button>
+                    </div>
+                </li>
+                <li class="item" data-id="-1">
+                    <p class="name">Trader Joe's Salsa Authentica</p>
+                    <div class="item__info">
+                        <p><span class="servsize">56</span><span class="unit">g</span></p>
+                        <button type="button" class="icon_button">
+                            <img src="../assets/dashboard/trash.svg">
+                        </button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="meal-section">
+            <div class="meal-header">
+                <div class="flex gap-2">
+                    <button type="button" id="addfood_btn" class="icon_button">
+                        <img src="../assets/shared/icons/add.svg" alt="">
+                    </button>
+                    <p class="meal-title">Snacks</p>
+                </div>
+                <div class="meal__numbers">
+                    <p><span class="fs-24">0</span>cal</p>
+                    <p><span class="fs-24">0</span>g</p>
+                    <p><span class="fs-24">0</span>g</p>
+                    <p><span class="fs-24">0</span>g</p>
+                </div>
+            </div>
+            <ul class="foodlist">
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>

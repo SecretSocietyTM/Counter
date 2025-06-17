@@ -2,4 +2,8 @@
     <symbol id="line-divider" viewBox="0 0 100 1" preserveAspectRatio="none">
         <line x1="0" y1="1" x2="100" y2="1" stroke="currentColor" stroke-width="2" />
     </symbol>
+
+    <symbol id="chevron-down" viewBox="0 0 10 10" preserveAspectRatio="xMidYMid meet">
+        <path d="M2,2 L5,8 L8,2" fill="currentColor"/>
+    </symbol>
 </svg>
