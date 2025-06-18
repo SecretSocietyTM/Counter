@@ -87,6 +87,8 @@ router.post("/food/add-to-day", async (req, res) => {
     let carb = ratio * base.carbs;
     let prot = ratio * base.protein;
 
+    // TODO: clean the value before storing!
+
     let food_eaten = {
         food_id:    food_info.food_id,
         date_eaten: food_info.date,

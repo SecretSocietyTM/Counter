@@ -115,7 +115,7 @@
 
     .meal__numbers {
         display: flex;
-        gap: 1.5rem;
+        gap: 0.75vw;
 
         margin-block-end: 0.1rem;
 
