@@ -102,7 +102,7 @@ function createSearchListItem(item) {
     return li;
 }
 
-function createSearchListItemForm(item) {
+function createSearchListItemForm(meal, date_in, item) {
     const form = document.createElement("form");
     form.className = "item__form";
 
@@ -112,9 +112,27 @@ function createSearchListItemForm(item) {
     const buttons = document.createElement("div");
     buttons.className = "form__buttons";
 
+    const meal_type = document.createElement("input");
+    meal_type.type = "hidden";
+    meal_type.name = "meal_id";
+    meal_type.value = meal;
+
+    const date = document.createElement("input");
+    date.type = "hidden";
+    date.name = "date";
+    date.value = date_in;
+
+    const food_id = document.createElement("input");
+    food_id.type = "hidden";
+    food_id.name = "food_id";
+    food_id.value = item.food_id;
+
     const servsize = document.createElement("input");
     servsize.type = "number";
+    servsize.name = "servsize"
     servsize.placeholder = "0";
+    servsize.step = "0.01";
+    servsize.required = true;
 
     const unit = document.createElement("select");
     unit.name = "unit";
@@ -160,6 +178,7 @@ function createSearchListItemForm(item) {
 
     const check_button = document.createElement("button");
     check_button.type = "button";
+    check_button.id = "searchform_submit_btn";
     check_button.className = "icon_button";
 
     const check_image = document.createElement("img");
@@ -169,7 +188,7 @@ function createSearchListItemForm(item) {
     check_button.appendChild(check_image);
 
     buttons.append(cancel_button, check_button);
-    inputs.append(servsize, unit);
+    inputs.append(meal_type, date, food_id, servsize, unit);
 
     form.append(inputs, buttons);
     return form;

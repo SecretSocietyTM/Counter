@@ -37,6 +37,18 @@ async function addNewFood(uid, item) {
     return result;
 }
 
+async function addEatenFood(uid, item) {
+    const db = await connectDB();
+    const result = await db.get(`INSERT INTO foods_eaten 
+        (user_id, food_id, date_eaten, meal_type, name, serving_size, unit, calories, fat, carbs, protein) VALUES 
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *`,
+        [uid, item.food_id, item.date_eaten, item.meal_type, 
+        item.name, item.servsize, item.unit,
+        item.cal, item.fat, item.carb, item.prot]);
+    await db.close();
+    return result;
+}
+
 async function getNFoods(uid, last_fid, n = 15, str=undefined) {
     const db = await connectDB();
     let results = [];
@@ -63,6 +75,13 @@ async function getNFoods(uid, last_fid, n = 15, str=undefined) {
     return { results, count: count.x };
 }
 
+async function searchFoodById(uid, fid) {
+    const db = await connectDB();
+    let result = await db.get("SELECT * FROM foods WHERE user_id=? AND food_id=?", [uid, fid]);
+    await db.close();
+    return result;
+}
+
 async function editFood(uid, fid, item) {
     const db = await connectDB();
     const result = await db.get(`UPDATE foods 
@@ -87,7 +106,9 @@ module.exports = {
     addUser,
     authUser,
     addNewFood,
+    addEatenFood,
     getNFoods,
+    searchFoodById,
     editFood,
     deleteFood
 };

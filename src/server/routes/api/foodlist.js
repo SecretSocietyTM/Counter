@@ -13,7 +13,7 @@ router.route("/food")
         try {
             result = await db.getNFoods(uid, last_fid, undefined, food_query);
         } catch (err) {
-            console.err(err);
+            console.error(err);
             return res.json({ success: false, errmsg: "Something went wrong, please try again" });
         }
 
@@ -27,7 +27,7 @@ router.route("/food")
         try {
             result = await db.addNewFood(uid, item);
         } catch (err) {
-            console.err(err);
+            console.error(err);
             return res.json({ success: false, errmsg: "Something went wrong, please try again" });
         }
 
@@ -45,7 +45,7 @@ router.route("/food/:id")
         try {
             result = await db.editFood(uid, fid, item);
         } catch (err) {
-            console.err(err);
+            console.error(err);
             return res.json({ success: false, errmsg: "Something went wrong, please try again" });
         }
 
@@ -59,11 +59,53 @@ router.route("/food/:id")
         try {
             result = await db.deleteFood(uid, fid);
         } catch (err) {
-            console.err(err);
+            console.error(err);
             return res.json({ success: false, errmsg: "Something went wrong, please try again "});
         }
 
         return res.json({ success: true, id: result.food_id })
     });
+
+
+router.post("/food/add-to-day", async (req, res) => {
+    const food_info = req.body;
+    const uid = req.session.user.id;
+    let fid = food_info.food_id;
+
+    let base;
+    try {
+        base = await db.searchFoodById(uid, fid);
+    } catch (err) {
+        console.error(err);
+        return res.json({ success: false, message: "Something went wrong, please try again" });
+    }
+
+    // TODO: calculations should be done elsewhere, possibly create a new file
+    let ratio = parseInt(food_info.servsize) / parseInt(base.serving_size);
+    let cal = ratio * base.calories;
+    let fat = ratio * base.fat;
+    let carb = ratio * base.carbs;
+    let prot = ratio * base.protein;
+
+    let food_eaten = {
+        food_id:    food_info.food_id,
+        date_eaten: food_info.date,
+        meal_type:  food_info.meal_id,
+        name:       base.name,
+        servsize:   food_info.servsize,
+        unit:       food_info.unit,
+        cal, fat, carb, prot       
+    };
+
+    let result;
+    try {
+        result = await db.addEatenFood(uid, food_eaten);
+    } catch (err) {
+        console.error(err);
+        return res.json({ success: false, message: "Something went wrong, please try again" });
+    }
+
+    return res.json({ success: true, item: result });
+});
 
 module.exports = router;
