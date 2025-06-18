@@ -24,6 +24,14 @@ const snacks_obj = {
     cal: 0, fat: 0, carb: 0, prot: 0,
 }
 
+const calories_obj = {
+    main: 0, remaining: 0, over: 0,
+}
+
+const macros_obj = {
+    fat: 0, carb: 0, prot: 0,
+}
+
 const searchlist_array = new FoodManager();
 
 let meal_id = null;
@@ -38,6 +46,14 @@ const addfood_btns = document.querySelectorAll(".addfood_btn");
 const search_dialog = document.getElementById("search_dialog");
 const search_input = document.getElementById("searchbar_input");
 const searchlist = document.getElementById("searchlist");
+
+// calorie numbers
+const main_calories = document.getElementById("main_calories");
+
+// macro numbers
+const main_fat = document.getElementById("main_fat");
+const main_carb = document.getElementById("main_carb");
+const main_prot = document.getElementById("main_prot");
 
 // meal lists
 const breakfast_list = document.getElementById("breakfast_list");
@@ -160,6 +176,8 @@ searchlist.addEventListener("click", async (e) => {
         if (data.success) {
             getActiveMealArray().add(data.item);
             getActiveMealList().appendChild(FoodUI.createMealListItem(data.item));
+
+            // TODO: turn this into a fucntion
             let active_obj = getActiveMealObj();
             active_obj.cal += data.item.calories;
             active_obj.fat += data.item.fat;
@@ -178,7 +196,28 @@ searchlist.addEventListener("click", async (e) => {
             meal_numbers.carb.textContent = active_obj.carb;
             meal_numbers.prot.textContent = active_obj.prot;
 
-            
+            // TODO: turn this into a function
+            calories_obj.main += data.item.calories;
+            // TODO: make function that adds calories + 1 until remaining = 0 or calories = goal.
+            // then start adding to over
+            // calories_obj.remaining -= data.item.calories;
+            main_calories.textContent = calories_obj.main;
+
+            // TODO: turn this into a function
+            macros_obj.fat += data.item.fat;
+            macros_obj.carb += data.item.carbs;
+            macros_obj.prot += data.item.protein;
+
+            // TODO: turn this into a function
+            main_fat. className = "card__value-on";
+            main_carb.className = "card__value-on";
+            main_prot.className = "card__value-on";
+
+            // TODO: turn this into a function
+            main_fat.textContent = macros_obj.fat;
+            main_carb.textContent = macros_obj.carb;
+            main_prot.textContent = macros_obj.prot;
+
             search_input.value = "";
             searchlist.replaceChildren();
             active_form.remove();

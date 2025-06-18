@@ -88,6 +88,9 @@ router.post("/food/add-to-day", async (req, res) => {
     let prot = ratio * base.protein;
 
     // TODO: clean the value before storing!
+    // ex: 0.05 = 0
+    // ex: 1.5 = 2
+    // ex: 20.52 = 20.1
 
     let food_eaten = {
         food_id:    food_info.food_id,
