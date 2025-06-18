@@ -14,7 +14,7 @@ async function connectDB() {
 // user table functions
 async function addUser(username, password) {
     const db = await connectDB();
-    const result = await db.get("INSERT INTO users (username, password) VALUES (?, ?) RETURNING *", [username, password]);
+    const result = await db.get("INSERT INTO users (username, password, calorie_goal) VALUES (?, ?, ?) RETURNING *", [username, password, 0]);
     await db.close();
     return result;
 }

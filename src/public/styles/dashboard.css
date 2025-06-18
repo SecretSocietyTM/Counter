@@ -151,7 +151,7 @@ dialog {
     width: 100%;
     align-items: center;
     /* padding: 0.8rem 1.5rem 0.8rem 0.5rem; */
-    padding-inline: 0.8rem 1.5rem;
+    padding-inline: 0.8rem 0.8rem;
 
     border-radius: 2rem;
     background-color: var(--clr-neutral-10);

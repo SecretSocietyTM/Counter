@@ -17,7 +17,7 @@ router.post("/signup", async (req, res) => {
             return res.json({ success: false, errmsg });
     }
     req.session.user = { id: user.user_id }
-    return res.json({ success: true, redirect: "/foodlist" /* "/dashboard" */ })
+    return res.json({ success: true, redirect: "/dashboard" })
 });
 
 router.post("/login", async (req, res) => {
@@ -33,7 +33,7 @@ router.post("/login", async (req, res) => {
 
     if (user) {
         req.session.user = { id: user.user_id };
-        return res.json({ success: true, redirect: "/foodlist" /* "/dashboard" */ });
+        return res.json({ success: true, redirect: "/dashboard" });
     } else {
         return res.json({ success: false, errmsg: "Username or password invalid, try again" });
     }
