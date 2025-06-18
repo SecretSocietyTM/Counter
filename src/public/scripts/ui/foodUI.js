@@ -1,3 +1,6 @@
+
+// TODO: rename functions? create classes for each section??? 
+// example: foodListPageClass, dashboardSearchListClass, dashboardEatenClass
 function createListItem(item) {
     const li = document.createElement("li");
     li.className = "item";
@@ -83,8 +86,128 @@ function updateForm(form, item) {
     form.querySelector("[name='prot']").value = item.protein;
 }
 
+function createSearchListItem(item) {
+    const li = document.createElement("li");
+    li.className = "searchlist__whole-item";
+    li.dataset.id = item.food_id;
+
+    const div = document.createElement("div");
+    div.className = "searchlist__item";
+
+    const name = document.createElement("p");
+    name.textContent = item.name;
+
+    div.appendChild(name);
+    li.appendChild(div);
+    return li;
+}
+
+function createSearchListItemForm(item) {
+    const form = document.createElement("form");
+    form.className = "item__form";
+
+    const inputs = document.createElement("div");
+    inputs.className = "form__inputs";
+
+    const buttons = document.createElement("div");
+    buttons.className = "form__buttons";
+
+    const servsize = document.createElement("input");
+    servsize.type = "number";
+    servsize.placeholder = "0";
+
+    const unit = document.createElement("select");
+    unit.name = "unit";
+    if (item.unit == "g") {
+        unit.innerHTML = `
+            <option value="g">g</option>
+            <option value="x">x</option>
+            <option value="oz">oz</option>
+            <option value="ml">mL</option>
+        `;
+    } else if (item.unit == "x") {
+        unit.innerHTML = `
+            <option value="x">x</option>
+            <option value="g">g</option>
+            <option value="oz">oz</option>
+            <option value="ml">mL</option>
+        `;        
+    } else if (item.unit == "oz") {
+        unit.innerHTML = `
+            <option value="oz">oz</option>
+            <option value="x">x</option>
+            <option value="g">g</option>
+            <option value="ml">mL</option>
+        `;        
+    } else if (item.unit == "ml") {
+        unit.innerHTML = `
+            <option value="ml">mL</option>
+            <option value="x">x</option>
+            <option value="g">g</option>
+            <option value="oz">oz</option>
+        `;        
+    }
+
+    const cancel_button = document.createElement("button");
+    cancel_button.type = "button";
+    cancel_button.className = "icon_button";
+
+    const cancel_image = document.createElement("img");
+    cancel_image.src = "../assets/shared/icons/cancel.svg";
+    cancel_image.width = 25;
+
+    cancel_button.appendChild(cancel_image);
+
+    const check_button = document.createElement("button");
+    check_button.type = "button";
+    check_button.className = "icon_button";
+
+    const check_image = document.createElement("img");
+    check_image.src = "../assets/dashboard/check.svg";
+    check_image.width = 20;
+
+    check_button.appendChild(check_image);
+
+    buttons.append(cancel_button, check_button);
+    inputs.append(servsize, unit);
+
+    form.append(inputs, buttons);
+    return form;
+}
+
+function createMealListItem(item) {
+    const li = document.createElement("li");
+    li.className = "item";
+    li.dataset.id = item.food_id;
+
+    const name = document.createElement("p");
+    name.textContent = item.name;
+
+    const div = document.createElement("div");
+    div.className = "item__info";
+
+    const servsizeunit = createServingUnit(
+        item.serving_size, item.unit, ["servsize"], ["unit"]);
+
+    const trash_button = document.createElement("button");
+    trash_button.type = "button";
+    trash_button.className = "icon_button";
+
+    const trash_image = document.createElement("img");
+    trash_image.src = "../assets/dashboard/trash.svg";
+
+    trash_button.appendChild(trash_image);
+    
+    div.append(servsizeunit, trash_button);
+    li.append(name, div);
+    return li;
+}
+
 export { 
     createListItem,
     updateListItem,
-    updateForm
+    updateForm,
+    createSearchListItem,
+    createSearchListItemForm,
+    createMealListItem
 }

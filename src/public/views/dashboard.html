@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../styles/shared/base.css">
     <link rel="stylesheet" href="../styles/shared/components.css">
     <link rel="stylesheet" href="../styles/dashboard.css">
+    <script type="module" src="../scripts/dashboard.js" defer></script>
 </head>
 <body>
 <div class="body">
@@ -37,7 +38,7 @@
         </ul>
     </div>
 
-    <div class="left">
+    <div class="left shadow">
         <div>
             <div class="section-title">
                 <p>Today</p>
@@ -54,7 +55,7 @@
                     <span class="cal-value txt-prim-green">0</span>
                 </div>
                 <div class="subsection top_b">
-                    <p class="subsection-title">Today's Calorie Info</p>
+                    <p class="subsection-title">Calorie Breakdown</p>
                     <div class="flex gap-5">
                         <div>
                             <div class="flex gap-1">
@@ -129,7 +130,8 @@
         <div class="meal-section">
             <div class="meal-header">
                 <div class="flex gap-2">
-                    <button type="button" id="addfood_btn" class="icon_button">
+                    <!-- TODO: FIX BUTTON NAMES -->
+                    <button type="button" id="add_to_breakfast" class="icon_button">
                         <img src="../assets/shared/icons/add.svg" alt="">
                     </button>
                     <p class="meal-title">Breakfast</p>
@@ -142,60 +144,6 @@
                 </div>
             </div>
             <ul class="foodlist">
-                <li class="item" data-id="-1">
-                    <p class="name">Trader Joe's Salsa Authentica</p>
-                    <div class="item__info">
-                        <p><span class="servsize">56</span><span class="unit">g</span></p>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/dashboard/trash.svg">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">Trader Joe's Salsa Authentica</p>
-                    <div class="item__info">
-                        <p><span class="servsize">56</span><span class="unit">g</span></p>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/dashboard/trash.svg">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">Trader Joe's Salsa Authentica</p>
-                    <div class="item__info">
-                        <p><span class="servsize">56</span><span class="unit">g</span></p>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/dashboard/trash.svg">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">Trader Joe's Salsa Authentica</p>
-                    <div class="item__info">
-                        <p><span class="servsize">56</span><span class="unit">g</span></p>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/dashboard/trash.svg">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">Trader Joe's Salsa Authentica</p>
-                    <div class="item__info">
-                        <p><span class="servsize">56</span><span class="unit">g</span></p>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/dashboard/trash.svg">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">Trader Joe's Salsa Authentica</p>
-                    <div class="item__info">
-                        <p><span class="servsize">56</span><span class="unit">g</span></p>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/dashboard/trash.svg">
-                        </button>
-                    </div>
-                </li>
             </ul>
         </div>
         <div class="meal-section">
@@ -214,60 +162,6 @@
                 </div>
             </div>
             <ul class="foodlist">
-                <li class="item" data-id="-1">
-                    <p class="name">Trader Joe's Salsa Authentica</p>
-                    <div class="item__info">
-                        <p><span class="servsize">56</span><span class="unit">g</span></p>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/dashboard/trash.svg">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">Trader Joe's Salsa Authentica</p>
-                    <div class="item__info">
-                        <p><span class="servsize">56</span><span class="unit">g</span></p>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/dashboard/trash.svg">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">Trader Joe's Salsa Authentica</p>
-                    <div class="item__info">
-                        <p><span class="servsize">56</span><span class="unit">g</span></p>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/dashboard/trash.svg">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">Trader Joe's Salsa Authentica</p>
-                    <div class="item__info">
-                        <p><span class="servsize">56</span><span class="unit">g</span></p>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/dashboard/trash.svg">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">Trader Joe's Salsa Authentica</p>
-                    <div class="item__info">
-                        <p><span class="servsize">56</span><span class="unit">g</span></p>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/dashboard/trash.svg">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">Trader Joe's Salsa Authentica</p>
-                    <div class="item__info">
-                        <p><span class="servsize">56</span><span class="unit">g</span></p>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/dashboard/trash.svg">
-                        </button>
-                    </div>
-                </li>
             </ul>
         </div>
         <div class="meal-section">
@@ -286,60 +180,6 @@
                 </div>
             </div>
             <ul class="foodlist">
-                                <li class="item" data-id="-1">
-                    <p class="name">Trader Joe's Salsa Authentica</p>
-                    <div class="item__info">
-                        <p><span class="servsize">56</span><span class="unit">g</span></p>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/dashboard/trash.svg">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">Trader Joe's Salsa Authentica</p>
-                    <div class="item__info">
-                        <p><span class="servsize">56</span><span class="unit">g</span></p>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/dashboard/trash.svg">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">Trader Joe's Salsa Authentica</p>
-                    <div class="item__info">
-                        <p><span class="servsize">56</span><span class="unit">g</span></p>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/dashboard/trash.svg">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">Trader Joe's Salsa Authentica</p>
-                    <div class="item__info">
-                        <p><span class="servsize">56</span><span class="unit">g</span></p>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/dashboard/trash.svg">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">Trader Joe's Salsa Authentica</p>
-                    <div class="item__info">
-                        <p><span class="servsize">56</span><span class="unit">g</span></p>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/dashboard/trash.svg">
-                        </button>
-                    </div>
-                </li>
-                <li class="item" data-id="-1">
-                    <p class="name">Trader Joe's Salsa Authentica</p>
-                    <div class="item__info">
-                        <p><span class="servsize">56</span><span class="unit">g</span></p>
-                        <button type="button" class="icon_button">
-                            <img src="../assets/dashboard/trash.svg">
-                        </button>
-                    </div>
-                </li>
             </ul>
         </div>
         <div class="meal-section">
@@ -362,5 +202,17 @@
         </div>
     </div>
 </div>
+
+<dialog class="shadow">
+    <div id="searchbar" class="searchbar">
+        <img class="searchbar__icon" src="../assets/dashboard/search.svg" alt="" width="20">
+        <input type="text" placeholder="Search your foods" id="searchbar_input">
+        <button type="button" id="addfood_btn" class="icon_button">
+            <img src="../assets/shared/icons/cancel.svg" alt="" width="25">
+        </button>
+    </div>
+    <ul class="searchlist">
+    </ul>
+</dialog>
 </body>
 </html>

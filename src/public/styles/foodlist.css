@@ -73,10 +73,18 @@
 }
 
 .foodlist {
-    width: 70%;
+    width: 72%;
     height: 75vh;
-    overflow-y: auto;
+    overflow-y: hidden;
     list-style-type: none;
+
+    padding-inline: 0.2rem;
+    scrollbar-color: var(--clr-neutral-50) var(--clr-neutral-20);
+    scrollbar-gutter: stable both-edges;
+}
+
+.foodlist:hover {
+    overflow-y: auto;
 }
 
 .item {
@@ -134,20 +142,6 @@
 }
 
 
-/* transitions */
-.searchbar {
-    transition: 300ms;
-}
-
-.searchbar:hover,
-.searchbar:focus-within {
-    transition: 300ms;
-    background-color: var(--clr-neutral-30);
-}
-
-
-
-
 /* dialog styling */
 dialog {
     position: absolute;
@@ -170,4 +164,18 @@ dialog {
     display: grid;
     margin-block-start: 2rem;
     gap: 1.5rem;
+}
+
+
+
+
+/* transitions */
+.searchbar {
+    transition: 300ms;
+}
+
+.searchbar:hover,
+.searchbar:focus-within {
+    transition: 300ms;
+    background-color: var(--clr-neutral-30);
 }
