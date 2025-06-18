@@ -166,16 +166,6 @@ function createSearchListItemForm(meal, date_in, item) {
         `;        
     }
 
-    const cancel_button = document.createElement("button");
-    cancel_button.type = "button";
-    cancel_button.className = "icon_button";
-
-    const cancel_image = document.createElement("img");
-    cancel_image.src = "../assets/shared/icons/cancel.svg";
-    cancel_image.width = 25;
-
-    cancel_button.appendChild(cancel_image);
-
     const check_button = document.createElement("button");
     check_button.type = "button";
     check_button.id = "searchform_submit_btn";
@@ -187,7 +177,7 @@ function createSearchListItemForm(meal, date_in, item) {
 
     check_button.appendChild(check_image);
 
-    buttons.append(cancel_button, check_button);
+    buttons.appendChild(check_button);
     inputs.append(meal_type, date, food_id, servsize, unit);
 
     form.append(inputs, buttons);

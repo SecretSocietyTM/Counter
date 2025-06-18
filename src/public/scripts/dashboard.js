@@ -16,6 +16,24 @@ const search_dialog = document.getElementById("search_dialog");
 const search_input = document.getElementById("searchbar_input");
 const searchlist = document.getElementById("searchlist");
 
+// meal lists
+const breakfast_list = document.getElementById("breakfast_list");
+const lunch_list = document.getElementById("lunch_list");
+const dinner_list = document.getElementById("dinner_list");
+const snacks_list = document.getElementById("snacks_list");
+
+
+function getActiveMealList() {
+    let active_list;
+    if (meal_id == 1) active_list = breakfast_list;
+    else if (meal_id == 2) active_list = lunch_list;
+    else if (meal_id == 3) active_list = dinner_list;
+    else if (meal_id == 4) active_list = snacks_list;
+    return active_list;
+}
+
+
+
 
 // open search dialog events
 addfood_btns.forEach(btn => {
@@ -81,7 +99,16 @@ searchlist.addEventListener("click", async (e) => {
             body: JSON.stringify(form_obj)
         });
         const data = await res.json();
-        console.log(data);
+        
+        if (data.success) {
+            getActiveMealList().appendChild(FoodUI.createMealListItem(data.item));
+            search_input.value = "";
+            searchlist.replaceChildren();
+            active_form.remove();
+            active_form = null;
+        } else {
+            alert(data.errmsg);
+        }
     }
 
     if (e.target.closest(".item__form")) return;
