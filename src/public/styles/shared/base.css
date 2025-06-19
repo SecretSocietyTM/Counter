@@ -107,42 +107,50 @@ input::-webkit-inner-spin-button {
     align-items: center;
 }
 
+.ai-end {
+    align-items: end;
+}
 
-/* gap */
-.gap-1 {
+
+/* gaps */
+.gap-0_5 {
     gap: 0.5rem;
 }
 
-.gap-2 {
+.gap-1_0 {
     gap: 1rem;
 }
 
-.gap-3 {
+.gap-1_25 {
+    gap: 1.25rem;
+}
+
+.gap-1_5 {
     gap: 1.5rem;
 }
 
-.gap-4 {
+.gap-2_0 {
     gap: 2rem;
 }
 
-.gap-5 {
+.gap-2_5 {
     gap: 2.5rem;
 }
 
-.gap-6 {
-    gap:3rem;
+.gap-3_0 {
+    gap: 3rem;
 }
 
-.gap-7 {
+.gap-3_5 {
     gap: 3.5rem;
 }
 
-.gap-8 {
+.gap-4_0 {
     gap: 4rem;
 }
 
 
-/* background colors */
+/* background colors - neutral */
 .bg-ntrl-10 {
     background-color: var(--clr-neutral-10);
 }
@@ -175,6 +183,7 @@ input::-webkit-inner-spin-button {
     background-color: var(--clr-neutral-80);
 }
 
+/* background colors - primary */
 .bg-prim-blue {
     background-color: var(--clr-primary-blue);
 }
@@ -187,6 +196,7 @@ input::-webkit-inner-spin-button {
     background-color: var(--clr-primary-red);
 }
 
+/* background colors - accent */
 .bg-acnt-yellow {
     background-color: var(--clr-accent-yellow);
 }
@@ -223,6 +233,10 @@ input::-webkit-inner-spin-button {
 
 .fs-28 {
     font-size: var(--fs-28);
+}
+
+.fs-36 {
+    font-size: var(--fs-36);
 }
 
 .fs-40 {
@@ -332,24 +346,4 @@ input::-webkit-inner-spin-button {
 
 .px-5 {
     padding-inline: 3rem;
-}
-
-
-/* box shadow */
-.shadow {
-    box-shadow: 0px 0px 0.5rem 0 rgba(0, 0, 0, 0.26);
-}
-
-
-/* button reset for icons */
-.icon_button {
-    background: none;
-    border: none;
-    border-radius: 0;
-    cursor: pointer;
-}
-
-.input-label {
-    display: grid;
-    gap: 0.5rem;
 }

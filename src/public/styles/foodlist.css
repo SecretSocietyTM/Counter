@@ -6,10 +6,6 @@
 
     width: 100%;
     height: 100%;
-
-    /* experimenting */
-    /* gap: 1rem;
-    background-color: var(--clr-accent-lightblue); */
 }
 
 .main {
@@ -31,7 +27,6 @@
     position: relative;
     display: flex;
     align-items: center;
-    /* padding: 0.8rem 1.5rem 0.8rem 0.5rem; */
     padding-inline: 0.8rem 1.5rem;
     
     width: 50%;

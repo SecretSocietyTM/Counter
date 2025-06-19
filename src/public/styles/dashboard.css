@@ -21,6 +21,19 @@
     background-color: var(--clr-neutral-20);
 }
 
+.right {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 2rem;
+    border-radius: 1.2rem;
+    background-color: var(--clr-neutral-80);
+
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+
 .section {
     margin-block-start: 1rem;
 }
@@ -62,25 +75,36 @@
     grid-area: c;
 }
 
-
-.right {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    padding: 2rem;
-    border-radius: 1.2rem;
-    background-color: var(--clr-neutral-80);
-
-    overflow-y: auto;
-    scrollbar-width: none;
-}
-
 .meal-section {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
 }
 
+.meal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .meal-title {
+        font-size: var(--fs-20);
+        font-weight: var(--fw-bold);
+        letter-spacing: 0.05rem;
+        color: var(--clr-neutral-10)
+    }
+
+    .meal__numbers {
+        display: flex;
+        gap: 0.55vw;
+
+        margin-block-end: 0.1rem;
+
+        font-size: var(--fs-20);
+        color: var(--clr-neutral-70);
+    }
+}
+
+/* items shown under meal section */
 .item {
     display: flex;
     justify-content: space-between;
@@ -101,34 +125,12 @@
     }
 }
 
-.meal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    .meal-title {
-        font-size: var(--fs-20);
-        font-weight: var(--fw-bold);
-        letter-spacing: 0.05rem;
-        color: var(--clr-neutral-10)
-    }
-
-    .meal__numbers {
-        display: flex;
-        gap: 0.75vw;
-
-        margin-block-end: 0.1rem;
-
-        font-size: var(--fs-20);
-        color: var(--clr-neutral-70);
-    }
-}
 
 /* dialog styling */
 dialog {
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+    gap: 0.75rem;
 
     position: absolute;
     top: 16%;
@@ -140,9 +142,14 @@ dialog {
     margin: 0;
     padding: 1.5rem 1.8rem 0.75rem 1.8rem;
 
+
     border-radius: 0.75rem;
     border: none;
     background-color: var(--clr-neutral-80);
+}
+
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.3);
 }
 
 .searchbar {
@@ -150,7 +157,6 @@ dialog {
     display: flex;
     width: 100%;
     align-items: center;
-    /* padding: 0.8rem 1.5rem 0.8rem 0.5rem; */
     padding-inline: 0.8rem 0.8rem;
 
     border-radius: 2rem;
@@ -166,7 +172,7 @@ dialog {
 
     input {
         flex: 1;
-        padding-inline-start: 3rem;
+        padding-inline-start: 2.5rem;
         padding-block: 0.7rem;
         margin-inline-end: 1.5rem;
 
@@ -174,13 +180,13 @@ dialog {
         border: none;
 
         font-weight: var(--fw-light);
-        color: var(--clr-neutral-50);
+        color: var(--clr-neutral-80);
 
         background-color: transparent;
     }
 
     input::placeholder {
-        color: var(--clr-neutral-80);
+        color: var(--clr-neutral-70);
     }
 
     input:focus {
@@ -198,6 +204,7 @@ dialog {
     list-style-type: none;
 
     scrollbar-color: var(--clr-neutral-40) var(--clr-neutral-80);
+    /* TODO: figure out why the UI gets messed up */
     scrollbar-gutter: stable both-edges;
 }
 
@@ -224,7 +231,6 @@ dialog {
         border: 2px solid var(--clr-neutral-10);
         background-color: transparent;
     
-
         cursor: pointer;
     }
 }
@@ -285,6 +291,8 @@ dialog {
 
 
 
+
+/* transitions */
 .searchlist__item:hover {
     transition: 500ms;
     background-color: var(--clr-neutral-50);

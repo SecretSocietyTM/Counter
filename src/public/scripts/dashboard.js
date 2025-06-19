@@ -68,7 +68,7 @@ const dinner_numbers = document.getElementById("dinner_numbers");
 const snacks_numbers = document.getElementById("snacks_numbers");
 
 // dates?
-const today_date = document.getElementById("today_date");
+const sub_date = document.getElementById("sub_date");
 const week_date = document.getElementById("week_date");
 
 
@@ -144,6 +144,8 @@ search_dialog.addEventListener("click", (e) => {
 search_input.addEventListener("input", async (e) => {
     let searchterm = e.target.value;
     searchlist.replaceChildren();
+
+    if (searchterm.length == 0) return;
 
     const res = await fetch(`api/foodlist/food?last_item=0&query=${searchterm}`);
     const data = await res.json();
@@ -330,7 +332,7 @@ function getWeekRange(date) {
 
 function updateTodayDate() {
     let format_date = formatDate(now);
-    today_date.textContent = format_date;
+    sub_date.textContent = format_date;
 }
 
 function updateWeekDate() {

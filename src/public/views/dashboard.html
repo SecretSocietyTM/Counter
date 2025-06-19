@@ -14,13 +14,15 @@
     <div class="sidebar">
         <div class="sidebar__logo">
             <img src="../assets/shared/logos/logo.svg" alt="">
-            <h1 class="fs-24 txt-ntrl-10">Counter</h1>
+            <a href="/dashboard">
+                <h1 class="fs-24 txt-ntrl-10">Counter</h1>
+            </a>
         </div>
         <ul class="sidebar__list">
             <li class="bg-acnt-yellow">
                 <a href="/dashboard">
                     <img src="../assets/shared/sidebar/dashboard.svg" alt="">
-                    <p class=>Dashboard</p>
+                    <p>Dashboard</p>
                 </a>
             </li>
             <li class="bg-acnt-lblue">
@@ -40,10 +42,10 @@
 
     <div class="left shadow">
         <div>
-            <div class="section-title">
-                <p>Today</p>
-                <p id="today_date" class="section-title__subtitle"></p>
-                <button type="button" id="addfood_btn" class="icon_button">
+            <div class="flex ai-end gap-1_25 section-title">
+                <p id="main_date">Today</p>
+                <p id="sub_date" class="section-title__subtitle"></p>
+                <button type="button" id="date_dropdown" class="icon_button">
                     <svg width="24px" height="24px">
                         <use href="../assets/icons.svg#chevron-down"/>
                     </svg>
@@ -58,23 +60,23 @@
                 </div>
                 <div class="subsection top_b">
                     <p class="subsection-title">Calorie Breakdown</p>
-                    <div class="flex gap-5">
+                    <div class="flex gap-2_5">
                         <div>
-                            <div class="flex gap-1">
+                            <div class="flex gap-1_0">
                                 <p class="txt-ntrl-40">Your Goal</p>
-                                <button type="button" id="addfood_btn" class="icon_button">
+                                <button type="button" id="edit_goal_btn" class="icon_button">
                                     <img src="../assets/shared/icons/edit.svg" alt="">
                                 </button>
                             </div>
-                            <span class="cal-value txt-prim-blue">0</span>
+                            <span id="goal_calories" class="cal-value txt-prim-blue">0</span>
                         </div>
                         <div class="flex-col ai-cntr">
                             <p class="txt-ntrl-40">Remaining</p>
-                            <span class="cal-value txt-acnt-orange">0</span>
+                            <span id="remaining_calories" class="cal-value txt-acnt-orange">0</span>
                         </div>
                         <div class="flex-col ai-cntr">
                             <p class="txt-ntrl-40">Over</p>
-                            <span class="cal-value txt-prim-red">0</span>
+                            <span id="over_calories" class="cal-value txt-prim-red">0</span>
                         </div>
                     </div>
                 </div>
@@ -107,9 +109,9 @@
             </div>
         </div>   
         <div>
-            <div class="section-title">
+            <div class="flex ai-end gap-1_25 section-title">
                 <p>My week</p>
-                <p id="week_date" class="section-title__subtitle">Feb 9 - Feb 15</p>
+                <p id="week_date" class="section-title__subtitle"></p>
             </div>
             <div class="section bot">
                 <div class="subsection a">
@@ -131,7 +133,7 @@
     <div class="right">
         <div class="meal-section">
             <div class="meal-header">
-                <div class="flex gap-2">
+                <div class="flex gap-1_0">
                     <button type="button" data-meal_id="1" class="icon_button addfood_btn">
                         <img src="../assets/shared/icons/add.svg" alt="">
                     </button>
@@ -144,12 +146,12 @@
                     <p><span class="prot fs-24">0</span>g</p>
                 </div>
             </div>
-            <ul id="breakfast_list" class="foodlist">
+            <ul id="breakfast_list">
             </ul>
         </div>
         <div class="meal-section">
             <div class="meal-header">
-                <div class="flex gap-2">
+                <div class="flex gap-1_0">
                     <button type="button" data-meal_id="2" class="icon_button addfood_btn">
                         <img src="../assets/shared/icons/add.svg" alt="">
                     </button>
@@ -162,12 +164,12 @@
                     <p><span class="prot fs-24">0</span>g</p>
                 </div>
             </div>
-            <ul id="lunch_list" class="foodlist">
+            <ul id="lunch_list">
             </ul>
         </div>
         <div class="meal-section">
             <div class="meal-header">
-                <div class="flex gap-2">
+                <div class="flex gap-1_0">
                     <button type="button" data-meal_id="3" class="icon_button addfood_btn">
                         <img src="../assets/shared/icons/add.svg" alt="">
                     </button>
@@ -180,12 +182,12 @@
                     <p><span class="prot fs-24">0</span>g</p>
                 </div>
             </div>
-            <ul id="dinner_list" class="foodlist">
+            <ul id="dinner_list">
             </ul>
         </div>
         <div class="meal-section">
             <div class="meal-header">
-                <div class="flex gap-2">
+                <div class="flex gap-1_0">
                     <button type="button" data-meal_id="4" class="icon_button addfood_btn">
                         <img src="../assets/shared/icons/add.svg" alt="">
                     </button>
@@ -198,7 +200,7 @@
                     <p><span class="prot fs-24">0</span>g</p>
                 </div>
             </div>
-            <ul id="snacks_list" class="foodlist">
+            <ul id="snacks_list">
             </ul>
         </div>
     </div>
@@ -208,7 +210,7 @@
     <div id="searchbar" class="searchbar">
         <img class="searchbar__icon" src="../assets/dashboard/search.svg" alt="" width="20">
         <input type="text" placeholder="Search your foods" id="searchbar_input">
-        <button type="button" id="addfood_btn" class="icon_button">
+        <button type="button" id="clear_search_btn" class="icon_button">
             <img src="../assets/shared/icons/cancel.svg" alt="" width="25">
         </button>
     </div>
