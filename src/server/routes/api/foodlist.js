@@ -67,6 +67,24 @@ router.route("/food/:id")
     });
 
 
+
+// TODO: consider combining get and post for these
+
+router.get("/food/day", async (req, res) => {
+    let date = req.query.date;
+    const uid = req.session.user.id;
+    let result;
+
+    try {
+        result = await db.getFoodsByDate(uid, date);
+    } catch (err) {
+        console.error(err);
+        return res.json({ success: false, errmsg: "Something went wrong, please try again" });
+    }
+
+    return res.json( {success: true, items: result });
+});
+
 router.post("/food/add-to-day", async (req, res) => {
     const food_info = req.body;
     const uid = req.session.user.id;

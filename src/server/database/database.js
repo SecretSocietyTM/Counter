@@ -75,6 +75,13 @@ async function getNFoods(uid, last_fid, n = 15, str=undefined) {
     return { results, count: count.x };
 }
 
+async function getFoodsByDate(uid, date) {
+    const db = await connectDB();
+    let result = await db.all("SELECT * FROM foods_eaten WHERE user_id=? AND date_eaten=?", [uid, date]);
+    await db.close();
+    return result;
+}
+
 async function searchFoodById(uid, fid) {
     const db = await connectDB();
     let result = await db.get("SELECT * FROM foods WHERE user_id=? AND food_id=?", [uid, fid]);
@@ -108,6 +115,7 @@ module.exports = {
     addNewFood,
     addEatenFood,
     getNFoods,
+    getFoodsByDate,
     searchFoodById,
     editFood,
     deleteFood
