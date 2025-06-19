@@ -158,7 +158,7 @@ submit_btn.addEventListener("click", async (e) => {
 delete_btn.addEventListener("click", async () => {
     const id = cur_listitem.dataset.id;
 
-    const res = await fetch(`/api/foodlist/food/${id}`, {
+    const res = await fetch(`api/foodlist/food/${id}`, {
         method: "DELETE"   
     });
 
@@ -186,7 +186,7 @@ delete_btn.addEventListener("click", async () => {
 
 // fetch food 
 async function fetchInitFood() {
-    const res = await fetch("/api/foodlist/food?last_item=0");
+    const res = await fetch("api/foodlist/food?last_item=0");
     const data = await res.json();
 
     if (data.success) {
@@ -242,7 +242,7 @@ search_input.addEventListener("input", async (e) => {
         cur_observed_listitem = foodlist.lastElementChild;
         foodlist.scrollTop = 0;
     } else {
-        const res = await fetch(`/api/foodlist/food?last_item=0&query=${searchterm}`); 
+        const res = await fetch(`api/foodlist/food?last_item=0&query=${searchterm}`); 
         const data = await res.json();
 
         if (data.success) {

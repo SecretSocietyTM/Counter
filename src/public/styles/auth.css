@@ -34,16 +34,3 @@
 form {
     width: 100%;
 }
-
-/* input:focus {
-    transition: 200ms;
-    outline: none;
-    border: 2px solid var(--clr-primary-green);
-}
-
-button:hover, 
-button:focus-visible {
-    transition: 500ms;
-    outline: none;
-    background-color: var(--clr-neutral-80);
-} */
