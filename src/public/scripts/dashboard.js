@@ -275,9 +275,9 @@ async function fetchInitFood() {
             meal_numbers.prot.classList.add("fw-b", "txt-acnt-purple");
 
             meal_numbers.cal.textContent = active_obj.cal;
-            meal_numbers.fat.textContent = active_obj.fat;
-            meal_numbers.carb.textContent = active_obj.carb;
-            meal_numbers.prot.textContent = active_obj.prot;
+            meal_numbers.fat.textContent = Math.round(active_obj.fat * 10) / 10;
+            meal_numbers.carb.textContent = Math.round(active_obj.carb * 10) / 10;
+            meal_numbers.prot.textContent = Math.round(active_obj.prot * 10) / 10;
 
             // TODO: turn this into a function
             calories_obj.main += data.items[i].calories;
@@ -297,9 +297,9 @@ async function fetchInitFood() {
             main_prot.className = "card__value-on";
 
             // TODO: turn this into a function
-            main_fat.textContent = macros_obj.fat;
-            main_carb.textContent = macros_obj.carb;
-            main_prot.textContent = macros_obj.prot;
+            main_fat.textContent = Math.round(macros_obj.fat * 10) / 10;
+            main_carb.textContent = Math.round(macros_obj.carb * 10) / 10;
+            main_prot.textContent = Math.round(macros_obj.prot * 10) / 10;
         }
     } else {
         alert(data.errmsg);

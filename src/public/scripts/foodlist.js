@@ -190,6 +190,10 @@ async function fetchInitFood() {
     const data = await res.json();
 
     if (data.success) {
+        if (data.items.length == 0) {
+            total_count = 0;
+            return;
+        }
         for (let i = 0; i < data.items.length; i++) {
             foodlist_array.add(data.items[i]);
             foodlist.appendChild(FoodUI.createListItem(data.items[i]));

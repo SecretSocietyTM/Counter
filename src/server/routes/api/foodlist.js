@@ -100,15 +100,10 @@ router.post("/food/add-to-day", async (req, res) => {
 
     // TODO: calculations should be done elsewhere, possibly create a new file
     let ratio = parseInt(food_info.servsize) / parseInt(base.serving_size);
-    let cal = ratio * base.calories;
-    let fat = ratio * base.fat;
-    let carb = ratio * base.carbs;
-    let prot = ratio * base.protein;
-
-    // TODO: clean the value before storing!
-    // ex: 0.05 = 0
-    // ex: 1.5 = 2
-    // ex: 20.52 = 20.1
+    let cal = Math.round(ratio * base.calories);
+    let fat = Math.round(ratio * base.fat * 10) / 10;
+    let carb = Math.round(ratio * base.carbs * 10) / 10;
+    let prot = Math.round(ratio * base.protein * 10) / 10;
 
     let food_eaten = {
         food_id:    food_info.food_id,
