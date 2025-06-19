@@ -37,7 +37,7 @@ const searchlist_array = new FoodManager();
 let meal_id = null;
 let active_form = null;
 
-const now = new Date();
+let now = new Date();
 
 // buttons
 const addfood_btns = document.querySelectorAll(".addfood_btn");
@@ -249,9 +249,9 @@ searchlist.addEventListener("click", async (e) => {
 
 
 
-async function fetchInitFood() {
+async function fetchInitFood(date) {
     // TODO: after done testing replace now.toDateString() with now.toLocaleDateString()
-    const res = await fetch(`/api/foodlist/food/day?date=${now.toDateString()}`);
+    const res = await fetch(`/api/foodlist/food/day?date=${date.toDateString()}`);
     const data = await res.json();
 
     if (data.success) {
@@ -343,4 +343,89 @@ function updateWeekDate() {
 updateTodayDate();
 updateWeekDate();
 
-fetchInitFood();
+fetchInitFood(now);
+
+
+
+// TODO: change
+const date_input = document.getElementById("date_input");
+
+date_input.addEventListener("change", (e) => {
+
+    // reset all values to 0 or none.
+
+    breakfast_array.deleteAll();
+    lunch_array.deleteAll();
+    dinner_array.deleteAll();
+    snacks_array.deleteAll();
+
+
+    for (let key in breakfast_obj) {
+        breakfast_obj[key] = 0;
+    }
+
+    for (let key in lunch_obj) {
+        lunch_obj[key] = 0;
+    }
+
+    for (let key in dinner_obj) {
+        dinner_obj[key] = 0;
+    }
+
+    for (let key in snacks_obj) {
+        snacks_obj[key] = 0;
+    }
+
+    for (let key in calories_obj) {
+        calories_obj[key] = 0;
+    }
+
+    for (let key in macros_obj) {
+        macros_obj[key] = 0;
+    }
+
+    let [year, month, day] = date_input.value.split("-").map(Number);
+    // Note: month is 0-indexed in JS Date
+    now = new Date(year, month - 1, day); // Local time, 00:00:00
+    /* now = new Date(date_input.value); */
+
+    updateTodayDate();
+    updateWeekDate();
+
+    breakfast_list.replaceChildren();
+    lunch_list.replaceChildren();
+    dinner_list.replaceChildren();
+    snacks_list.replaceChildren();
+
+    let breakfast = getActiveMealNumbers(1);
+    let lunch = getActiveMealNumbers(2);
+    let dinner = getActiveMealNumbers(3);
+    let snacks = getActiveMealNumbers(4);
+
+    breakfast.cal.textContent = 0
+    breakfast.fat.textContent = 0
+    breakfast.carb.textContent = 0
+    breakfast.prot.textContent = 0
+
+    lunch.cal.textContent = 0
+    lunch.fat.textContent = 0
+    lunch.carb.textContent = 0
+    lunch.prot.textContent = 0
+
+    dinner.cal.textContent = 0
+    dinner.fat.textContent = 0
+    dinner.carb.textContent = 0
+    dinner.prot.textContent = 0
+
+    snacks.cal.textContent = 0
+    snacks.fat.textContent = 0
+    snacks.carb.textContent = 0
+    snacks.prot.textContent = 0
+
+    main_calories.textContent = 0;
+    main_fat.textContent = 0
+    main_carb.textContent = 0
+    main_prot.textContent = 0
+
+    fetchInitFood(now);
+});
