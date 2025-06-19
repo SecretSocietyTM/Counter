@@ -67,6 +67,10 @@ const lunch_numbers = document.getElementById("lunch_numbers");
 const dinner_numbers = document.getElementById("dinner_numbers");
 const snacks_numbers = document.getElementById("snacks_numbers");
 
+// dates?
+const today_date = document.getElementById("today_date");
+const week_date = document.getElementById("week_date");
+
 
 function getActiveMealList() {
     let active_list;
@@ -240,3 +244,38 @@ searchlist.addEventListener("click", async (e) => {
     active_form = FoodUI.createSearchListItemForm(meal_id, now.toDateString(), item);
     searchlist_whole.appendChild(active_form);
 })
+
+
+
+
+// dates
+function formatDate(date) {
+    let str = date.toDateString();
+    str = str.split(" ");
+    return `${str[1]} ${str[2]}, ${str[3]}`;
+}
+
+
+function getWeekRange(date) {
+    const dayOfWeek = date.getDay();
+    const start = new Date(date);
+    start.setDate(date.getDate() - dayOfWeek);
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    return { start, end };
+}
+
+function updateTodayDate() {
+    let format_date = formatDate(now);
+    today_date.textContent = format_date;
+}
+
+function updateWeekDate() {
+    let { start, end } = getWeekRange(now);
+    let format_start = formatDate(start).split(",")[0];
+    let format_end = formatDate(end).split(",")[0];
+    week_date.textContent = `${format_start} - ${format_end}`;
+}
+
+updateTodayDate();
+updateWeekDate();
