@@ -71,48 +71,24 @@ const snacks_numbers = document.getElementById("snacks_numbers");
 const sub_date = document.getElementById("sub_date");
 const week_date = document.getElementById("week_date");
 
+const MEALS = {
+    1: { array: breakfast_array, values: breakfast_obj, ui_list: breakfast_list, ui_numbers: breakfast_numbers },
+    2: { array: lunch_array, values: lunch_obj, ui_list: lunch_list, ui_numbers: lunch_numbers },
+    3: { array: dinner_array, values: dinner_obj, ui_list: dinner_list, ui_numbers: dinner_numbers },
+    4: { array: snacks_array, values: snacks_obj, ui_list: snacks_list, ui_numbers: snacks_numbers }
+};
 
-function getActiveMealList(meal) {
-    let active_list;
-    if (meal == 1) active_list = breakfast_list;
-    else if (meal == 2) active_list = lunch_list;
-    else if (meal == 3) active_list = dinner_list;
-    else if (meal == 4) active_list = snacks_list;
-    return active_list;
+function getActiveMeal(meal) {
+    return MEALS[meal];
 }
 
-function getActiveMealArray(meal) {
-    let active_array;
-    if (meal == 1) active_array = breakfast_array;
-    else if (meal == 2) active_array = lunch_array;
-    else if (meal == 3) active_array = dinner_array;
-    else if (meal == 4) active_array = snacks_array;
-    return active_array;
-}
-
-function getActiveMealObj(meal) {
-    let active_obj;
-    if (meal == 1) active_obj = breakfast_obj;
-    else if (meal == 2) active_obj = lunch_obj;
-    else if (meal == 3) active_obj = dinner_obj;
-    else if (meal == 4) active_obj = snacks_obj;
-    return active_obj;
-}
-
-function getActiveMealNumbers(meal) {
-    let active_numbers;
-    if (meal == 1) active_numbers = breakfast_numbers;
-    else if (meal == 2) active_numbers = lunch_numbers;
-    else if (meal == 3) active_numbers = dinner_numbers;
-    else if (meal == 4) active_numbers = snacks_numbers;
-
-    let cal = active_numbers.querySelector(".cal");
-    let fat = active_numbers.querySelector(".fat");
-    let carb = active_numbers.querySelector(".carb");
-    let prot = active_numbers.querySelector(".prot");
+function getActiveMealNumbers(numbers_ui) {
+    let cal = numbers_ui.querySelector(".cal");
+    let fat = numbers_ui.querySelector(".fat");
+    let carb = numbers_ui.querySelector(".carb");
+    let prot = numbers_ui.querySelector(".prot");
     return { cal, fat, carb, prot };
 }
-
 
 
 // open search dialog events
@@ -180,11 +156,15 @@ searchlist.addEventListener("click", async (e) => {
         const data = await res.json();
         
         if (data.success) {
-            getActiveMealArray(meal_id).add(data.item);
-            getActiveMealList(meal_id).appendChild(FoodUI.createMealListItem(data.item));
+            // TEST: testing something
+            const meal = getActiveMeal(meal_id);
+            const meal_numbers = getActiveMealNumbers(meal.ui_numbers);
 
-            updateMealObj(data.item, meal_id);
-            updateMealNumbersUI(meal_id);
+            meal.array.add(data.item);
+            meal.ui_list.appendChild(FoodUI.createMealListItem(data.item));
+
+            updateMealValues(meal.values, data.item);
+            updateMealNumbersUI(meal_numbers, meal.values);
 
             // TODO: turn this into a function
             calories_obj.main += data.item.calories;
@@ -229,11 +209,15 @@ async function fetchInitFood(date) {
     if (data.success) {
         for (let i = 0; i < data.items.length; i++) {
             let cur_meal_type = data.items[i].meal_type;
-            getActiveMealArray(cur_meal_type).add(data.items[i]);
-            getActiveMealList(cur_meal_type).appendChild(FoodUI.createMealListItem(data.items[i]));
 
-            updateMealObj(data.items[i], cur_meal_type);
-            updateMealNumbersUI(cur_meal_type);
+            const meal = getActiveMeal(cur_meal_type);
+            const meal_numbers = getActiveMealNumbers(meal.ui_numbers);
+
+            meal.array.add(data.items[i]);
+            meal.ui_list.appendChild(FoodUI.createMealListItem(data.items[i]));
+
+            updateMealValues(meal.values, data.items[i]);
+            updateMealNumbersUI(meal_numbers, meal.values);
 
             // TODO: turn this into a function
             calories_obj.main += data.items[i].calories;
@@ -322,43 +306,31 @@ date_input.addEventListener("change", (e) => {
 });
 
 
-
-
-function updateMealObj(item, meal_type) {
-    let active_obj = getActiveMealObj(meal_type);
-    active_obj.cal += item.calories;
-    active_obj.fat += item.fat;
-    active_obj.carb += item.carbs;
-    active_obj.prot += item.protein;
-
-    // maybe also make this a function?
-    active_obj.fat = Math.round(active_obj.fat * 10) / 10;
-    active_obj.carb = Math.round(active_obj.carb * 10) / 10;
-    active_obj.prot = Math.round(active_obj.prot * 10) / 10;
+function updateMealValues(values, item) {
+    values.cal += item.calories;
+    values.fat += item.fat;
+    values.carb += item.carbs;
+    values.prot += item.protein;
+    roundMacros(values);
 }
 
 function updateMacrosObj(item) {
     macros_obj.fat += item.fat;
     macros_obj.carb += item.carbs;
     macros_obj.prot += item.protein;    
-
-    macros_obj.fat = Math.round(macros_obj.fat * 10) / 10;
-    macros_obj.carb = Math.round(macros_obj.carb * 10) / 10;
-    macros_obj.prot = Math.round(macros_obj.prot * 10) / 10;
+    roundMacros(macros_obj);
 } 
  
-function updateMealNumbersUI(meal_type) {
-    let meal_numbers = getActiveMealNumbers(meal_type);
-    let active_obj = getActiveMealObj(meal_type); 
-    meal_numbers.cal.classList.add("fw-b", "txt-prim-green");
-    meal_numbers.fat.classList.add("fw-b", "txt-acnt-yellow");
-    meal_numbers.carb.classList.add("fw-b", "txt-acnt-lightblue");
-    meal_numbers.prot.classList.add("fw-b", "txt-acnt-purple"); 
+function updateMealNumbersUI(ui_numbers, values) {
+    ui_numbers.cal.classList.add("fw-b", "txt-prim-green");
+    ui_numbers.fat.classList.add("fw-b", "txt-acnt-yellow");
+    ui_numbers.carb.classList.add("fw-b", "txt-acnt-lightblue");
+    ui_numbers.prot.classList.add("fw-b", "txt-acnt-purple"); 
 
-    meal_numbers.cal.textContent = active_obj.cal;
-    meal_numbers.fat.textContent = active_obj.fat;
-    meal_numbers.carb.textContent = active_obj.carb;
-    meal_numbers.prot.textContent = active_obj.prot;
+    ui_numbers.cal.textContent = values.cal;
+    ui_numbers.fat.textContent = values.fat;
+    ui_numbers.carb.textContent = values.carb;
+    ui_numbers.prot.textContent = values.prot;
 }
 
 function updateMacrosUI() {
@@ -371,6 +343,12 @@ function updateMacrosUI() {
     main_prot.textContent = macros_obj.prot;
 }
 
+function roundMacros(obj) {
+    for (let key of ["fat", "carb", "prot"]) {
+        obj[key] = Math.round(obj[key] * 10) / 10;
+    }
+}
+
 function resetObj(meal_obj) {
     for (let key in meal_obj) {
         meal_obj[key] = 0;
@@ -378,7 +356,7 @@ function resetObj(meal_obj) {
 }
 
 function resetUI() {
-     breakfast_list.replaceChildren();
+    breakfast_list.replaceChildren();
     lunch_list.replaceChildren();
     dinner_list.replaceChildren();
     snacks_list.replaceChildren();
