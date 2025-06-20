@@ -183,46 +183,16 @@ searchlist.addEventListener("click", async (e) => {
             getActiveMealArray(meal_id).add(data.item);
             getActiveMealList(meal_id).appendChild(FoodUI.createMealListItem(data.item));
 
-            // TODO: turn this into a fucntion
-            let active_obj = getActiveMealObj(meal_id);
-            active_obj.cal += data.item.calories;
-            active_obj.fat += data.item.fat;
-            active_obj.carb += data.item.carbs;
-            active_obj.prot += data.item.protein;
-
-            // TODO: turn this into a function;
-            let meal_numbers = getActiveMealNumbers(meal_id);
-            meal_numbers.cal.classList.add("fw-b", "txt-prim-green");
-            meal_numbers.fat.classList.add("fw-b", "txt-acnt-yellow");
-            meal_numbers.carb.classList.add("fw-b", "txt-acnt-lightblue");
-            meal_numbers.prot.classList.add("fw-b", "txt-acnt-purple");
-
-            meal_numbers.cal.textContent = active_obj.cal;
-            meal_numbers.fat.textContent = Math.round(active_obj.fat * 10) / 10;
-            meal_numbers.carb.textContent = Math.round(active_obj.carb * 10) / 10;
-            meal_numbers.prot.textContent = Math.round(active_obj.prot * 10) / 10;
+            updateMealObj(data.item, meal_id);
+            updateMealNumbersUI(meal_id);
 
             // TODO: turn this into a function
             calories_obj.main += data.item.calories;
-            // TODO: make function that adds calories + 1 until remaining = 0 or calories = goal.
-            // then start adding to over
-            // calories_obj.remaining -= data.item.calories;
             main_calories.textContent = calories_obj.main;
+            // more logic for remaining and over
 
-            // TODO: turn this into a function
-            macros_obj.fat += data.item.fat;
-            macros_obj.carb += data.item.carbs;
-            macros_obj.prot += data.item.protein;
-
-            // TODO: turn this into a function
-            main_fat. className = "card__value-on";
-            main_carb.className = "card__value-on";
-            main_prot.className = "card__value-on";
-
-            // TODO: turn this into a function
-            main_fat.textContent = Math.round(macros_obj.fat * 10) / 10;
-            main_carb.textContent = Math.round(macros_obj.carb * 10) / 10;
-            main_prot.textContent = Math.round(macros_obj.prot * 10) / 10;
+            updateMacrosObj(data.item);
+            updateMacrosUI();
 
             search_input.value = "";
             searchlist.replaceChildren();
@@ -262,46 +232,16 @@ async function fetchInitFood(date) {
             getActiveMealArray(cur_meal_type).add(data.items[i]);
             getActiveMealList(cur_meal_type).appendChild(FoodUI.createMealListItem(data.items[i]));
 
-            // TODO: turn this into a fucntion
-            let active_obj = getActiveMealObj(cur_meal_type);
-            active_obj.cal += data.items[i].calories;
-            active_obj.fat += data.items[i].fat;
-            active_obj.carb += data.items[i].carbs;
-            active_obj.prot += data.items[i].protein;
-
-            // TODO: turn this into a function;
-            let meal_numbers = getActiveMealNumbers(cur_meal_type);
-            meal_numbers.cal.classList.add("fw-b", "txt-prim-green");
-            meal_numbers.fat.classList.add("fw-b", "txt-acnt-yellow");
-            meal_numbers.carb.classList.add("fw-b", "txt-acnt-lightblue");
-            meal_numbers.prot.classList.add("fw-b", "txt-acnt-purple");
-
-            meal_numbers.cal.textContent = active_obj.cal;
-            meal_numbers.fat.textContent = Math.round(active_obj.fat * 10) / 10;
-            meal_numbers.carb.textContent = Math.round(active_obj.carb * 10) / 10;
-            meal_numbers.prot.textContent = Math.round(active_obj.prot * 10) / 10;
+            updateMealObj(data.items[i], cur_meal_type);
+            updateMealNumbersUI(cur_meal_type);
 
             // TODO: turn this into a function
             calories_obj.main += data.items[i].calories;
-            // TODO: make function that adds calories + 1 until remaining = 0 or calories = goal.
-            // then start adding to over
-            // calories_obj.remaining -= data.item.calories;
             main_calories.textContent = calories_obj.main;
+            // more logic for remaining and over
 
-            // TODO: turn this into a function
-            macros_obj.fat += data.items[i].fat;
-            macros_obj.carb += data.items[i].carbs;
-            macros_obj.prot += data.items[i].protein;
-
-            // TODO: turn this into a function
-            main_fat. className = "card__value-on";
-            main_carb.className = "card__value-on";
-            main_prot.className = "card__value-on";
-
-            // TODO: turn this into a function
-            main_fat.textContent = Math.round(macros_obj.fat * 10) / 10;
-            main_carb.textContent = Math.round(macros_obj.carb * 10) / 10;
-            main_prot.textContent = Math.round(macros_obj.prot * 10) / 10;
+            updateMacrosObj(data.items[i]);
+            updateMacrosUI();
         }
     } else {
         alert(data.errmsg);
@@ -361,30 +301,12 @@ date_input.addEventListener("change", (e) => {
     dinner_array.deleteAll();
     snacks_array.deleteAll();
 
-
-    for (let key in breakfast_obj) {
-        breakfast_obj[key] = 0;
-    }
-
-    for (let key in lunch_obj) {
-        lunch_obj[key] = 0;
-    }
-
-    for (let key in dinner_obj) {
-        dinner_obj[key] = 0;
-    }
-
-    for (let key in snacks_obj) {
-        snacks_obj[key] = 0;
-    }
-
-    for (let key in calories_obj) {
-        calories_obj[key] = 0;
-    }
-
-    for (let key in macros_obj) {
-        macros_obj[key] = 0;
-    }
+    resetObj(breakfast_obj);
+    resetObj(lunch_obj);
+    resetObj(dinner_obj);
+    resetObj(snacks_obj);
+    resetObj(calories_obj);
+    resetObj(macros_obj);
 
     let [year, month, day] = date_input.value.split("-").map(Number);
     // Note: month is 0-indexed in JS Date
@@ -394,7 +316,69 @@ date_input.addEventListener("change", (e) => {
     updateTodayDate();
     updateWeekDate();
 
-    breakfast_list.replaceChildren();
+    resetUI();
+
+    fetchInitFood(now);
+});
+
+
+
+
+function updateMealObj(item, meal_type) {
+    let active_obj = getActiveMealObj(meal_type);
+    active_obj.cal += item.calories;
+    active_obj.fat += item.fat;
+    active_obj.carb += item.carbs;
+    active_obj.prot += item.protein;
+
+    // maybe also make this a function?
+    active_obj.fat = Math.round(active_obj.fat * 10) / 10;
+    active_obj.carb = Math.round(active_obj.carb * 10) / 10;
+    active_obj.prot = Math.round(active_obj.prot * 10) / 10;
+}
+
+function updateMacrosObj(item) {
+    macros_obj.fat += item.fat;
+    macros_obj.carb += item.carbs;
+    macros_obj.prot += item.protein;    
+
+    macros_obj.fat = Math.round(macros_obj.fat * 10) / 10;
+    macros_obj.carb = Math.round(macros_obj.carb * 10) / 10;
+    macros_obj.prot = Math.round(macros_obj.prot * 10) / 10;
+} 
+ 
+function updateMealNumbersUI(meal_type) {
+    let meal_numbers = getActiveMealNumbers(meal_type);
+    let active_obj = getActiveMealObj(meal_type); 
+    meal_numbers.cal.classList.add("fw-b", "txt-prim-green");
+    meal_numbers.fat.classList.add("fw-b", "txt-acnt-yellow");
+    meal_numbers.carb.classList.add("fw-b", "txt-acnt-lightblue");
+    meal_numbers.prot.classList.add("fw-b", "txt-acnt-purple"); 
+
+    meal_numbers.cal.textContent = active_obj.cal;
+    meal_numbers.fat.textContent = active_obj.fat;
+    meal_numbers.carb.textContent = active_obj.carb;
+    meal_numbers.prot.textContent = active_obj.prot;
+}
+
+function updateMacrosUI() {
+    main_fat.className = "card__value-on";
+    main_carb.className = "card__value-on";
+    main_prot.className = "card__value-on";
+
+    main_fat.textContent = macros_obj.fat;
+    main_carb.textContent = macros_obj.carb;
+    main_prot.textContent = macros_obj.prot;
+}
+
+function resetObj(meal_obj) {
+    for (let key in meal_obj) {
+        meal_obj[key] = 0;
+    }
+}
+
+function resetUI() {
+     breakfast_list.replaceChildren();
     lunch_list.replaceChildren();
     dinner_list.replaceChildren();
     snacks_list.replaceChildren();
@@ -427,7 +411,5 @@ date_input.addEventListener("change", (e) => {
     main_calories.textContent = 0;
     main_fat.textContent = 0
     main_carb.textContent = 0
-    main_prot.textContent = 0
-
-    fetchInitFood(now);
-});
+    main_prot.textContent = 0   
+}
