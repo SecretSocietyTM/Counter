@@ -82,6 +82,13 @@ async function getFoodsByDate(uid, date) {
     return result;
 }
 
+async function getCalorieGoal(uid) {
+    const db = await connectDB();
+    let result = await db.get("SELECT calorie_goal FROM users WHERE user_id=?", [uid]);
+    await db.close();
+    return result;
+}
+
 async function searchFoodById(uid, fid) {
     const db = await connectDB();
     let result = await db.get("SELECT * FROM foods WHERE user_id=? AND food_id=?", [uid, fid]);
@@ -101,6 +108,18 @@ async function editFood(uid, fid, item) {
     return result;
 }
 
+async function editCalorieGoal(uid, goal) {
+    const db = await connectDB();
+    const result = await db.get(`
+        UPDATE users
+        SET calorie_goal=? 
+        WHERE user_id=?
+        RETURNING calorie_goal`,
+        [goal, uid]);
+    await db.close();
+    return result;
+}
+
 async function deleteFood(uid, fid) {
     const db = await connectDB();
     const result = await db.get(`DELETE FROM foods WHERE user_id=? AND food_id=? RETURNING food_id`, [uid, fid]);
@@ -116,7 +135,9 @@ module.exports = {
     addEatenFood,
     getNFoods,
     getFoodsByDate,
+    getCalorieGoal,
     searchFoodById,
     editFood,
+    editCalorieGoal,
     deleteFood
 };

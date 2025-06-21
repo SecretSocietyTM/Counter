@@ -126,4 +126,36 @@ router.post("/food/add-to-day", async (req, res) => {
     return res.json({ success: true, item: result });
 });
 
+
+router.route("/calorie-goal")
+    .get(async (req, res) => { 
+        const uid = req.session.user.id;
+        let result;
+
+        try {
+            result = await db.getCalorieGoal(uid);
+        } catch (err) {
+            console.error(err);
+            return res.json({ success: false, errmsg: "Something went wrong, please try again" });
+        }
+
+        return res.json({ success: true, goal: result.calorie_goal }); 
+    })
+    .patch(async (req, res) => { 
+        const goal = req.body;
+        const uid = req.session.user.id;
+        let result;
+
+        try {
+            result = await db.editCalorieGoal(uid, goal.goal);
+        } catch (err) {
+            console.error(err);
+            return res.json({ success: false, errmsg: "Something went wrong, please try again" });
+        }
+
+        return res.json({ success: true, goal: result.calorie_goal });  
+    });
+
+
+
 module.exports = router;

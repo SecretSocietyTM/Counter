@@ -25,7 +25,7 @@ const snacks_obj = {
 }
 
 const calories_obj = {
-    main: 0, remaining: 0, over: 0,
+    main: 0, goal: null, remaining: 0, over: 0,
 }
 
 const macros_obj = {
@@ -41,6 +41,11 @@ let now = new Date();
 
 // buttons
 const addfood_btns = document.querySelectorAll(".addfood_btn");
+const edit_goal_btn = document.getElementById("edit_goal_btn");
+
+// edit calorie goal elements
+const goal_calories = document.getElementById("goal_calories");
+const goal_calories_input = document.getElementById("goal_calories_input");
 
 // search dialog elements
 const search_dialog = document.getElementById("search_dialog");
@@ -114,6 +119,54 @@ search_dialog.addEventListener("click", (e) => {
         searchlist.replaceChildren();
         search_dialog.close();
     }
+});
+
+
+// edit calorie goal events
+edit_goal_btn.addEventListener("click", (e) => {
+    goal_calories.style.display = "none";
+    goal_calories_input.style.display = "inline-block";
+    goal_calories_input.value = goal_calories.textContent;
+    goal_calories_input.select();
+    goal_calories_input.focus();
+});
+
+goal_calories_input.addEventListener("keydown", async (e) => {
+    if (e.key === "Escape") {
+        goal_calories_input.blur();
+        goal_calories.style.display = "inline";
+        goal_calories_input.style.display = "none";
+        goal_calories_input.value = "";
+    } else if (e.key === "Enter") {
+        const res = await fetch("api/foodlist/calorie-goal", {
+            method: "PATCH",
+            headers: { "Content-Type" : "application/json" },
+            body: JSON.stringify({ goal: goal_calories_input.value })
+        });
+        const data = await res.json();
+        calories_obj.goal = data.goal;
+        goal_calories.textContent = data.goal;
+
+        goal_calories_input.blur();
+        goal_calories.style.display = "inline";
+        goal_calories_input.style.display = "none";
+        goal_calories_input.value = "";
+    }
+});
+
+goal_calories_input.addEventListener("blur", async (e) => {
+    const res = await fetch("api/foodlist/calorie-goal", {
+        method: "PATCH",
+        headers: { "Content-Type" : "application/json" },
+        body: JSON.stringify({ goal: goal_calories_input.value })
+    });
+    const data = await res.json();
+    calories_obj.goal = data.goal;
+    goal_calories.textContent = data.goal;
+
+    goal_calories.style.display = "inline";
+    goal_calories_input.style.display = "none";
+    goal_calories_input.value = "";
 });
 
 
@@ -233,6 +286,17 @@ async function fetchInitFood(date) {
 }
 
 
+async function fetchFoodGoal() {
+    const res = await fetch("api/foodlist/calorie-goal");
+    const data = await res.json();
+
+    if (data.success) {
+        goal_calories.textContent = data.goal;
+    } else {
+        alert(data.errmsg);
+    }
+}
+
 
 
 
@@ -269,6 +333,7 @@ function updateWeekDate() {
 updateTodayDate();
 updateWeekDate();
 
+fetchFoodGoal();
 fetchInitFood(now);
 
 

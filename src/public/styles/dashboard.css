@@ -13,6 +13,19 @@
     font-weight: var(--fw-bold);
 }
 
+.calorie-goal-container {
+    width: 3em;
+}
+
+.goal_calories_input {
+    display: none;
+    width: 100%;
+    outline: none;
+    border: none;
+
+    color: var(--clr-primary-blue);
+}
+
 .left {
     display: grid;
     gap: 1rem;
