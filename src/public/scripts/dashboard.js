@@ -426,10 +426,10 @@ function resetUI() {
     dinner_list.replaceChildren();
     snacks_list.replaceChildren();
 
-    let breakfast = getActiveMealNumbers(1);
-    let lunch = getActiveMealNumbers(2);
-    let dinner = getActiveMealNumbers(3);
-    let snacks = getActiveMealNumbers(4);
+    let breakfast = getActiveMealNumbers(MEALS[1].ui_numbers);
+    let lunch = getActiveMealNumbers(MEALS[2].ui_numbers);
+    let dinner = getActiveMealNumbers(MEALS[3].ui_numbers);
+    let snacks = getActiveMealNumbers(MEALS[4].ui_numbers);
 
     breakfast.cal.textContent = 0
     breakfast.fat.textContent = 0
