@@ -1,6 +1,6 @@
 const express = require("express");
 const router  = express.Router();
-const db      = require("../../database/database.js");
+const db      = require("../../database/index.js");
 
 router.route("/food")
     .get(async (req, res) => {
@@ -9,15 +9,17 @@ router.route("/food")
         if (food_query === "undefined") food_query = undefined;
         const uid = req.session.user.id;
         let result;
+        let count;
 
         try {
-            result = await db.getNFoods(uid, last_fid, undefined, food_query);
+            result = await db.foodDB.getNFoods(uid, last_fid, undefined, food_query);
+            count = await db.foodDB.getFoodCount(uid, food_query);
         } catch (err) {
             console.error(err);
             return res.json({ success: false, errmsg: "Something went wrong, please try again" });
         }
 
-        return res.json( {success: true, items: result.results, count: result.count });
+        return res.json( {success: true, items: result, count: count.x });
     })
     .post(async (req, res) => {
         const item = req.body;
@@ -25,7 +27,7 @@ router.route("/food")
         let result;
 
         try {
-            result = await db.addNewFood(uid, item);
+            result = await db.foodDB.addFood(uid, item);
         } catch (err) {
             console.error(err);
             return res.json({ success: false, errmsg: "Something went wrong, please try again" });
@@ -43,7 +45,7 @@ router.route("/food/:id")
         let result;
 
         try {
-            result = await db.editFood(uid, fid, item);
+            result = await db.foodDB.editFood(uid, fid, item);
         } catch (err) {
             console.error(err);
             return res.json({ success: false, errmsg: "Something went wrong, please try again" });
@@ -57,7 +59,7 @@ router.route("/food/:id")
         let result;
 
         try {
-            result = await db.deleteFood(uid, fid);
+            result = await db.foodDB.deleteFood(uid, fid);
         } catch (err) {
             console.error(err);
             return res.json({ success: false, errmsg: "Something went wrong, please try again "});
@@ -76,7 +78,7 @@ router.get("/food/day", async (req, res) => {
     let result;
 
     try {
-        result = await db.getFoodsByDate(uid, date);
+        result = await db.diaryDB.getFoodsByDate(uid, date);
     } catch (err) {
         console.error(err);
         return res.json({ success: false, errmsg: "Something went wrong, please try again" });
@@ -92,7 +94,7 @@ router.post("/food/add-to-day", async (req, res) => {
 
     let base;
     try {
-        base = await db.searchFoodById(uid, fid);
+        base = await db.foodDB.getFoodById(uid, fid);
     } catch (err) {
         console.error(err);
         return res.json({ success: false, message: "Something went wrong, please try again" });
@@ -117,7 +119,7 @@ router.post("/food/add-to-day", async (req, res) => {
 
     let result;
     try {
-        result = await db.addEatenFood(uid, food_eaten);
+        result = await db.diaryDB.addFood(uid, food_eaten);
     } catch (err) {
         console.error(err);
         return res.json({ success: false, message: "Something went wrong, please try again" });
@@ -133,7 +135,7 @@ router.route("/calorie-goal")
         let result;
 
         try {
-            result = await db.getCalorieGoal(uid);
+            result = await db.userDB.getCalorieGoal(uid);
         } catch (err) {
             console.error(err);
             return res.json({ success: false, errmsg: "Something went wrong, please try again" });
@@ -147,7 +149,7 @@ router.route("/calorie-goal")
         let result;
 
         try {
-            result = await db.editCalorieGoal(uid, goal.goal);
+            result = await db.userDB.editCalorieGoal(uid, goal.goal);
         } catch (err) {
             console.error(err);
             return res.json({ success: false, errmsg: "Something went wrong, please try again" });

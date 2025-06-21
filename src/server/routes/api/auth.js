@@ -1,6 +1,6 @@
 const express = require("express");
 const router  = express.Router();
-const db      = require("../../database/database.js");
+const db      = require("../../database/index.js");
 
 
 router.post("/signup", async (req, res) => {
@@ -8,7 +8,7 @@ router.post("/signup", async (req, res) => {
     let user;
 
     try {
-        user = await db.addUser(username, password);
+        user = await db.userDB.addUser(username, password);
     } catch (err) {
         console.error(err);
         const errmsg = err.message.includes("UNIQUE constraint failed")
@@ -25,7 +25,7 @@ router.post("/login", async (req, res) => {
     let user;
 
     try {
-        user = await db.authUser(username, password);
+        user = await db.userDB.authUser(username, password);
     } catch (err) {
         console.error(err);
         return res.json({success: false, errmsg: "Something went wrong, please try again" });
