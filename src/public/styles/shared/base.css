@@ -347,3 +347,13 @@ input::-webkit-inner-spin-button {
 .px-5 {
     padding-inline: 3rem;
 }
+
+
+/* max width */
+.max-w-55 {
+    max-width: 55%;
+}
+
+.max-w-75 {
+    max-width: 75%;
+}

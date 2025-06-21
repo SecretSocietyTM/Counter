@@ -206,3 +206,11 @@
 .shadow {
     box-shadow: 0px 0px 0.5rem 0 rgba(0, 0, 0, 0.26);
 }
+
+
+/* p styles */
+.truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

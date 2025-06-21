@@ -7,7 +7,7 @@ function createListItem(item) {
     li.dataset.id = item.food_id;
 
     const name = document.createElement("p");
-    name.className = "name";
+    name.classList.add("name", "truncate", "max-w-55");
     name.textContent = item.name;
 
     const div = document.createElement("div");
@@ -95,6 +95,7 @@ function createSearchListItem(item) {
     div.className = "searchlist__item";
 
     const name = document.createElement("p");
+    name.className = "truncate";
     name.textContent = item.name;
 
     div.appendChild(name);
@@ -190,6 +191,7 @@ function createMealListItem(item) {
     li.dataset.id = item.food_id;
 
     const name = document.createElement("p");
+    name.classList.add("truncate", "max-w-75");
     name.textContent = item.name;
 
     const div = document.createElement("div");

@@ -95,7 +95,7 @@
 
     .item__info {
         display: flex;
-        gap: 5rem;
+        gap: 3vw;
     }
 
     .info__numbers {
