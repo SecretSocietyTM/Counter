@@ -138,7 +138,7 @@ goal_calories_input.addEventListener("keydown", async (e) => {
         goal_calories_input.style.display = "none";
         goal_calories_input.value = "";
     } else if (e.key === "Enter") {
-        const res = await fetch("api/foodlist/calorie-goal", {
+        const res = await fetch("api/user/calorie-goal", {
             method: "PATCH",
             headers: { "Content-Type" : "application/json" },
             body: JSON.stringify({ goal: goal_calories_input.value })
@@ -155,7 +155,7 @@ goal_calories_input.addEventListener("keydown", async (e) => {
 });
 
 goal_calories_input.addEventListener("blur", async (e) => {
-    const res = await fetch("api/foodlist/calorie-goal", {
+    const res = await fetch("api/user/calorie-goal", {
         method: "PATCH",
         headers: { "Content-Type" : "application/json" },
         body: JSON.stringify({ goal: goal_calories_input.value })
@@ -176,7 +176,7 @@ search_input.addEventListener("input", async (e) => {
 
     if (searchterm.length == 0) return;
 
-    const res = await fetch(`api/foodlist/food?last_item=0&query=${searchterm}`);
+    const res = await fetch(`api/food?last_item=0&query=${searchterm}`);
     const data = await res.json();
 
     if (data.success) {
@@ -201,7 +201,7 @@ searchlist.addEventListener("click", async (e) => {
             return;
         }
 
-        const res = await fetch("api/foodlist/food/add-to-day", {
+        const res = await fetch("api/diary", {
             method: "POST",
             headers: { "Content-Type" : "application/json" },
             body: JSON.stringify(form_obj)
@@ -256,7 +256,7 @@ searchlist.addEventListener("click", async (e) => {
 
 async function fetchInitFood(date) {
     // TODO: after done testing replace now.toDateString() with now.toLocaleDateString()
-    const res = await fetch(`api/foodlist/food/day?date=${date.toDateString()}`);
+    const res = await fetch(`api/diary?date=${date.toDateString()}`);
     const data = await res.json();
 
     if (data.success) {
@@ -287,7 +287,7 @@ async function fetchInitFood(date) {
 
 
 async function fetchFoodGoal() {
-    const res = await fetch("api/foodlist/calorie-goal");
+    const res = await fetch("api/user/calorie-goal");
     const data = await res.json();
 
     if (data.success) {

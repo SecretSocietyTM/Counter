@@ -13,7 +13,7 @@ form.addEventListener("click", async (e) => {
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    const res = await fetch(`/api/auth${action}`, {
+    const res = await fetch(`/api/user/${action}`, {
         method: "POST",
         headers: { "Content-Type" : "application/json" },
         body: JSON.stringify({ username, password })

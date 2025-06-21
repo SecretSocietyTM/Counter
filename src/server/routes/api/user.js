@@ -20,6 +20,7 @@ router.post("/signup", async (req, res) => {
     return res.json({ success: true, redirect: "/dashboard" })
 });
 
+// TODO: figure out elegeant way to convert to GET req on frontend on file src/public/scripts/auth.js
 router.post("/login", async (req, res) => {
     const { username, password } = req.body;
     let user;
@@ -38,5 +39,36 @@ router.post("/login", async (req, res) => {
         return res.json({ success: false, errmsg: "Username or password invalid, try again" });
     }
 });
+
+router.route("/calorie-goal")
+    .get(async (req, res) => { 
+        const uid = req.session.user.id;
+        let result;
+
+        try {
+            result = await db.userDB.getCalorieGoal(uid);
+        } catch (err) {
+            console.error(err);
+            return res.json({ success: false, errmsg: "Something went wrong, please try again" });
+        }
+
+        return res.json({ success: true, goal: result.calorie_goal }); 
+    })
+    .patch(async (req, res) => { 
+        const goal = req.body;
+        const uid = req.session.user.id;
+        let result;
+
+        try {
+            result = await db.userDB.editCalorieGoal(uid, goal.goal);
+        } catch (err) {
+            console.error(err);
+            return res.json({ success: false, errmsg: "Something went wrong, please try again" });
+        }
+
+        return res.json({ success: true, goal: result.calorie_goal });  
+    });
+
+
 
 module.exports = router;
