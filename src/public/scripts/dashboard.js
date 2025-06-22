@@ -250,7 +250,6 @@ searchlist.addEventListener("click", async (e) => {
         const data = await DashboardAPI.addToDiary(form_obj);
         
         if (data.success) {
-            // TEST: testing something
             const meal = getActiveMeal(meal_id);
             const meal_numbers = getActiveMealNumbers(meal.ui_numbers);
 
@@ -287,7 +286,6 @@ searchlist.addEventListener("click", async (e) => {
     const searchlist_whole = e.target.closest(".searchlist__whole-item")
     if (searchlist_whole.children.length == 2) return;
     let item = searchlist_array.getFoodById(searchlist_whole.dataset.id)
-    // TODO: after done testing replace now.toDateString() with now.toLocaleDateString()
     active_form = DashboardUI.createSearchListItemForm(meal_id, now.toDateString(), item);
     searchlist_whole.appendChild(active_form);
 });
@@ -324,7 +322,6 @@ date_input.addEventListener("change", (e) => {
 
 
 async function fetchInitFood(date) {
-    // TODO: after done testing replace now.toDateString() with now.toLocaleDateString()
     const data = await DashboardAPI.getDiary(date);
 
     if (data.success) {
