@@ -56,6 +56,8 @@ const searchlist = document.getElementById("searchlist");
 
 // calorie numbers
 const main_calories = document.getElementById("main_calories");
+const remaining_calories = document.getElementById("remaining_calories");
+const over_calories = document.getElementById("over_calories");
 
 // macro numbers
 const main_fat = document.getElementById("main_fat");
@@ -80,7 +82,8 @@ const week_date = document.getElementById("week_date");
 const date_input = document.getElementById("date_input");
 
 const MEAL_LISTS = [breakfast_list, lunch_list, dinner_list, snacks_list];
-const MAINS = [main_calories, main_fat, main_carb, main_prot];
+const MAINS = [main_calories, main_fat, main_carb, main_prot,
+                goal_calories, remaining_calories, over_calories];
 const MEALS = {
     1: { array: breakfast_array, values: breakfast_obj, ui_list: breakfast_list, ui_numbers: breakfast_numbers },
     2: { array: lunch_array, values: lunch_obj, ui_list: lunch_list, ui_numbers: lunch_numbers },
@@ -162,6 +165,13 @@ addfood_btns.forEach(btn => {
     });
 });
 
+search_dialog.addEventListener("cancel", (e) => {
+    search_dialog.style.display = "none";
+    search_input.value = "";
+    searchlist.replaceChildren();
+    search_dialog.close();
+});
+
 // close search dialog event (click outside of dialog)
 search_dialog.addEventListener("click", (e) => {
     const dialog_dimensions = search_dialog.getBoundingClientRect();
@@ -189,28 +199,38 @@ edit_goal_btn.addEventListener("click", (e) => {
 
 goal_calories_input.addEventListener("keydown", async (e) => {
     if (e.key === "Escape") {
-        goal_calories_input.blur();
         goal_calories.style.display = "inline";
         goal_calories_input.style.display = "none";
         goal_calories_input.value = "";
     } else if (e.key === "Enter") {
-        const data = await DashboardAPI.updateCalorieGoal(goal_calories_input.value);
-
-        calories_obj.goal = data.goal;
-        goal_calories.textContent = data.goal;
-
         goal_calories_input.blur();
-        goal_calories.style.display = "inline";
-        goal_calories_input.style.display = "none";
-        goal_calories_input.value = "";
     }
 });
 
 goal_calories_input.addEventListener("blur", async (e) => {
+    if (goal_calories_input.style.display == "none") {
+        return;
+    }
+    // input check
+    if (goal_calories_input.value < 1 || goal_calories_input.value % 1 < 1) {
+        goal_calories.style.display = "inline";
+        goal_calories_input.style.display = "none";
+        goal_calories_input.value = "";
+        return;
+    }
+
     const data = await DashboardAPI.updateCalorieGoal(goal_calories_input.value);
 
     calories_obj.goal = data.goal;
+    calories_obj.remaining = calories_obj.goal - calories_obj.main;
+    calories_obj.over = 0;
+    if (calories_obj.remaining < 0) {
+        calories_obj.over += Math.abs(calories_obj.remaining);
+        calories_obj.remaining = 0;
+    }
     goal_calories.textContent = data.goal;
+    remaining_calories.textContent = calories_obj.remaining;
+    over_calories.textContent = calories_obj.over;
 
     goal_calories.style.display = "inline";
     goal_calories_input.style.display = "none";
@@ -261,8 +281,14 @@ searchlist.addEventListener("click", async (e) => {
 
             // TODO: turn this into a function
             calories_obj.main += data.item.calories;
+            calories_obj.remaining -= data.item.calories;
+            if (calories_obj.remaining < 0) {
+                calories_obj.over += Math.abs(calories_obj.remaining);
+                calories_obj.remaining = 0;
+            }
             main_calories.textContent = calories_obj.main;
-            // more logic for remaining and over
+            remaining_calories.textContent = calories_obj.remaining;
+            over_calories.textContent = calories_obj.over;
 
             updateMacrosObj(data.item);
             updateMacrosUI();
@@ -317,6 +343,7 @@ date_input.addEventListener("change", (e) => {
     let snacks = getActiveMealNumbers(MEALS[4].ui_numbers);
     let meals = [breakfast, lunch, dinner, snacks];
     DashboardUI.resetUI(meals, MAINS);
+    fetchFoodGoal();
     fetchInitFood(now);
 });
 
@@ -339,8 +366,14 @@ async function fetchInitFood(date) {
 
             // TODO: turn this into a function
             calories_obj.main += data.items[i].calories;
+            calories_obj.remaining -= data.items[i].calories;
+            if (calories_obj.remaining < 0) {
+                calories_obj.over += Math.abs(calories_obj.remaining);
+                calories_obj.remaining = 0;
+            }
             main_calories.textContent = calories_obj.main;
-            // more logic for remaining and over
+            remaining_calories.textContent = calories_obj.remaining;
+            over_calories.textContent = calories_obj.over;
 
             updateMacrosObj(data.items[i]);
             updateMacrosUI();
@@ -354,6 +387,8 @@ async function fetchFoodGoal() {
     const data = await DashboardAPI.getCalorieGoal();
 
     if (data.success) {
+        calories_obj.goal = data.goal;
+        calories_obj.remaining = calories_obj.goal;
         goal_calories.textContent = data.goal;
     } else {
         alert(data.errmsg);
