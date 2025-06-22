@@ -2,7 +2,6 @@ const express = require("express");
 const router  = express.Router();
 const db      = require("../../database/index.js");
 
-// TODO: consider combining get and post for these
 
 router.route("/")
     .get(async (req, res) => {

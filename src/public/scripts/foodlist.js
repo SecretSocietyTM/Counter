@@ -1,5 +1,5 @@
-import { FoodManager } from "./foodmanager.js";
-import * as FoodUI from "./ui/foodUI.js";
+import { FoodManager } from "./util/foodmanager.js";
+import * as FoodlistUI from "./ui/foodlistUI.js";
 
 
 const foodlist_array = new FoodManager()
@@ -81,7 +81,7 @@ foodlist.addEventListener("click", (e) => {
         const li = e.target.closest("li");
         const item = getActiveFoodList().getFoodById(li.dataset.id);
         cur_listitem = li;
-        FoodUI.updateForm(foodform, item);
+        FoodlistUI.updateForm(foodform, item);
         dialog.showModal();
     }
 });
@@ -137,7 +137,7 @@ submit_btn.addEventListener("click", async (e) => {
             if (!flag_searching) {
                 if (foodlist_array.size() == total_count) {
                     foodlist_array.add(data.item);
-                    foodlist.appendChild(FoodUI.createListItem(data.item));
+                    foodlist.appendChild(FoodlistUI.createListItem(data.item));
                     total_count++;
                 }
             }
@@ -145,7 +145,7 @@ submit_btn.addEventListener("click", async (e) => {
         else if (method == "PATCH") {
             getActiveFoodList().updateFood(data.item.food_id, data.item);
             if (foodlist_array.getFoodById(data.item.food_id)) foodlist_array.updateFood(data.item.food_id, data.item);
-            FoodUI.updateListItem(data.item, cur_listitem);
+            FoodlistUI.updateListItem(data.item, cur_listitem);
         }
         dialog.close();
         addfood_btn.blur();
@@ -196,7 +196,7 @@ async function fetchInitFood() {
         }
         for (let i = 0; i < data.items.length; i++) {
             foodlist_array.add(data.items[i]);
-            foodlist.appendChild(FoodUI.createListItem(data.items[i]));
+            foodlist.appendChild(FoodlistUI.createListItem(data.items[i]));
         }
         observer.observe(foodlist.lastElementChild);
         cur_observed_listitem = foodlist.lastElementChild;
@@ -215,7 +215,7 @@ async function fetchMoreFood(str = undefined) {
     if (data.success) {
         for (let i = 0; i < data.items.length; i++) {
             activelist.add(data.items[i]);
-            foodlist.appendChild(FoodUI.createListItem(data.items[i]));
+            foodlist.appendChild(FoodlistUI.createListItem(data.items[i]));
         }
     } else {
         alert(data.errmsg);
@@ -236,7 +236,7 @@ search_input.addEventListener("input", async (e) => {
         flag_searching = false;
         glob_searchterm = undefined;
         for (let i = 0; i < foodlist_array.foods.length; i++) {
-            foodlist.appendChild(FoodUI.createListItem(foodlist_array.foods[i]));
+            foodlist.appendChild(FoodlistUI.createListItem(foodlist_array.foods[i]));
         }
         observer.observe(foodlist.lastElementChild);
         cur_observed_listitem = foodlist.lastElementChild;
@@ -250,7 +250,7 @@ search_input.addEventListener("input", async (e) => {
             flag_searching = true;
             for (let i = 0; i < data.items.length; i++) {
                 s_foodlist_array.add(data.items[i]);
-                foodlist.appendChild(FoodUI.createListItem(data.items[i]));
+                foodlist.appendChild(FoodlistUI.createListItem(data.items[i]));
             }
             observer.observe(foodlist.lastElementChild);
             cur_observed_listitem = foodlist.lastElementChild;

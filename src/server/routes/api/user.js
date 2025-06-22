@@ -16,8 +16,8 @@ router.post("/signup", async (req, res) => {
             : "Something went wrong, please try again";
             return res.json({ success: false, errmsg });
     }
-    req.session.user = { id: user.user_id }
-    return res.json({ success: true, redirect: "/dashboard" })
+    req.session.user = { id: user.user_id };
+    return res.json({ success: true, redirect: "/dashboard" });
 });
 
 // TODO: figure out elegeant way to convert to GET req on frontend on file src/public/scripts/auth.js
@@ -68,7 +68,5 @@ router.route("/calorie-goal")
 
         return res.json({ success: true, goal: result.calorie_goal });  
     });
-
-
 
 module.exports = router;

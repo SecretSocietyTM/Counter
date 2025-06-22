@@ -1,90 +1,4 @@
-
-// TODO: rename functions? create classes for each section??? 
-// example: foodListPageClass, dashboardSearchListClass, dashboardEatenClass
-function createListItem(item) {
-    const li = document.createElement("li");
-    li.className = "item";
-    li.dataset.id = item.food_id;
-
-    const name = document.createElement("p");
-    name.classList.add("name", "truncate", "max-w-55");
-    name.textContent = item.name;
-
-    const div = document.createElement("div");
-    div.className = "item__info";
-
-    const div_numbers = document.createElement("div");
-    div_numbers.className = "info__numbers";
-
-    const servsizeunit = createServingUnit(
-        item.serving_size, item.unit, ["servsize"], ["unit"]);
-
-    const cal = createMacro(item.calories, "cal", ["cal"]);
-    const fat = createMacro(item.fat, undefined, ["fat"]);
-    const carb = createMacro(item.carbs, undefined, ["carb"]);
-    const prot = createMacro(item.protein, undefined, ["prot"]);
-
-    const dot = document.createElement("p");
-    dot.className = "dot";
-    dot.innerHTML = "&#9679;";
-
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "editfood_btn icon_button";
-
-    const image = document.createElement("img");
-    image.src = "../assets/shared/icons/edit.svg";
-
-    button.appendChild(image);
-    div_numbers.append(servsizeunit, dot, cal, fat, carb, prot);
-    div.append(div_numbers, button);
-    li.append(name, div);
-    return li;
-}
-
-function createSpan(text, classes = []) {
-    const span = document.createElement("span");
-    span.textContent = text;
-    span.classList.add(...classes);
-    return span;
-}
-
-function createServingUnit(value, unit, value_classes = [], unit_classes = []) {
-    const p = document.createElement("p");
-    const span1 = createSpan(value, value_classes);
-    const span2 = createSpan(unit, unit_classes);
-    p.appendChild(span1);
-    p.appendChild(span2);
-    return p;
-}
-
-function createMacro(value, unit = "g", span_classes = []) {
-    const p = document.createElement("p");
-    const span = createSpan(value, span_classes);
-    p.appendChild(span);
-    p.append(unit);
-    return p;
-}
-
-function updateListItem(item, listitem) {
-    listitem.querySelector(".name").textContent = item.name;
-    listitem.querySelector(".servsize").textContent = item.serving_size;
-    listitem.querySelector(".unit").textContent = item.unit;
-    listitem.querySelector(".cal").textContent = item.calories;
-    listitem.querySelector(".fat").textContent = item.fat;
-    listitem.querySelector(".carb").textContent = item.carbs;
-    listitem.querySelector(".prot").textContent = item.protein;
-}
-
-function updateForm(form, item) {
-    form.querySelector("[name='name']").value = item.name;
-    form.querySelector("[name='servsize']").value = item.serving_size;
-    form.querySelector("[name='unit']").value = item.unit;
-    form.querySelector("[name='cal']").value = item.calories;
-    form.querySelector("[name='fat']").value = item.fat;
-    form.querySelector("[name='carb']").value = item.carbs;
-    form.querySelector("[name='prot']").value = item.protein;
-}
+import * as GenUI from "./generalUI.js";
 
 function createSearchListItem(item) {
     const li = document.createElement("li");
@@ -197,7 +111,7 @@ function createMealListItem(item) {
     const div = document.createElement("div");
     div.className = "item__info";
 
-    const servsizeunit = createServingUnit(
+    const servsizeunit = GenUI.createServingUnit(
         item.serving_size, item.unit, ["servsize"], ["unit"]);
 
     const trash_button = document.createElement("button");
@@ -214,11 +128,41 @@ function createMealListItem(item) {
     return li;
 }
 
-export { 
-    createListItem,
-    updateListItem,
-    updateForm,
+function updateMealNumbers(ui_numbers, values) {
+    ui_numbers.cal.classList.add("fw-b", "txt-prim-green");
+    ui_numbers.fat.classList.add("fw-b", "txt-acnt-yellow");
+    ui_numbers.carb.classList.add("fw-b", "txt-acnt-lightblue");
+    ui_numbers.prot.classList.add("fw-b", "txt-acnt-purple"); 
+
+    ui_numbers.cal.textContent = values.cal;
+    ui_numbers.fat.textContent = values.fat;
+    ui_numbers.carb.textContent = values.carb;
+    ui_numbers.prot.textContent = values.prot;
+}
+
+function resetMealLists(lists) {
+    lists.forEach(list => {
+        list.replaceChildren();
+    });
+}
+
+function resetUI(meals, mains) {
+    meals.forEach(meal => {
+        for (let val in meal) {
+            meal[val].textContent = 0;
+        }
+    });
+
+    mains.forEach(main => {
+        main.textContent = 0;
+    });
+}
+
+export {
     createSearchListItem,
     createSearchListItemForm,
-    createMealListItem
+    createMealListItem,
+    updateMealNumbers,
+    resetMealLists,
+    resetUI
 }

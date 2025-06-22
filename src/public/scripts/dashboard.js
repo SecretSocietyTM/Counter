@@ -1,5 +1,6 @@
-import { FoodManager } from "./foodmanager.js";
-import * as FoodUI from "./ui/foodUI.js";
+import { FoodManager } from "./util/foodmanager.js";
+import * as DateUtil from "./util/date.js";
+import * as DashboardUI from "./ui/dashboardUI.js";
 
 
 
@@ -76,6 +77,8 @@ const snacks_numbers = document.getElementById("snacks_numbers");
 const sub_date = document.getElementById("sub_date");
 const week_date = document.getElementById("week_date");
 
+const MEAL_LISTS = [breakfast_list, lunch_list, dinner_list, snacks_list];
+const MAINS = [main_calories, main_fat, main_carb, main_prot];
 const MEALS = {
     1: { array: breakfast_array, values: breakfast_obj, ui_list: breakfast_list, ui_numbers: breakfast_numbers },
     2: { array: lunch_array, values: lunch_obj, ui_list: lunch_list, ui_numbers: lunch_numbers },
@@ -183,7 +186,7 @@ search_input.addEventListener("input", async (e) => {
         if (data.count == 0) return;
         for (let i = 0; i < data.items.length; i++) {
             searchlist_array.add(data.items[i]);
-            searchlist.appendChild(FoodUI.createSearchListItem(data.items[i]));
+            searchlist.appendChild(DashboardUI.createSearchListItem(data.items[i]));
         }
     } else {
         alert(data.errmsg);
@@ -214,10 +217,10 @@ searchlist.addEventListener("click", async (e) => {
             const meal_numbers = getActiveMealNumbers(meal.ui_numbers);
 
             meal.array.add(data.item);
-            meal.ui_list.appendChild(FoodUI.createMealListItem(data.item));
+            meal.ui_list.appendChild(DashboardUI.createMealListItem(data.item));
 
             updateMealValues(meal.values, data.item);
-            updateMealNumbersUI(meal_numbers, meal.values);
+            DashboardUI.updateMealNumbers(meal_numbers, meal.values);
 
             // TODO: turn this into a function
             calories_obj.main += data.item.calories;
@@ -247,7 +250,7 @@ searchlist.addEventListener("click", async (e) => {
     if (searchlist_whole.children.length == 2) return;
     let item = searchlist_array.getFoodById(searchlist_whole.dataset.id)
     // TODO: after done testing replace now.toDateString() with now.toLocaleDateString()
-    active_form = FoodUI.createSearchListItemForm(meal_id, now.toDateString(), item);
+    active_form = DashboardUI.createSearchListItemForm(meal_id, now.toDateString(), item);
     searchlist_whole.appendChild(active_form);
 })
 
@@ -267,10 +270,10 @@ async function fetchInitFood(date) {
             const meal_numbers = getActiveMealNumbers(meal.ui_numbers);
 
             meal.array.add(data.items[i]);
-            meal.ui_list.appendChild(FoodUI.createMealListItem(data.items[i]));
+            meal.ui_list.appendChild(DashboardUI.createMealListItem(data.items[i]));
 
             updateMealValues(meal.values, data.items[i]);
-            updateMealNumbersUI(meal_numbers, meal.values);
+            DashboardUI.updateMealNumbers(meal_numbers, meal.values);
 
             // TODO: turn this into a function
             calories_obj.main += data.items[i].calories;
@@ -299,34 +302,15 @@ async function fetchFoodGoal() {
 
 
 
-
-
-// dates
-function formatDate(date) {
-    let str = date.toDateString();
-    str = str.split(" ");
-    return `${str[1]} ${str[2]}, ${str[3]}`;
-}
-
-
-function getWeekRange(date) {
-    const dayOfWeek = date.getDay();
-    const start = new Date(date);
-    start.setDate(date.getDate() - dayOfWeek);
-    const end = new Date(start);
-    end.setDate(start.getDate() + 6);
-    return { start, end };
-}
-
 function updateTodayDate() {
-    let format_date = formatDate(now);
+    let format_date = DateUtil.formatDate(now);
     sub_date.textContent = format_date;
 }
 
 function updateWeekDate() {
-    let { start, end } = getWeekRange(now);
-    let format_start = formatDate(start).split(",")[0];
-    let format_end = formatDate(end).split(",")[0];
+    let { start, end } = DateUtil.getWeekRange(now);
+    let format_start = DateUtil.formatDate(start).split(",")[0];
+    let format_end = DateUtil.formatDate(end).split(",")[0];
     week_date.textContent = `${format_start} - ${format_end}`;
 }
 
@@ -364,9 +348,13 @@ date_input.addEventListener("change", (e) => {
 
     updateTodayDate();
     updateWeekDate();
-
-    resetUI();
-
+    DashboardUI.resetMealLists(MEAL_LISTS);
+    let breakfast = getActiveMealNumbers(MEALS[1].ui_numbers);
+    let lunch = getActiveMealNumbers(MEALS[2].ui_numbers);
+    let dinner = getActiveMealNumbers(MEALS[3].ui_numbers);
+    let snacks = getActiveMealNumbers(MEALS[4].ui_numbers);
+    let meals = [breakfast, lunch, dinner, snacks];
+    DashboardUI.resetUI(meals, MAINS);
     fetchInitFood(now);
 });
 
@@ -384,18 +372,6 @@ function updateMacrosObj(item) {
     macros_obj.carb += item.carbs;
     macros_obj.prot += item.protein;    
     roundMacros(macros_obj);
-} 
- 
-function updateMealNumbersUI(ui_numbers, values) {
-    ui_numbers.cal.classList.add("fw-b", "txt-prim-green");
-    ui_numbers.fat.classList.add("fw-b", "txt-acnt-yellow");
-    ui_numbers.carb.classList.add("fw-b", "txt-acnt-lightblue");
-    ui_numbers.prot.classList.add("fw-b", "txt-acnt-purple"); 
-
-    ui_numbers.cal.textContent = values.cal;
-    ui_numbers.fat.textContent = values.fat;
-    ui_numbers.carb.textContent = values.carb;
-    ui_numbers.prot.textContent = values.prot;
 }
 
 function updateMacrosUI() {
@@ -418,41 +394,4 @@ function resetObj(meal_obj) {
     for (let key in meal_obj) {
         meal_obj[key] = 0;
     }
-}
-
-function resetUI() {
-    breakfast_list.replaceChildren();
-    lunch_list.replaceChildren();
-    dinner_list.replaceChildren();
-    snacks_list.replaceChildren();
-
-    let breakfast = getActiveMealNumbers(MEALS[1].ui_numbers);
-    let lunch = getActiveMealNumbers(MEALS[2].ui_numbers);
-    let dinner = getActiveMealNumbers(MEALS[3].ui_numbers);
-    let snacks = getActiveMealNumbers(MEALS[4].ui_numbers);
-
-    breakfast.cal.textContent = 0
-    breakfast.fat.textContent = 0
-    breakfast.carb.textContent = 0
-    breakfast.prot.textContent = 0
-
-    lunch.cal.textContent = 0
-    lunch.fat.textContent = 0
-    lunch.carb.textContent = 0
-    lunch.prot.textContent = 0
-
-    dinner.cal.textContent = 0
-    dinner.fat.textContent = 0
-    dinner.carb.textContent = 0
-    dinner.prot.textContent = 0
-
-    snacks.cal.textContent = 0
-    snacks.fat.textContent = 0
-    snacks.carb.textContent = 0
-    snacks.prot.textContent = 0
-
-    main_calories.textContent = 0;
-    main_fat.textContent = 0
-    main_carb.textContent = 0
-    main_prot.textContent = 0   
 }
