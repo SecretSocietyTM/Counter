@@ -1,6 +1,7 @@
 import { FoodManager } from "./util/foodmanager.js";
 import * as DateUtil from "./util/date.js";
 import * as DashboardUI from "./ui/dashboardUI.js";
+import * as DashboardAPI from "./api/dashboardAPI.js";
 
 
 
@@ -73,9 +74,10 @@ const lunch_numbers = document.getElementById("lunch_numbers");
 const dinner_numbers = document.getElementById("dinner_numbers");
 const snacks_numbers = document.getElementById("snacks_numbers");
 
-// dates?
+// dates
 const sub_date = document.getElementById("sub_date");
 const week_date = document.getElementById("week_date");
+const date_input = document.getElementById("date_input");
 
 const MEAL_LISTS = [breakfast_list, lunch_list, dinner_list, snacks_list];
 const MAINS = [main_calories, main_fat, main_carb, main_prot];
@@ -97,6 +99,58 @@ function getActiveMealNumbers(numbers_ui) {
     let prot = numbers_ui.querySelector(".prot");
     return { cal, fat, carb, prot };
 }
+
+
+function updateTodayDate() {
+    let format_date = DateUtil.formatDate(now);
+    sub_date.textContent = format_date;
+}
+
+function updateWeekDate() {
+    let { start, end } = DateUtil.getWeekRange(now);
+    let format_start = DateUtil.formatDate(start).split(",")[0];
+    let format_end = DateUtil.formatDate(end).split(",")[0];
+    week_date.textContent = `${format_start} - ${format_end}`;
+}
+
+
+function updateMealValues(values, item) {
+    values.cal += item.calories;
+    values.fat += item.fat;
+    values.carb += item.carbs;
+    values.prot += item.protein;
+    roundMacros(values);
+}
+
+function updateMacrosObj(item) {
+    macros_obj.fat += item.fat;
+    macros_obj.carb += item.carbs;
+    macros_obj.prot += item.protein;    
+    roundMacros(macros_obj);
+}
+
+function updateMacrosUI() {
+    main_fat.className = "card__value-on";
+    main_carb.className = "card__value-on";
+    main_prot.className = "card__value-on";
+
+    main_fat.textContent = macros_obj.fat;
+    main_carb.textContent = macros_obj.carb;
+    main_prot.textContent = macros_obj.prot;
+}
+
+function roundMacros(obj) {
+    for (let key of ["fat", "carb", "prot"]) {
+        obj[key] = Math.round(obj[key] * 10) / 10;
+    }
+}
+
+function resetObj(meal_obj) {
+    for (let key in meal_obj) {
+        meal_obj[key] = 0;
+    }
+}
+
 
 
 // open search dialog events
@@ -124,7 +178,6 @@ search_dialog.addEventListener("click", (e) => {
     }
 });
 
-
 // edit calorie goal events
 edit_goal_btn.addEventListener("click", (e) => {
     goal_calories.style.display = "none";
@@ -141,12 +194,8 @@ goal_calories_input.addEventListener("keydown", async (e) => {
         goal_calories_input.style.display = "none";
         goal_calories_input.value = "";
     } else if (e.key === "Enter") {
-        const res = await fetch("api/user/calorie-goal", {
-            method: "PATCH",
-            headers: { "Content-Type" : "application/json" },
-            body: JSON.stringify({ goal: goal_calories_input.value })
-        });
-        const data = await res.json();
+        const data = await DashboardAPI.updateCalorieGoal(goal_calories_input.value);
+
         calories_obj.goal = data.goal;
         goal_calories.textContent = data.goal;
 
@@ -158,12 +207,8 @@ goal_calories_input.addEventListener("keydown", async (e) => {
 });
 
 goal_calories_input.addEventListener("blur", async (e) => {
-    const res = await fetch("api/user/calorie-goal", {
-        method: "PATCH",
-        headers: { "Content-Type" : "application/json" },
-        body: JSON.stringify({ goal: goal_calories_input.value })
-    });
-    const data = await res.json();
+    const data = await DashboardAPI.updateCalorieGoal(goal_calories_input.value);
+
     calories_obj.goal = data.goal;
     goal_calories.textContent = data.goal;
 
@@ -172,15 +217,13 @@ goal_calories_input.addEventListener("blur", async (e) => {
     goal_calories_input.value = "";
 });
 
-
 search_input.addEventListener("input", async (e) => {
     let searchterm = e.target.value;
     searchlist.replaceChildren();
 
     if (searchterm.length == 0) return;
 
-    const res = await fetch(`api/food?last_item=0&query=${searchterm}`);
-    const data = await res.json();
+    const data = await DashboardAPI.getFoods(searchterm);
 
     if (data.success) {
         if (data.count == 0) return;
@@ -204,12 +247,7 @@ searchlist.addEventListener("click", async (e) => {
             return;
         }
 
-        const res = await fetch("api/diary", {
-            method: "POST",
-            headers: { "Content-Type" : "application/json" },
-            body: JSON.stringify(form_obj)
-        });
-        const data = await res.json();
+        const data = await DashboardAPI.addToDiary(form_obj);
         
         if (data.success) {
             // TEST: testing something
@@ -252,83 +290,9 @@ searchlist.addEventListener("click", async (e) => {
     // TODO: after done testing replace now.toDateString() with now.toLocaleDateString()
     active_form = DashboardUI.createSearchListItemForm(meal_id, now.toDateString(), item);
     searchlist_whole.appendChild(active_form);
-})
-
-
-
-
-async function fetchInitFood(date) {
-    // TODO: after done testing replace now.toDateString() with now.toLocaleDateString()
-    const res = await fetch(`api/diary?date=${date.toDateString()}`);
-    const data = await res.json();
-
-    if (data.success) {
-        for (let i = 0; i < data.items.length; i++) {
-            let cur_meal_type = data.items[i].meal_type;
-
-            const meal = getActiveMeal(cur_meal_type);
-            const meal_numbers = getActiveMealNumbers(meal.ui_numbers);
-
-            meal.array.add(data.items[i]);
-            meal.ui_list.appendChild(DashboardUI.createMealListItem(data.items[i]));
-
-            updateMealValues(meal.values, data.items[i]);
-            DashboardUI.updateMealNumbers(meal_numbers, meal.values);
-
-            // TODO: turn this into a function
-            calories_obj.main += data.items[i].calories;
-            main_calories.textContent = calories_obj.main;
-            // more logic for remaining and over
-
-            updateMacrosObj(data.items[i]);
-            updateMacrosUI();
-        }
-    } else {
-        alert(data.errmsg);
-    }
-}
-
-
-async function fetchFoodGoal() {
-    const res = await fetch("api/user/calorie-goal");
-    const data = await res.json();
-
-    if (data.success) {
-        goal_calories.textContent = data.goal;
-    } else {
-        alert(data.errmsg);
-    }
-}
-
-
-
-function updateTodayDate() {
-    let format_date = DateUtil.formatDate(now);
-    sub_date.textContent = format_date;
-}
-
-function updateWeekDate() {
-    let { start, end } = DateUtil.getWeekRange(now);
-    let format_start = DateUtil.formatDate(start).split(",")[0];
-    let format_end = DateUtil.formatDate(end).split(",")[0];
-    week_date.textContent = `${format_start} - ${format_end}`;
-}
-
-updateTodayDate();
-updateWeekDate();
-
-fetchFoodGoal();
-fetchInitFood(now);
-
-
-
-// TODO: change
-const date_input = document.getElementById("date_input");
+});
 
 date_input.addEventListener("change", (e) => {
-
-    // reset all values to 0 or none.
-
     breakfast_array.deleteAll();
     lunch_array.deleteAll();
     dinner_array.deleteAll();
@@ -359,39 +323,49 @@ date_input.addEventListener("change", (e) => {
 });
 
 
-function updateMealValues(values, item) {
-    values.cal += item.calories;
-    values.fat += item.fat;
-    values.carb += item.carbs;
-    values.prot += item.protein;
-    roundMacros(values);
-}
+async function fetchInitFood(date) {
+    // TODO: after done testing replace now.toDateString() with now.toLocaleDateString()
+    const data = await DashboardAPI.getDiary(date);
 
-function updateMacrosObj(item) {
-    macros_obj.fat += item.fat;
-    macros_obj.carb += item.carbs;
-    macros_obj.prot += item.protein;    
-    roundMacros(macros_obj);
-}
+    if (data.success) {
+        for (let i = 0; i < data.items.length; i++) {
+            let cur_meal_type = data.items[i].meal_type;
 
-function updateMacrosUI() {
-    main_fat.className = "card__value-on";
-    main_carb.className = "card__value-on";
-    main_prot.className = "card__value-on";
+            const meal = getActiveMeal(cur_meal_type);
+            const meal_numbers = getActiveMealNumbers(meal.ui_numbers);
 
-    main_fat.textContent = macros_obj.fat;
-    main_carb.textContent = macros_obj.carb;
-    main_prot.textContent = macros_obj.prot;
-}
+            meal.array.add(data.items[i]);
+            meal.ui_list.appendChild(DashboardUI.createMealListItem(data.items[i]));
 
-function roundMacros(obj) {
-    for (let key of ["fat", "carb", "prot"]) {
-        obj[key] = Math.round(obj[key] * 10) / 10;
+            updateMealValues(meal.values, data.items[i]);
+            DashboardUI.updateMealNumbers(meal_numbers, meal.values);
+
+            // TODO: turn this into a function
+            calories_obj.main += data.items[i].calories;
+            main_calories.textContent = calories_obj.main;
+            // more logic for remaining and over
+
+            updateMacrosObj(data.items[i]);
+            updateMacrosUI();
+        }
+    } else {
+        alert(data.errmsg);
     }
 }
 
-function resetObj(meal_obj) {
-    for (let key in meal_obj) {
-        meal_obj[key] = 0;
+async function fetchFoodGoal() {
+    const data = await DashboardAPI.getCalorieGoal();
+
+    if (data.success) {
+        goal_calories.textContent = data.goal;
+    } else {
+        alert(data.errmsg);
     }
 }
+
+
+updateTodayDate();
+updateWeekDate();
+
+fetchFoodGoal();
+fetchInitFood(now);
