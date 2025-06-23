@@ -102,7 +102,7 @@ function createSearchListItemForm(meal, date_in, item) {
 function createMealListItem(item) {
     const li = document.createElement("li");
     li.className = "item";
-    li.dataset.id = item.food_id;
+    li.dataset.id = item.entry_id;
 
     const name = document.createElement("p");
     name.classList.add("truncate", "max-w-75");

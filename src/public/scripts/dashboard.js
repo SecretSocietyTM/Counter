@@ -307,13 +307,13 @@ searchlist.addEventListener("click", async (e) => {
         active_form.remove();
         active_form = null;
     }
-    const searchlist_item = e.target.closest(".searchlist__item");
-    /* if (!searchlist_item) return; */
     const searchlist_whole = e.target.closest(".searchlist__whole-item")
+    if (!searchlist_whole) return;
     if (searchlist_whole.children.length == 2) return;
     let item = searchlist_array.getFoodById(searchlist_whole.dataset.id)
     active_form = DashboardUI.createSearchListItemForm(meal_id, now.toDateString(), item);
     searchlist_whole.appendChild(active_form);
+    active_form.querySelector("[name='servsize']").focus();
 });
 
 date_input.addEventListener("change", (e) => {
