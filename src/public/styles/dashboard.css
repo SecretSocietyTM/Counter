@@ -139,9 +139,11 @@
     border-radius: 2rem;
     background-color: var(--clr-neutral-60);
 
+    transition: 500ms;
+    
     .item__info {
         display: flex;
-        gap: 2rem;
+        gap: 1.5rem;
     }
 }
 
@@ -159,9 +161,14 @@
     background-color: var(--clr-neutral-60);
 }
 
-/* .item:hover + .item__subinfo {
-  display: flex;
-} */
+.whole-item:hover .item__subinfo {
+    display: flex;
+}
+
+.whole-item:hover .item {
+    transition: 500ms;
+    width: 95%;
+}
 
 
 /* dialog styling */

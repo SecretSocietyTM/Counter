@@ -101,8 +101,11 @@ function createSearchListItemForm(meal, date_in, item) {
 
 function createMealListItem(item) {
     const li = document.createElement("li");
-    li.className = "item";
+    li.className = "whole-item";
     li.dataset.id = item.entry_id;
+
+    const entry = document.createElement("div");
+    entry.className = "item";
 
     const name = document.createElement("p");
     name.classList.add("truncate", "max-w-75");
@@ -124,8 +127,22 @@ function createMealListItem(item) {
     trash_button.appendChild(trash_image);
     
     div.append(servsizeunit, trash_button);
-    li.append(name, div);
+    entry.append(name, div);
+    li.append(entry, createEntryInfoElement(item));
     return li;
+}
+
+function createEntryInfoElement(item) {
+    const div = document.createElement("div");
+    div.className = "item__subinfo";
+
+    const cals = GenUI.createMacro(item.calories, "cal", ["txt-prim-green"]);
+    const fat = GenUI.createMacro(item.fat, undefined, ["txt-acnt-yellow"]);
+    const carb = GenUI.createMacro(item.carbs, undefined, ["txt-acnt-lightblue"]);
+    const prot = GenUI.createMacro(item.protein, undefined, ["txt-acnt-purple2"]);
+
+    div.append(cals, fat, carb, prot);
+    return div;
 }
 
 function updateMealNumbers(ui_numbers, values) {
