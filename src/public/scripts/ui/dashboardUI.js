@@ -132,12 +132,24 @@ function updateMealNumbers(ui_numbers, values) {
     ui_numbers.cal.classList.add("fw-b", "txt-prim-green");
     ui_numbers.fat.classList.add("fw-b", "txt-acnt-yellow");
     ui_numbers.carb.classList.add("fw-b", "txt-acnt-lightblue");
-    ui_numbers.prot.classList.add("fw-b", "txt-acnt-purple"); 
+    ui_numbers.prot.classList.add("fw-b", "txt-acnt-purple");
 
     ui_numbers.cal.textContent = values.cal;
     ui_numbers.fat.textContent = values.fat;
     ui_numbers.carb.textContent = values.carb;
     ui_numbers.prot.textContent = values.prot;
+}
+
+function resetMealNumbers(ui_numbers) {
+    ui_numbers.cal.classList.remove("fw-b", "txt-prim-green");
+    ui_numbers.fat.classList.remove("fw-b", "txt-acnt-yellow");
+    ui_numbers.carb.classList.remove("fw-b", "txt-acnt-lightblue");
+    ui_numbers.prot.classList.remove("fw-b", "txt-acnt-purple");
+
+    ui_numbers.cal.textContent = 0;
+    ui_numbers.fat.textContent = 0;
+    ui_numbers.carb.textContent = 0;
+    ui_numbers.prot.textContent = 0;
 }
 
 function resetMealLists(lists) {
@@ -163,6 +175,7 @@ export {
     createSearchListItemForm,
     createMealListItem,
     updateMealNumbers,
+    resetMealNumbers,
     resetMealLists,
     resetUI
 }

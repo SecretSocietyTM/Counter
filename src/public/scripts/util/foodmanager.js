@@ -7,8 +7,8 @@ export class FoodManager {
         this.foods.push(food);
     }
 
-    delete(id) {
-        const index = this.foods.findIndex(item => item.food_id == id);
+    delete(id, id_type) {
+        const index = this.foods.findIndex(item => item[id_type] == id);
         if (index !== -1) {
             this.foods.splice(index, 1);
         }

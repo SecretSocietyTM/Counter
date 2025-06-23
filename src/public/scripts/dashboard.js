@@ -119,18 +119,31 @@ function updateWeekDate() {
 }
 
 
-function updateMealValues(values, item) {
-    values.cal += item.calories;
-    values.fat += item.fat;
-    values.carb += item.carbs;
-    values.prot += item.protein;
+function updateMealValues(values, item, flag="add") {
+    if (flag === "add") {
+        values.cal += item.calories;
+        values.fat += item.fat;
+        values.carb += item.carbs;
+        values.prot += item.protein;        
+    } else if (flag === "sub") {
+        values.cal -= item.calories;
+        values.fat -= item.fat;
+        values.carb -= item.carbs;
+        values.prot -= item.protein;        
+    }
     roundMacros(values);
 }
 
-function updateMacrosObj(item) {
-    macros_obj.fat += item.fat;
-    macros_obj.carb += item.carbs;
-    macros_obj.prot += item.protein;    
+function updateMacrosObj(item, flag="add") {
+    if (flag === "add") {
+        macros_obj.fat += item.fat;
+        macros_obj.carb += item.carbs;
+        macros_obj.prot += item.protein;    
+    } else if (flag === "sub") {
+        macros_obj.fat -= item.fat;
+        macros_obj.carb -= item.carbs;
+        macros_obj.prot -= item.protein;         
+    }
     roundMacros(macros_obj);
 }
 
@@ -162,10 +175,45 @@ diary.addEventListener("click", async (e) => {
     const li = e.target.closest("li");
     const data = await DashboardAPI.deleteFromDiary(li.dataset.id);
 
-    /* const list = li.closest("ul");
-    const meal_type = list.dataset.meal_type;
-    const meal_array = getActiveMeal(meal_type).array
-    const item = meal_array.getFoodById(li.dataset.id, "entry_id"); */
+    if (data.success) {
+        const list = li.closest("ul");
+        const meal_type = list.dataset.meal_type;
+        const meal = getActiveMeal(meal_type);
+        const meal_numbers = getActiveMealNumbers(meal.ui_numbers);
+        const entry = meal.array.getFoodById(li.dataset.id, "entry_id");
+        
+        meal.array.delete(data.id, "entry_id");
+        li.remove();
+
+        updateMealValues(meal.values, entry, "sub");
+        if (!meal.array.size()) DashboardUI.resetMealNumbers(meal_numbers);
+        else {
+            meal_numbers.cal.textContent = meal.values.cal;
+            meal_numbers.fat.textContent = meal.values.fat;
+            meal_numbers.carb.textContent = meal.values.carb;
+            meal_numbers.prot.textContent = meal.values.prot;
+        }
+
+        calories_obj.main -= entry.calories;
+        if (calories_obj.main <= calories_obj.goal) {
+            calories_obj.remaining = calories_obj.goal - calories_obj.main;
+            calories_obj.over = 0;
+        } else {
+            calories_obj.over = calories_obj.main - calories_obj.goal;
+            calories_obj.remaining = 0;
+        }
+        main_calories.textContent = calories_obj.main;
+        remaining_calories.textContent = calories_obj.remaining;
+        over_calories.textContent = calories_obj.over;
+
+        updateMacrosObj(entry, "sub");
+        main_fat.textContent = macros_obj.fat;
+        main_carb.textContent = macros_obj.carb;
+        main_prot.textContent = macros_obj.prot;
+        
+    } else {
+        alert(data.errmsg);
+    }
 });
 
 // open search dialog events
@@ -224,7 +272,7 @@ goal_calories_input.addEventListener("blur", async (e) => {
         return;
     }
     // input check
-    if (goal_calories_input.value < 1 || goal_calories_input.value % 1 < 1) {
+    if (goal_calories_input.value < 1 || goal_calories_input.value % 1 > 1) {
         goal_calories.style.display = "inline";
         goal_calories_input.style.display = "none";
         goal_calories_input.value = "";
@@ -401,7 +449,8 @@ async function fetchFoodGoal() {
     if (data.success) {
         calories_obj.goal = data.goal;
         calories_obj.remaining = calories_obj.goal;
-        goal_calories.textContent = data.goal;
+        goal_calories.textContent = calories_obj.goal;
+        remaining_calories.textContent = calories_obj.goal;
     } else {
         alert(data.errmsg);
     }
