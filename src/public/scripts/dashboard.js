@@ -158,9 +158,7 @@ function resetObj(meal_obj) {
 
 diary.addEventListener("click", async (e) => {
     const delete_btn = e.target.closest(".delete_btn");
-    if (!delete_btn) {
-        return;
-    }
+    if (!delete_btn) return;
     const li = e.target.closest("li");
     const data = await DashboardAPI.deleteFromDiary(li.dataset.id);
 

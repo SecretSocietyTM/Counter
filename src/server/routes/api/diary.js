@@ -59,4 +59,10 @@ router.route("/")
         return res.json({ success: true, item: result });
     });
 
+router.delete("/:id", (req, res) => {
+    const entry_id = req.params.id;
+    const uid = req.session.user.id;
+    let result;
+});
+
 module.exports = router;
