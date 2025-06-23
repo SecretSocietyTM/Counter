@@ -116,7 +116,7 @@ function createMealListItem(item) {
 
     const trash_button = document.createElement("button");
     trash_button.type = "button";
-    trash_button.className = "icon_button";
+    trash_button.classList.add("delete_btn", "icon_button");
 
     const trash_image = document.createElement("img");
     trash_image.src = "../assets/dashboard/trash.svg";

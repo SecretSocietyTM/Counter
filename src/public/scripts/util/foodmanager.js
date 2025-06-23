@@ -14,8 +14,8 @@ export class FoodManager {
         }
     }
 
-    getFoodById(id) {
-        return this.foods.find(item => item.food_id == id);
+    getFoodById(id, id_type) {
+        return this.foods.find(item => item[id_type] == id);
     }
 
     updateFood(id, data) {

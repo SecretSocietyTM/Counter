@@ -41,6 +41,8 @@ let active_form = null;
 
 let now = new Date();
 
+
+const diary = document.getElementById("diary");
 // buttons
 const addfood_btns = document.querySelectorAll(".addfood_btn");
 const edit_goal_btn = document.getElementById("edit_goal_btn");
@@ -154,7 +156,19 @@ function resetObj(meal_obj) {
     }
 }
 
+diary.addEventListener("click", async (e) => {
+    const delete_btn = e.target.closest(".delete_btn");
+    if (!delete_btn) {
+        return;
+    }
+    const li = e.target.closest("li");
+    const data = await DashboardAPI.deleteFromDiary(li.dataset.id);
 
+    /* const list = li.closest("ul");
+    const meal_type = list.dataset.meal_type;
+    const meal_array = getActiveMeal(meal_type).array
+    const item = meal_array.getFoodById(li.dataset.id, "entry_id"); */
+});
 
 // open search dialog events
 addfood_btns.forEach(btn => {
@@ -310,7 +324,7 @@ searchlist.addEventListener("click", async (e) => {
     const searchlist_whole = e.target.closest(".searchlist__whole-item")
     if (!searchlist_whole) return;
     if (searchlist_whole.children.length == 2) return;
-    let item = searchlist_array.getFoodById(searchlist_whole.dataset.id)
+    let item = searchlist_array.getFoodById(searchlist_whole.dataset.id, "food_id");
     active_form = DashboardUI.createSearchListItemForm(meal_id, now.toDateString(), item);
     searchlist_whole.appendChild(active_form);
     active_form.querySelector("[name='servsize']").focus();

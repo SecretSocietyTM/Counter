@@ -30,3 +30,10 @@ export async function addToDiary(item) {
     });
     return await res.json();
 }
+
+export async function deleteFromDiary(id) {
+    const res = await fetch(`api/diary/${id}`, {
+        method: "DELETE"
+    });
+    return await res.json();
+}
