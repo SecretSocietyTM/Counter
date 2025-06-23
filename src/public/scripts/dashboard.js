@@ -57,7 +57,6 @@ const search_input = document.getElementById("searchbar_input");
 const searchlist = document.getElementById("searchlist");
 
 // calorie numbers
-const main_calories = document.getElementById("main_calories");
 const remaining_calories = document.getElementById("remaining_calories");
 const over_calories = document.getElementById("over_calories");
 
@@ -84,14 +83,32 @@ const week_date = document.getElementById("week_date");
 const date_input = document.getElementById("date_input");
 
 const MEAL_LISTS = [breakfast_list, lunch_list, dinner_list, snacks_list];
-const MAINS = [main_calories, main_fat, main_carb, main_prot,
-                goal_calories, remaining_calories, over_calories];
+const MAINS = [main_fat, main_carb, main_prot, goal_calories,
+               remaining_calories, over_calories];
 const MEALS = {
     1: { array: breakfast_array, values: breakfast_obj, ui_list: breakfast_list, ui_numbers: breakfast_numbers },
     2: { array: lunch_array, values: lunch_obj, ui_list: lunch_list, ui_numbers: lunch_numbers },
     3: { array: dinner_array, values: dinner_obj, ui_list: dinner_list, ui_numbers: dinner_numbers },
     4: { array: snacks_array, values: snacks_obj, ui_list: snacks_list, ui_numbers: snacks_numbers }
 };
+
+const progress_bar = document.getElementById("progress_bar");
+const indicator_pointer = document.getElementById("indicator_pointer");
+const indicator_text = document.getElementById("indicator_text");
+
+const arc_value = 189.5;
+const initial_rotation_indication = -128;
+
+function updateCalorieProgressBar(value, goal) {
+    let normalize = value / goal * 100;
+    if (normalize > 100) normalize = 100;
+    const stroke_dashoffset_value = arc_value * (100 - normalize) / 100;
+    const rotate_zvalue = (initial_rotation_indication) * (50 - normalize) / 50;
+
+    progress_bar.style.strokeDashoffset = stroke_dashoffset_value;
+    indicator_pointer.style.transform = `rotateZ(${rotate_zvalue}deg)`;
+    indicator_text.firstChild.textContent = value;
+}
 
 function getActiveMeal(meal) {
     return MEALS[meal];
@@ -195,6 +212,7 @@ diary.addEventListener("click", async (e) => {
         }
 
         calories_obj.main -= entry.calories;
+        updateCalorieProgressBar(calories_obj.main, calories_obj.goal);
         if (calories_obj.main <= calories_obj.goal) {
             calories_obj.remaining = calories_obj.goal - calories_obj.main;
             calories_obj.over = 0;
@@ -202,7 +220,6 @@ diary.addEventListener("click", async (e) => {
             calories_obj.over = calories_obj.main - calories_obj.goal;
             calories_obj.remaining = 0;
         }
-        main_calories.textContent = calories_obj.main;
         remaining_calories.textContent = calories_obj.remaining;
         over_calories.textContent = calories_obj.over;
 
@@ -282,6 +299,7 @@ goal_calories_input.addEventListener("blur", async (e) => {
     const data = await DashboardAPI.updateCalorieGoal(goal_calories_input.value);
 
     calories_obj.goal = data.goal;
+    updateCalorieProgressBar(calories_obj.main, calories_obj.goal);
     calories_obj.remaining = calories_obj.goal - calories_obj.main;
     calories_obj.over = 0;
     if (calories_obj.remaining < 0) {
@@ -341,12 +359,12 @@ searchlist.addEventListener("click", async (e) => {
 
             // TODO: turn this into a function
             calories_obj.main += data.item.calories;
+            updateCalorieProgressBar(calories_obj.main, calories_obj.goal);
             calories_obj.remaining -= data.item.calories;
             if (calories_obj.remaining < 0) {
                 calories_obj.over += Math.abs(calories_obj.remaining);
                 calories_obj.remaining = 0;
             }
-            main_calories.textContent = calories_obj.main;
             remaining_calories.textContent = calories_obj.remaining;
             over_calories.textContent = calories_obj.over;
 
@@ -426,12 +444,12 @@ async function fetchInitFood(date) {
 
             // TODO: turn this into a function
             calories_obj.main += data.items[i].calories;
+            updateCalorieProgressBar(calories_obj.main, calories_obj.goal);
             calories_obj.remaining -= data.items[i].calories;
             if (calories_obj.remaining < 0) {
                 calories_obj.over += Math.abs(calories_obj.remaining);
                 calories_obj.remaining = 0;
             }
-            main_calories.textContent = calories_obj.main;
             remaining_calories.textContent = calories_obj.remaining;
             over_calories.textContent = calories_obj.over;
 

@@ -2,11 +2,18 @@
     margin-inline: auto;
 }
 
+.progress-bar {
+    stroke: var(--clr-primary-green);
+    transition: stroke-dashoffset 800ms ease-in;
+}
+
 .indicator-pointer {
     fill: white;
     filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.4));
     transform-origin: 50px 55px;
     transform: rotate(-128deg);
+
+    transition: transform 800ms ease-in;
 }
 
 .indicator-text {

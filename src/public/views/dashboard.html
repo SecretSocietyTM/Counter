@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../styles/shared/base.css">
     <link rel="stylesheet" href="../styles/shared/components.css">
     <link rel="stylesheet" href="../styles/dashboard.css">
-    <link rel="stylesheet" href="../styles/progressbar.css">
+    <link rel="stylesheet" href="../styles/svg_elements/progressbar.css">
     <script type="module" src="../scripts/dashboard.js" defer></script>
 </head>
 <body>
@@ -64,12 +64,12 @@
                                 A 43 43, 0 1 1, 85 80"
                             stroke="#ddd" stroke-width="12" fill="transparent" stroke-linecap="round"/>
                             
-                            <path class="progress-bar" stroke-dasharray="189.5" stroke-dashoffset="189.5" d="
+                            <path id="progress_bar" class="progress-bar" stroke-dasharray="189.5" stroke-dashoffset="189.5" d="
                                 M 15 80
                                 A 43 43, 0 1 1, 85 80"
                             stroke-width="12" fill="transparent" stroke-linecap="round"/>
                             
-                            <path class="indicator-pointer" d="
+                            <path id="indicator_pointer" class="indicator-pointer" d="
                                 M 25 55 
                                 A 25 25 0 0 1 48 30.09
                                 L 50 27
@@ -77,11 +77,10 @@
                                 A 25 25 0 0 1 75 55
                                 A 25 25 0 1 1 25 55
                             " fill="#ddd"/>
-                            <text class="indicator-text" x="50%" y="60%" dominant-baseline="central" text-anchor="middle">1286</text>
+                            <text id="indicator_text" class="indicator-text" x="50%" y="60%" dominant-baseline="central" text-anchor="middle">0</text>
                             <text class="text" x="50%" y="70%" dominant-baseline="central" text-anchor="middle">Eaten</text>
                         </svg>
                     </div>
-                    <!-- <span id="main_calories" class="cal-value txt-prim-green">0</span> -->
                 </div>
                 <div class="subsection top_b">
                     <p class="subsection-title">Calorie Breakdown</p>
