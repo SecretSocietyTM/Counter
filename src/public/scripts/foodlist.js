@@ -79,7 +79,7 @@ foodlist.addEventListener("click", (e) => {
         submit_btn.dataset.method = "PATCH";
 
         const li = e.target.closest("li");
-        const item = getActiveFoodList().getFoodById(li.dataset.id);
+        const item = getActiveFoodList().getFoodById(li.dataset.id, "food_id");
         cur_listitem = li;
         FoodlistUI.updateForm(foodform, item);
         dialog.showModal();
@@ -144,7 +144,7 @@ submit_btn.addEventListener("click", async (e) => {
         } 
         else if (method == "PATCH") {
             getActiveFoodList().updateFood(data.item.food_id, data.item);
-            if (foodlist_array.getFoodById(data.item.food_id)) foodlist_array.updateFood(data.item.food_id, data.item);
+            if (foodlist_array.getFoodById(data.item.food_id, "food_id")) foodlist_array.updateFood(data.item.food_id, data.item);
             FoodlistUI.updateListItem(data.item, cur_listitem);
         }
         dialog.close();
@@ -167,10 +167,10 @@ delete_btn.addEventListener("click", async () => {
     if (data.success) {
         let total = getActiveTotalCount(); 
 
-        getActiveFoodList().delete(data.id);
+        getActiveFoodList().delete(data.id, "food_id");
         if (flag_searching) {
-            if (foodlist_array.getFoodById(data.id)) {
-                foodlist_array.delete(data.id);
+            if (foodlist_array.getFoodById(data.id, "food_id")) {
+                foodlist_array.delete(data.id, "food_id");
                 total_count--;
             }
         }

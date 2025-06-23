@@ -59,4 +59,18 @@ router.route("/")
         return res.json({ success: true, item: result });
     });
 
+router.delete("/:id", async (req, res) => {
+    const entry_id = req.params.id;
+    const uid = req.session.user.id;
+    let result;
+    try {
+        result = await db.diaryDB.deleteFood(uid, entry_id);
+    } catch (err) {
+        console.error(err);
+        return res.json({ success: false, message: "Something went wrong, please try again" });
+    }
+
+    return res.json({ success: true, id: result.entry_id });
+});
+
 module.exports = router;

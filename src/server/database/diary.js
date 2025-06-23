@@ -28,7 +28,20 @@ async function getFoodsByDate(uid, date) {
     return result;
 }
 
+async function deleteFood(uid, entry_id) {
+    const db = await connectDB();
+    const result = await db.get(`
+        DELETE FROM foods_eaten 
+        WHERE user_id=? AND entry_id=? 
+        RETURNING entry_id`,
+        [uid, entry_id]
+    );
+    await db.close();
+    return result;
+}
+
 module.exports = {
     addFood,
-    getFoodsByDate
+    getFoodsByDate,
+    deleteFood
 }
