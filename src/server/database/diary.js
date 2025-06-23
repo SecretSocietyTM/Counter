@@ -42,5 +42,6 @@ async function deleteFood(uid, entry_id) {
 
 module.exports = {
     addFood,
-    getFoodsByDate
+    getFoodsByDate,
+    deleteFood
 }
