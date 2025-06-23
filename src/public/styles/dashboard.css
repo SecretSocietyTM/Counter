@@ -28,7 +28,8 @@
 
 .left {
     display: grid;
-    gap: 1rem;
+    grid-template-rows: max-content max-content;
+    gap: 2rem;
     padding: 2rem;
     border-radius: 1.2rem;
     background-color: var(--clr-neutral-20);
@@ -53,8 +54,10 @@
 
 .subsection {
     display: grid;
-    gap: 1rem;
-    padding: 1.5rem 1.5rem;
+    grid-template-rows: max-content auto;
+    width: 100%;
+    gap: 3.5vh;
+    padding: 1.5rem;
     
     border-radius: 1rem;
     background-color: var(--clr-neutral-10);
@@ -66,7 +69,7 @@
     "a b"
     "a c";
     grid-template-columns: 0.5fr 0.5fr;
-    grid-template-rows: 0.50 0.5fr;
+    grid-template-rows: 50% 50%;
     gap: 0.5rem;
 }
 
@@ -78,10 +81,13 @@
 
 .top_a {
     grid-area: a;
+    gap: 0;
+    padding-block-end: 1rem;
 }
 
 .top_b {
     grid-area: b;
+    padding-block-end: 2rem;
 }
 
 .top_c {

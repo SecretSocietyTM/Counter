@@ -1,0 +1,23 @@
+.wrapper {
+    margin-inline: auto;
+}
+
+.indicator-pointer {
+    fill: white;
+    filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.4));
+    transform-origin: 50px 55px;
+    transform: rotate(-128deg);
+}
+
+.indicator-text {
+    font-weight: var(--fw-bold);
+    font-size: 0.8rem;
+
+    fill: var(--clr-primary-green);
+}
+
+.text {
+    font-size: 0.3rem;
+
+    fill: var(--clr-neutral-40); 
+}
