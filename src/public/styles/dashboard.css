@@ -118,13 +118,20 @@
 }
 
 /* items shown under meal section */
+.whole-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-block-end: 0.35rem;
+}
+
 .item {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
 
     padding: 0.75rem 1.4rem 0.65rem 1.4rem;
-    margin-block-end: 0.35rem;
 
     font-size: var(--fs-14);
     font-weight: var(--fw-light);
@@ -137,6 +144,24 @@
         gap: 2rem;
     }
 }
+
+.item__subinfo {
+    display: none;
+    justify-content: center;
+    gap: 10%;
+    width: 60%;
+
+    padding-block-end: 0.4rem;
+
+    font-size: var(--fs-14);
+    color: var(--clr-neutral-40);
+    border-radius: 0 0 1rem 1rem;
+    background-color: var(--clr-neutral-60);
+}
+
+/* .item:hover + .item__subinfo {
+  display: flex;
+} */
 
 
 /* dialog styling */
