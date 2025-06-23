@@ -18,6 +18,7 @@
     --clr-accent-yellow:    #E2AE00;
     --clr-accent-lightblue: #3EB6C3;
     --clr-accent-purple:    #A552FF;
+    --clr-accent-purple2:   #bb7cff;
     --clr-accent-orange:    #D96B00;
     
     --ff-primary: "Inter", sans-serif;
@@ -320,6 +321,10 @@ input::-webkit-inner-spin-button {
 
 .txt-acnt-purple {
     color: var(--clr-accent-purple);
+}
+
+.txt-acnt-purple2 {
+    color: var(--clr-accent-purple2);
 }
 
 .txt-acnt-orange {
