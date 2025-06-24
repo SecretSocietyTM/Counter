@@ -70,6 +70,21 @@
     gap: 2vw;
 }
 
+.bar-graph {
+    display: grid;
+    grid-template-columns: repeat(7, 0.14fr);
+    gap: 0.8vw;
+    width: 100%;
+}
+
+.bar-dow-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5vh;
+    font-weight: var(--fw-light);
+}
+
 .top {
     display: grid;
     grid-template-areas: 

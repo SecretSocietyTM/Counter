@@ -1,0 +1,9 @@
+.goal-progress-bar {
+    stroke: var(--clr-primary-green);
+    transition: stroke-dashoffset 800ms ease-in;
+}
+
+.over-progress-bar {
+    stroke: var(--clr-primary-red);
+    transition: stroke-dashoffset 800ms ease-in;    
+}

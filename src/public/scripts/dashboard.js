@@ -477,6 +477,5 @@ async function fetchFoodGoal() {
 
 updateTodayDate();
 updateWeekDate();
-
 fetchFoodGoal();
 fetchInitFood(now);

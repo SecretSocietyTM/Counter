@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../styles/shared/components.css">
     <link rel="stylesheet" href="../styles/dashboard.css">
     <link rel="stylesheet" href="../styles/svg_elements/progressbar.css">
+    <link rel="stylesheet" href="../styles/svg_elements/bargraph.css">
     <script type="module" src="../scripts/dashboard.js" defer></script>
 </head>
 <body>
@@ -58,7 +59,7 @@
                 <div class="subsection top_a">
                     <p class="subsection-title">Calories</p>
                     <div class="wrapper">
-                        <svg class="svg" viewBox="0 5 100 89" width="100%" height="100%">
+                        <svg viewBox="0 5 100 89" width="100%" height="100%">
                             <path class="progress-track" d="
                                 M 15 80
                                 A 43 43, 0 1 1, 85 80"
@@ -148,7 +149,176 @@
                             <p class="txt-ntrl-40">This Week's Average</p>
                             <span class="cal-value txt-prim-green">0</span>
                         </div>
-                        <img src="../assets/dashboard/trash.svg" alt="">
+                        <div id="calorie-bar-graph" class="bar-graph">
+                            <div id="sun-bar" class="bar-dow-container">
+                                <svg viewBox="0 0 18 100" width="100%" height="100%">
+                                    <line class="progress-track"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="sun_goal_progress_bar" class="goal-progress-bar"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="56" stroke-dashoffset="56"
+                                    />
+                                
+                                    <line class="progress-track"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="sun_over_progress_bar" class="over-progress-bar"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="9" stroke-dashoffset="8"
+                                    />
+                                </svg>
+                                <p>S</p>
+                            </div>
+                            <div id="mon-bar" class="bar-dow-container">
+                                <svg viewBox="0 0 18 100" width="100%" height="100%">
+                                    <line class="progress-track"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="mon_goal_progress_bar" class="goal-progress-bar"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="56" stroke-dashoffset="56"
+                                    />
+                                
+                                    <line class="progress-track"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="mon_over_progress_bar" class="over-progress-bar"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="9" stroke-dashoffset="9"
+                                    />
+                                </svg>
+                                <p>M</p>
+                            </div>
+                            <div id="tue-bar" class="bar-dow-container">
+                                <svg viewBox="0 0 18 100" width="100%" height="100%">
+                                    <line class="progress-track"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="tue_goal_progress_bar" class="goal-progress-bar"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="56" stroke-dashoffset="56"
+                                    />
+                                
+                                    <line class="progress-track"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="tue_over_progress_bar" class="over-progress-bar"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="9" stroke-dashoffset="9"
+                                    />
+                                </svg>
+                                <p>T</p>
+                            </div>
+                            <div id="wed-bar" class="bar-dow-container">
+                                <svg viewBox="0 0 18 100" width="100%" height="100%">
+                                    <line class="progress-track"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="wed_goal_progress_bar" class="goal-progress-bar"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="56" stroke-dashoffset="56"
+                                    />
+                                
+                                    <line class="progress-track"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="wed_over_progress_bar" class="over-progress-bar"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="9" stroke-dashoffset="9"
+                                    />
+                                </svg>
+                                <p>W</p>
+                            </div>
+                            <div id="thu-bar" class="bar-dow-container">
+                                <svg viewBox="0 0 18 100" width="100%" height="100%">
+                                    <line class="progress-track"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="thu_goal_progress_bar" class="goal-progress-bar"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="56" stroke-dashoffset="56"
+                                    />
+                                
+                                    <line class="progress-track"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="thu_over_progress_bar" class="over-progress-bar"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="9" stroke-dashoffset="9"
+                                    />
+                                </svg>
+                                <p>T</p>
+                            </div>
+                            <div id="fri-bar" class="bar-dow-container">
+                                <svg id="calorie-bar" class="TODO: finish adding classes" viewBox="0 0 18 100" width="100%" height="100%">
+                                    <line class="progress-track"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="fri_goal_progress_bar" class="goal-progress-bar"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="56" stroke-dashoffset="56"
+                                    />
+                                
+                                    <line class="progress-track"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="fri_over_progress_bar" class="over-progress-bar"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="9" stroke-dashoffset="9"
+                                    />
+                                </svg>
+                                <p>F</p>
+                            </div>
+                            <div id="sat-bar" class="bar-dow-container">
+                                <svg id="calorie-bar" class="TODO: finish adding classes" viewBox="0 0 18 100" width="100%" height="100%">
+                                    <line class="progress-track"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="sat_goal_progress_bar" class="goal-progress-bar"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="56" stroke-dashoffset="56"
+                                    />
+                                
+                                    <line class="progress-track"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="sat_over_progress_bar" class="over-progress-bar"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="9" stroke-dashoffset="9"
+                                    />
+                                </svg>
+                                <p>S</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="subsection">
