@@ -40,6 +40,7 @@ let meal_id = null;
 let active_form = null;
 
 let now = new Date();
+let week_range = DateUtil.getWeekRange(now);
 
 
 const diary = document.getElementById("diary");
@@ -190,15 +191,26 @@ diary.addEventListener("click", async (e) => {
     const delete_btn = e.target.closest(".delete_btn");
     if (!delete_btn) return;
     const li = e.target.closest("li");
-    const data = await DashboardAPI.deleteFromDiary(li.dataset.id);
+    const list = li.closest("ul");
+    const meal_type = list.dataset.meal_type;
+    const meal = getActiveMeal(meal_type);
+    const meal_numbers = getActiveMealNumbers(meal.ui_numbers);
+    const entry = meal.array.getFoodById(li.dataset.id, "entry_id");
 
-    if (data.success) {
-        const list = li.closest("ul");
-        const meal_type = list.dataset.meal_type;
-        const meal = getActiveMeal(meal_type);
-        const meal_numbers = getActiveMealNumbers(meal.ui_numbers);
-        const entry = meal.array.getFoodById(li.dataset.id, "entry_id");
-        
+    // TODO: not proper, consider storing entries in foodmanager the same way that the form is sent:
+    // servsize, cal, fat, carb, prot, etc.
+    entry.cal = -entry.calories;
+    entry.fat = -entry.fat;
+    entry.carb = -entry.carbs;
+    entry.prot = -entry.protein;
+
+
+    const [data, data2] = await Promise.all([
+        await DashboardAPI.deleteFromDiary(li.dataset.id),
+        await DashboardAPI.updateDailySummary(now, entry),
+    ]);
+
+    if (data.success && data2) {
         meal.array.delete(data.id, "entry_id");
         li.remove();
 
@@ -345,9 +357,12 @@ searchlist.addEventListener("click", async (e) => {
             return;
         }
 
-        const data = await DashboardAPI.addToDiary(form_obj);
-        
-        if (data.success) {
+        const [data, data2] = await Promise.all([
+            DashboardAPI.addToDiary(form_obj),
+            DashboardAPI.updateDailySummary(now, form_obj)
+        ]);
+
+        if (data.success && data2.success) {
             const meal = getActiveMeal(meal_id);
             const meal_numbers = getActiveMealNumbers(meal.ui_numbers);
 
@@ -412,8 +427,9 @@ date_input.addEventListener("change", (e) => {
     now = new Date(year, month - 1, day); // Local time, 00:00:00
     /* now = new Date(date_input.value); */
 
+
     updateTodayDate();
-    updateWeekDate();
+    updateWeekDate(); // TODO: can probably move this into the week range checker below
     DashboardUI.resetMealLists(MEAL_LISTS);
     let breakfast = getActiveMealNumbers(MEALS[1].ui_numbers);
     let lunch = getActiveMealNumbers(MEALS[2].ui_numbers);
@@ -421,12 +437,17 @@ date_input.addEventListener("change", (e) => {
     let snacks = getActiveMealNumbers(MEALS[4].ui_numbers);
     let meals = [breakfast, lunch, dinner, snacks];
     DashboardUI.resetUI(meals, MAINS);
+
+    if (!(week_range.start <= now && now <= week_range.end)) {
+        fetchWeeklySummary(now);
+    }
+
     fetchFoodGoal();
-    fetchInitFood(now);
+    fetchDiary(now);
 });
 
 
-async function fetchInitFood(date) {
+async function fetchDiary(date) {
     const data = await DashboardAPI.getDiary(date);
 
     if (data.success) {
@@ -474,8 +495,15 @@ async function fetchFoodGoal() {
     }
 }
 
+async function fetchWeeklySummary(date) {
+    const data = DashboardAPI.getWeeklySummary(date);
+
+    // TODO: add response logic
+}
+
 
 updateTodayDate();
 updateWeekDate();
 fetchFoodGoal();
-fetchInitFood(now);
+fetchDiary(now);
+fetchWeeklySummary(now);
