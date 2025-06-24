@@ -82,7 +82,7 @@ async function getWeeklySummary(uid, dates) {
     const db = await connectDB();
     for (const date of dates) {
         let result = await db.get(`
-            SELECT calories, fat, carbs, protein 
+            SELECT * 
             FROM daily_summary
             WHERE user_id=? AND date=?`,
             [uid, date]
