@@ -24,7 +24,7 @@ async function setup() {
             protein INTEGER NOT NULL
         );
 
-        CREATE TABLE IF NOT EXISTS foods_eaten (
+        CREATE TABLE IF NOT EXISTS diary (
             entry_id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
             food_id INTEGER NOT NULL,

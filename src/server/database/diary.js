@@ -3,7 +3,7 @@ const { connectDB } = require("./connect.js");
 async function addFood(uid, item) {
     const db = await connectDB();
     const result = await db.get(`
-        INSERT INTO foods_eaten 
+        INSERT INTO diary 
         (user_id, food_id, date_eaten, meal_type, name, 
         serving_size, unit, calories, fat, carbs, protein) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
@@ -20,7 +20,7 @@ async function getFoodsByDate(uid, date) {
     const db = await connectDB();
     let result = await db.all(`
         SELECT * 
-        FROM foods_eaten 
+        FROM diary 
         WHERE user_id=? AND date_eaten=?`,
         [uid, date]
     );
@@ -31,7 +31,7 @@ async function getFoodsByDate(uid, date) {
 async function deleteFood(uid, entry_id) {
     const db = await connectDB();
     const result = await db.get(`
-        DELETE FROM foods_eaten 
+        DELETE FROM diary 
         WHERE user_id=? AND entry_id=? 
         RETURNING *`,
         [uid, entry_id]
