@@ -41,6 +41,9 @@ const searchlist_array = new FoodManager();
 let meal_id = null;
 let active_form = null;
 
+const real_now = new Date();
+real_now.setHours(0, 0, 0, 0);
+const real_week_range = DateUtil.getWeekRange(real_now);
 let now = new Date();
 now.setHours(0, 0, 0, 0);
 let week_range = DateUtil.getWeekRange(now);
@@ -655,23 +658,35 @@ async function fetchWeeklySummary(date) {
         usable_space -= (2 * 16);
         for (let i = 0; i < week_summary.length; i++) {
             if (!week_summary[i]) {
-                if (i < now.getDay()) {
+                if (now < real_week_range.start) {
+                    
+                    // TODO: refactor into a function
                     const goal_progress = calorie_graph_bars[i].querySelector(".goal-progress-bar");
                     const over_progress = calorie_graph_bars[i].querySelector(".over-progress-bar");
                     const whole_progress = macro_graph_bars[i].querySelector(".whole-progress-bar");
 
                     // TODO: consider applying these values directly to the html so that changing
                     // between dates within the same week doesn't cause flashing. (Talking about var(--clr-neutral-40))
-                    
-                    // TODO: need to do some async stuff with exe stall to get animation correct
-                    /* goal_progress.style.strokeDashoffset = goal_dashoffset;
-                    over_progress.style.strokeDashoffset = over_dashoffset; */
-
                     goal_progress.style.stroke = "var(--clr-neutral-40)";
                     goal_progress.style.strokeDashoffset = 0;
                     over_progress.style.stroke = "var(--clr-neutral-40)";
                     over_progress.style.strokeDashoffset = 0;
                     whole_progress.style.strokeDashoffset = 0;                    
+                } else {
+                    if (i < real_now.getDay()) {
+                        // TODO: refactor into a function
+                        const goal_progress = calorie_graph_bars[i].querySelector(".goal-progress-bar");
+                        const over_progress = calorie_graph_bars[i].querySelector(".over-progress-bar");
+                        const whole_progress = macro_graph_bars[i].querySelector(".whole-progress-bar");
+
+                        // TODO: consider applying these values directly to the html so that changing
+                        // between dates within the same week doesn't cause flashing. (Talking about var(--clr-neutral-40))
+                        goal_progress.style.stroke = "var(--clr-neutral-40)";
+                        goal_progress.style.strokeDashoffset = 0;
+                        over_progress.style.stroke = "var(--clr-neutral-40)";
+                        over_progress.style.strokeDashoffset = 0;
+                        whole_progress.style.strokeDashoffset = 0;                    
+                    }
                 }
             } else {
                 days_logged++;
