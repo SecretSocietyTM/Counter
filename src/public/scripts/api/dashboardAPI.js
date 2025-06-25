@@ -8,17 +8,17 @@ export async function getCalorieGoal() {
     return await res.json();
 }
 
-export async function getDiary(date) {
-    const res = await fetch(`api/diary?date=${date.toDateString()}`);
-    return await res.json();
-}
-
 export async function updateCalorieGoal(goal) {
     const res = await fetch("api/user/calorie-goal", {
         method: "PATCH",
         headers: { "Content-Type" : "application/json" },
         body: JSON.stringify({ goal })
     });
+    return await res.json();
+}
+
+export async function getDiary(date) {
+    const res = await fetch(`api/diary?date=${date.toDateString()}`);
     return await res.json();
 }
 
@@ -35,5 +35,10 @@ export async function deleteFromDiary(id) {
     const res = await fetch(`api/diary/${id}`, {
         method: "DELETE"
     });
+    return await res.json();
+}
+
+export async function getWeeklySummary(date) {
+    const res = await fetch(`api/diary/summary?date=${date.toDateString()}`);
     return await res.json();
 }

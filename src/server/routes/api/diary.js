@@ -49,28 +49,72 @@ router.route("/")
         };
 
         let result;
+        let result2;
         try {
             result = await db.diaryDB.addFood(uid, food_eaten);
+            // TODO: come up with better names
+            result2 = await db.diaryDB.updateDailySummary(uid, result);
         } catch (err) {
             console.error(err);
             return res.json({ success: false, message: "Something went wrong, please try again" });
         }
 
-        return res.json({ success: true, item: result });
+        return res.json({ success: true, item: result, summary: result2 });
     });
 
 router.delete("/:id", async (req, res) => {
     const entry_id = req.params.id;
     const uid = req.session.user.id;
     let result;
+    let result2;
     try {
         result = await db.diaryDB.deleteFood(uid, entry_id);
+        ['calories', 'fat', 'carbs', 'protein'].forEach(key => {
+            result[key] = -result[key];
+        });
+        result2 = await db.diaryDB.updateDailySummary(uid, result);
     } catch (err) {
         console.error(err);
         return res.json({ success: false, message: "Something went wrong, please try again" });
     }
 
-    return res.json({ success: true, id: result.entry_id });
+    // TODO: consider returing the whole item and not just the id
+    return res.json({ success: true, id: result.entry_id, summary: result2 });
 });
+
+router.get("/summary",async (req, res) => {
+    const date = req.query.date;
+    const uid = req.session.user.id;
+    const _date = new Date(date);
+    let dates = [];
+
+    const start = new Date(_date);
+    start.setDate(_date.getDate() - _date.getDay());
+    start.setHours(0, 0, 0, 0);
+    dates.push(start.toDateString());
+
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    end.setHours(0, 0, 0, 0);
+
+    for (let i = 1; i < 6; i++) {
+        const mid = new Date(start);
+        mid.setDate(start.getDate() + i);
+        mid.setHours(0, 0, 0, 0);
+        dates.push(mid.toDateString());
+    }
+    dates.push(end.toDateString());
+
+    let result;
+    try {
+        result = await db.diaryDB.getWeeklySummary(uid, dates);
+    } catch (err) {
+        console.error(err);
+        return res.json({ success: false, message: "Something went wrong, please try again" });
+    }
+
+    return res.json({ success: true, weekly_summary: result });
+});
+
 
 module.exports = router;

@@ -10,7 +10,7 @@ async function setup() {
             password TEXT NOT NULL,
             calorie_goal INTEGER,
             last_log_date TEXT
-        );  
+        );
 
         CREATE TABLE IF NOT EXISTS foods (
             food_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,7 +37,18 @@ async function setup() {
             fat INTEGER NOT NULL,
             carbs INTEGER NOT NULL,
             protein INTEGER NOT NULL
-        );`
+        );
+
+        CREATE TABLE IF NOT EXISTS daily_summary (
+            user_id INTEGER NOT NULL,
+            date TEXT NOT NULL,
+            calories INTEGER NOT NULL,
+            fat INTEGER NOT NULL,
+            carbs INTEGER NOT NULL,
+            protein INTEGER NOT NULL,
+            PRIMARY KEY (user_id, date)
+        );
+        `
     );
     await db.close();
 }

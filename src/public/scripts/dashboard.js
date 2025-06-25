@@ -34,12 +34,16 @@ const macros_obj = {
     fat: 0, carb: 0, prot: 0,
 }
 
+let week_summary = [];
+
 const searchlist_array = new FoodManager();
 
 let meal_id = null;
 let active_form = null;
 
 let now = new Date();
+now.setHours(0, 0, 0, 0);
+let week_range = DateUtil.getWeekRange(now);
 
 
 const diary = document.getElementById("diary");
@@ -59,11 +63,15 @@ const searchlist = document.getElementById("searchlist");
 // calorie numbers
 const remaining_calories = document.getElementById("remaining_calories");
 const over_calories = document.getElementById("over_calories");
+const average_calories = document.getElementById("average_calories");
 
 // macro numbers
 const main_fat = document.getElementById("main_fat");
 const main_carb = document.getElementById("main_carb");
 const main_prot = document.getElementById("main_prot");
+const average_fat = document.getElementById("average_fat");
+const average_carb = document.getElementById("average_carb");
+const average_prot = document.getElementById("average_prot");
 
 // meal lists
 const breakfast_list = document.getElementById("breakfast_list");
@@ -91,6 +99,35 @@ const MEALS = {
     3: { array: dinner_array, values: dinner_obj, ui_list: dinner_list, ui_numbers: dinner_numbers },
     4: { array: snacks_array, values: snacks_obj, ui_list: snacks_list, ui_numbers: snacks_numbers }
 };
+
+const calorie_bargraph = document.getElementById("calorie-bar-graph");
+const macro_bargraph = document.getElementById("macro-bar-graph");
+const calorie_graph_bars = 
+[
+    calorie_bargraph.querySelector(".sun-bar"),
+    calorie_bargraph.querySelector(".mon-bar"),
+    calorie_bargraph.querySelector(".tue-bar"),
+    calorie_bargraph.querySelector(".wed-bar"),
+    calorie_bargraph.querySelector(".thu-bar"),
+    calorie_bargraph.querySelector(".fri-bar"),
+    calorie_bargraph.querySelector(".sat-bar"),
+]
+
+const macro_graph_bars = 
+[
+    macro_bargraph.querySelector(".sun-bar"),
+    macro_bargraph.querySelector(".mon-bar"),
+    macro_bargraph.querySelector(".tue-bar"),
+    macro_bargraph.querySelector(".wed-bar"),
+    macro_bargraph.querySelector(".thu-bar"),
+    macro_bargraph.querySelector(".fri-bar"),
+    macro_bargraph.querySelector(".sat-bar"),
+]
+
+const whole_dashoffset = 84;
+const goal_dashoffset = 56;
+const over_dashoffset = 9;
+
 
 const progress_bar = document.getElementById("progress_bar");
 const indicator_pointer = document.getElementById("indicator_pointer");
@@ -190,17 +227,21 @@ diary.addEventListener("click", async (e) => {
     const delete_btn = e.target.closest(".delete_btn");
     if (!delete_btn) return;
     const li = e.target.closest("li");
+    const list = li.closest("ul");
+    const meal_type = list.dataset.meal_type;
+    const meal = getActiveMeal(meal_type);
+    const meal_numbers = getActiveMealNumbers(meal.ui_numbers);
+    const entry = meal.array.getFoodById(li.dataset.id, "entry_id");
+
+
     const data = await DashboardAPI.deleteFromDiary(li.dataset.id);
 
     if (data.success) {
-        const list = li.closest("ul");
-        const meal_type = list.dataset.meal_type;
-        const meal = getActiveMeal(meal_type);
-        const meal_numbers = getActiveMealNumbers(meal.ui_numbers);
-        const entry = meal.array.getFoodById(li.dataset.id, "entry_id");
-        
         meal.array.delete(data.id, "entry_id");
         li.remove();
+
+        week_summary[now.getDay()] = data.summary;
+        console.log(week_summary);
 
         updateMealValues(meal.values, entry, "sub");
         if (!meal.array.size()) DashboardUI.resetMealNumbers(meal_numbers);
@@ -227,6 +268,42 @@ diary.addEventListener("click", async (e) => {
         main_fat.textContent = macros_obj.fat;
         main_carb.textContent = macros_obj.carb;
         main_prot.textContent = macros_obj.prot;
+
+        const goal_progress = calorie_graph_bars[now.getDay()].querySelector(".goal-progress-bar");
+        const over_progress = calorie_graph_bars[now.getDay()].querySelector(".over-progress-bar");
+        let value = week_summary[now.getDay()].calories / calories_obj.goal * 100;
+        if (value > 100) {
+            value -= 100;
+            goal_progress.style.strokeDashoffset = 0;
+            over_progress.style.strokeDashoffset = over_dashoffset * (100 - value) / 100;
+        } else {
+            over_progress.style.strokeDashoffset = over_dashoffset;
+            goal_progress.style.strokeDashoffset = goal_dashoffset * (100 - value) / 100;
+        }
+
+        let avg_calories = 0;
+        let avg_fat = 0;
+        let avg_carb = 0;
+        let avg_prot = 0;
+        let days_logged = 0;
+        week_summary.forEach(day => {
+            if (day) { 
+                days_logged++;
+                avg_calories += day.calories;
+                avg_fat += day.fat;
+                avg_carb += day.carbs;
+                avg_prot += day.protein;
+            }
+        });
+        if (days_logged === 0) days_logged = 1;
+        avg_calories = Math.round(avg_calories / days_logged);
+        avg_fat = Math.round(avg_fat / days_logged);
+        avg_carb = Math.round(avg_carb / days_logged);
+        avg_prot = Math.round(avg_prot / days_logged);
+        average_calories.textContent = avg_calories;
+        average_fat.textContent = avg_fat;
+        average_carb.textContent = avg_carb;
+        average_prot.textContent = avg_prot;
         
     } else {
         alert(data.errmsg);
@@ -346,10 +423,13 @@ searchlist.addEventListener("click", async (e) => {
         }
 
         const data = await DashboardAPI.addToDiary(form_obj);
-        
+
         if (data.success) {
             const meal = getActiveMeal(meal_id);
             const meal_numbers = getActiveMealNumbers(meal.ui_numbers);
+
+            week_summary[now.getDay()] = data.summary;
+            console.log(week_summary);
 
             meal.array.add(data.item);
             meal.ui_list.appendChild(DashboardUI.createMealListItem(data.item));
@@ -370,6 +450,42 @@ searchlist.addEventListener("click", async (e) => {
 
             updateMacrosObj(data.item);
             updateMacrosUI();
+
+            const goal_progress = calorie_graph_bars[now.getDay()].querySelector(".goal-progress-bar");
+            const over_progress = calorie_graph_bars[now.getDay()].querySelector(".over-progress-bar");
+            let value = week_summary[now.getDay()].calories / calories_obj.goal * 100;
+            if (value > 100) {
+                value -= 100;
+                goal_progress.style.strokeDashoffset = 0;
+                over_progress.style.strokeDashoffset = over_dashoffset * (100 - value) / 100;
+            } else {
+                over_progress.style.strokeDashoffset = over_dashoffset;
+                goal_progress.style.strokeDashoffset = goal_dashoffset * (100 - value) / 100;
+            }
+            
+            let avg_calories = 0;
+            let avg_fat = 0;
+            let avg_carb = 0;
+            let avg_prot = 0;
+            let days_logged = 0;
+            week_summary.forEach(day => {
+                if (day) { 
+                    days_logged++;
+                    avg_calories += day.calories;
+                    avg_fat += day.fat;
+                    avg_carb += day.carbs;
+                    avg_prot += day.protein;
+                }
+            });
+            if (days_logged === 0) days_logged = 1;
+            avg_calories = Math.round(avg_calories / days_logged);
+            avg_fat = Math.round(avg_fat / days_logged);
+            avg_carb = Math.round(avg_carb / days_logged);
+            avg_prot = Math.round(avg_prot / days_logged);
+            average_calories.textContent = avg_calories;
+            average_fat.textContent = avg_fat;
+            average_carb.textContent = avg_carb;
+            average_prot.textContent = avg_prot;
 
             search_input.value = "";
             searchlist.replaceChildren();
@@ -410,10 +526,12 @@ date_input.addEventListener("change", (e) => {
     let [year, month, day] = date_input.value.split("-").map(Number);
     // Note: month is 0-indexed in JS Date
     now = new Date(year, month - 1, day); // Local time, 00:00:00
+    now.setHours(0, 0, 0, 0);
     /* now = new Date(date_input.value); */
 
+
     updateTodayDate();
-    updateWeekDate();
+    updateWeekDate(); // TODO: can probably move this into the week range checker below
     DashboardUI.resetMealLists(MEAL_LISTS);
     let breakfast = getActiveMealNumbers(MEALS[1].ui_numbers);
     let lunch = getActiveMealNumbers(MEALS[2].ui_numbers);
@@ -421,12 +539,54 @@ date_input.addEventListener("change", (e) => {
     let snacks = getActiveMealNumbers(MEALS[4].ui_numbers);
     let meals = [breakfast, lunch, dinner, snacks];
     DashboardUI.resetUI(meals, MAINS);
+
+    if (!(week_range.start <= now && now <= week_range.end)) {
+        week_range = DateUtil.getWeekRange(now);
+
+        // TODO: turn this into a function
+        // TODO: rename goal-progress-track and over-progress-track to just progress-track
+        const goal_progress_bars = document.querySelectorAll(".goal-progress-bar");
+        const over_progress_bars = document.querySelectorAll(".over-progress-bar");
+        const whole_progress_bar = document.querySelectorAll(".whole-progress-bar");
+        const fat_progress = document.querySelectorAll(".fat-progress-bar");
+        const carb_progress = document.querySelectorAll(".carb-progress-bar");
+        const prot_progress = document.querySelectorAll(".prot-progress-bar");
+        for (let i = 0; i < goal_progress_bars.length; i++) {
+            goal_progress_bars[i].style.strokeDashoffset = goal_dashoffset;
+            over_progress_bars[i].style.strokeDashoffset = over_dashoffset;
+            goal_progress_bars[i].style.stroke = "var(--clr-primary-green)";
+            over_progress_bars[i].style.stroke = "var(--clr-primary-red)";
+
+            whole_progress_bar[i].style.strokeDashoffset = whole_dashoffset;
+
+            fat_progress[i].setAttribute("y1", 0);
+            fat_progress[i].setAttribute("y2", 0);
+            fat_progress[i].style.opacity = "0";
+            fat_progress[i].style.strokeDasharray = 0;
+            fat_progress[i].style.strokeDashoffset = 0;
+
+            carb_progress[i].setAttribute("y1", 0);
+            carb_progress[i].setAttribute("y2", 0);
+            carb_progress[i].style.opacity = "0";
+            carb_progress[i].style.strokeDasharray = 0;
+            carb_progress[i].style.strokeDashoffset = 0;
+
+            prot_progress[i].setAttribute("y1", 0);
+            prot_progress[i].setAttribute("y2", 0);
+            prot_progress[i].style.opacity = "0";
+            prot_progress[i].style.strokeDasharray = 0;
+            prot_progress[i].style.strokeDashoffset = 0;
+        }
+        week_summary.length = 0;
+        fetchWeeklySummary(now);
+    }
+
     fetchFoodGoal();
-    fetchInitFood(now);
+    fetchDiary(now);
 });
 
 
-async function fetchInitFood(date) {
+async function fetchDiary(date) {
     const data = await DashboardAPI.getDiary(date);
 
     if (data.success) {
@@ -474,9 +634,117 @@ async function fetchFoodGoal() {
     }
 }
 
+async function fetchWeeklySummary(date) {
+    const data = await DashboardAPI.getWeeklySummary(date);
 
+    if (data.success) {
+        data.weekly_summary.forEach(item => {
+            week_summary.push(item);
+        });
+
+        let avg_calories = 0;
+        let avg_fat = 0;
+        let avg_carb = 0;
+        let avg_prot = 0;
+        let days_logged = 0;
+        let usable_space = 84;
+        usable_space -= (2 * 16);
+        for (let i = 0; i < week_summary.length; i++) {
+            if (!week_summary[i]) {
+                if (i < now.getDay()) {
+                    const goal_progress = calorie_graph_bars[i].querySelector(".goal-progress-bar");
+                    const over_progress = calorie_graph_bars[i].querySelector(".over-progress-bar");
+                    const whole_progress = macro_graph_bars[i].querySelector(".whole-progress-bar");
+
+                    // TODO: consider applying these values directly to the html so that changing
+                    // between dates within the same week doesn't cause flashing. (Talking about var(--clr-neutral-40))
+                    
+                    // TODO: need to do some async stuff with exe stall to get animation correct
+                    /* goal_progress.style.strokeDashoffset = goal_dashoffset;
+                    over_progress.style.strokeDashoffset = over_dashoffset; */
+
+                    goal_progress.style.stroke = "var(--clr-neutral-40)";
+                    goal_progress.style.strokeDashoffset = 0;
+                    over_progress.style.stroke = "var(--clr-neutral-40)";
+                    over_progress.style.strokeDashoffset = 0;
+                    whole_progress.style.strokeDashoffset = 0;                    
+                }
+            } else {
+                days_logged++;
+                avg_calories += week_summary[i].calories;
+                avg_fat += week_summary[i].fat;
+                avg_carb += week_summary[i].carbs;
+                avg_prot += week_summary[i].protein;
+                const goal_progress = calorie_graph_bars[i].querySelector(".goal-progress-bar");
+                const over_progress = calorie_graph_bars[i].querySelector(".over-progress-bar");
+                let value = week_summary[i].calories / calories_obj.goal * 100;
+                if (value > 100) {
+                    value -= 100;
+                    goal_progress.style.strokeDashoffset = 0
+                    over_progress.style.strokeDashoffset = over_dashoffset * (100 - value) / 100;
+                } else {
+                    over_progress.style.strokeDashoffset = over_dashoffset;
+                    goal_progress.style.strokeDashoffset = goal_dashoffset * (100 - value) / 100;
+                }
+
+                // TODO: implementing this for adding/deleting might be harder/more work, just leave as is.
+                // user can refresh page if they really want it.
+                // prefer refactoring first.
+                const fat_progress = macro_graph_bars[i].querySelector(".fat-progress-bar");
+                const carb_progress = macro_graph_bars[i].querySelector(".carb-progress-bar");
+                const prot_progress = macro_graph_bars[i].querySelector(".prot-progress-bar");
+                let total = week_summary[i].fat + week_summary[i].carbs + week_summary[i].protein;
+                let fat_perc = week_summary[i].fat / total;
+                let carb_perc = week_summary[i].carbs / total;
+                let prot_perc = week_summary[i].protein / total;
+
+                let cur_start = 92;
+                let cur_end = cur_start - (usable_space * fat_perc);
+
+                fat_progress.setAttribute("y1", cur_start);
+                fat_progress.setAttribute("y2", cur_end);
+                fat_progress.style.opacity = "1";
+                fat_progress.style.strokeDasharray = Math.ceil(cur_start - cur_end);
+                fat_progress.style.strokeDashoffset = 0;
+
+                cur_start = cur_end - 16;
+                cur_end = cur_start - (usable_space * carb_perc);
+
+                carb_progress.setAttribute("y1", cur_start);
+                carb_progress.setAttribute("y2", cur_end);
+                carb_progress.style.opacity = "1";
+                carb_progress.style.strokeDasharray = Math.ceil(cur_start - cur_end);
+                carb_progress.style.strokeDashoffset = 0;
+
+                cur_start = cur_end - 16;
+                cur_end = cur_start - (usable_space * prot_perc);
+
+                prot_progress.setAttribute("y1", cur_start);
+                prot_progress.setAttribute("y2", cur_end);
+                prot_progress.style.opacity = "1";                
+                prot_progress.style.strokeDasharray = Math.ceil(cur_start - cur_end);
+                prot_progress.style.strokeDashoffset = 0;
+            }
+        }
+        if (days_logged === 0) days_logged = 1;
+        avg_calories = Math.round(avg_calories / days_logged);
+        avg_fat = Math.round(avg_fat / days_logged);
+        avg_carb = Math.round(avg_carb / days_logged);
+        avg_prot = Math.round(avg_prot / days_logged);
+        average_calories.textContent = avg_calories;
+        average_fat.textContent = avg_fat;
+        average_carb.textContent = avg_carb;
+        average_prot.textContent = avg_prot;
+        // update macro bars
+
+        // update macro averages
+    }
+    console.log(week_summary);
+}
+
+// add function that boldens P element of graphs
 updateTodayDate();
 updateWeekDate();
-
 fetchFoodGoal();
-fetchInitFood(now);
+fetchDiary(now);
+fetchWeeklySummary(now);
