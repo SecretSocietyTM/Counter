@@ -504,13 +504,10 @@ date_input.addEventListener("change", (e) => {
         week_range = DateUtil.getWeekRange(now);
 
         // TODO: turn this into a function
-        const goal_tracks = document.querySelectorAll(".goal-progress-track");
-        const over_tracks = document.querySelectorAll(".over-progress-track");
+        // TODO: rename goal-progress-track and over-progress-track to just progress-track
         const goal_progress_bars = document.querySelectorAll(".goal-progress-bar");
         const over_progress_bars = document.querySelectorAll(".over-progress-bar");
-        for (let i = 0; i < goal_tracks.length; i++) {
-            goal_tracks[i].style.stroke = "var(--clr-neutral-30)";
-            over_tracks[i].style.stroke = "var(--clr-neutral-30)";
+        for (let i = 0; i < goal_progress_bars.length; i++) {
             goal_progress_bars[i].style.strokeDashoffset = goal_dashoffset;
             over_progress_bars[i].style.strokeDashoffset = over_dashoffset;
             goal_progress_bars[i].style.stroke = "var(--clr-primary-green)";
@@ -621,9 +618,6 @@ async function fetchWeeklySummary(date) {
         if (days_logged === 0) days_logged = 1;
         avg_calories = Math.round(avg_calories / days_logged);
         average_calories.textContent = avg_calories;
-
-        // update calorie average
-
         // update macro bars
 
         // update macro averages
