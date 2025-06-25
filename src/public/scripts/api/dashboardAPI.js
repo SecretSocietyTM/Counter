@@ -42,12 +42,3 @@ export async function getWeeklySummary(date) {
     const res = await fetch(`api/diary/summary?date=${date.toDateString()}`);
     return await res.json();
 }
-
-export async function updateDailySummary(date, item) {
-    const res = await fetch("api/diary/summary", {
-        method: "PATCH",
-        headers: { "Content-Type" : "application/json" },
-        body: JSON.stringify(item)
-    });
-    return await res.json();
-}

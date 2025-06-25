@@ -33,7 +33,7 @@ async function deleteFood(uid, entry_id) {
     const result = await db.get(`
         DELETE FROM foods_eaten 
         WHERE user_id=? AND entry_id=? 
-        RETURNING entry_id`,
+        RETURNING *`,
         [uid, entry_id]
     );
     await db.close();
@@ -51,10 +51,10 @@ async function updateDailySummary(uid, item) {
     );
 
     if (row) {
-        let updated_cal = Math.round((row.calories + item.cal) * 10) / 10;
+        let updated_cal = Math.round((row.calories + item.calories) * 10) / 10;
         let updated_fat = Math.round((row.fat + item.fat) * 10) / 10;
-        let updated_carb = Math.round((row.carbs + item.carb) * 10) / 10;
-        let updated_prot = Math.round((row.protein + item.prot) * 10) / 10;
+        let updated_carb = Math.round((row.carbs + item.carbs) * 10) / 10;
+        let updated_prot = Math.round((row.protein + item.protein) * 10) / 10;
 
         result = await db.get(`
             UPDATE daily_summary 
@@ -70,7 +70,7 @@ async function updateDailySummary(uid, item) {
             (user_id, date, calories, fat, carbs, protein)
             VALUES (?, ?, ?, ?, ?, ?)
             RETURNING *`,
-            [uid, item.date_eaten, item.cal, item.fat, item.carb, item.prot]
+            [uid, item.date_eaten, item.calories, item.fat, item.carbs, item.protein]
         );        
     }
     await db.close();
@@ -90,7 +90,6 @@ async function getWeeklySummary(uid, dates) {
         results.push(result);
     }
     await db.close()
-    console.log(results);
     return results;
 }
 
