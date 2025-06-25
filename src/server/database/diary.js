@@ -4,11 +4,11 @@ async function addFood(uid, item) {
     const db = await connectDB();
     const result = await db.get(`
         INSERT INTO diary 
-        (user_id, food_id, date_eaten, meal_type, name, 
+        (user_id, food_id, date, meal_type, name, 
         serving_size, unit, calories, fat, carbs, protein) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
         RETURNING *`,
-        [uid, item.food_id, item.date_eaten, item.meal_type, 
+        [uid, item.food_id, item.date, item.meal_type, 
         item.name, item.servsize, item.unit, item.cal, 
         item.fat, item.carb, item.prot]
     );
@@ -21,7 +21,7 @@ async function getFoodsByDate(uid, date) {
     let result = await db.all(`
         SELECT * 
         FROM diary 
-        WHERE user_id=? AND date_eaten=?`,
+        WHERE user_id=? AND date=?`,
         [uid, date]
     );
     await db.close();
@@ -47,7 +47,7 @@ async function updateDailySummary(uid, item) {
         SELECT calories, fat, carbs, protein 
         FROM daily_summary
         WHERE user_id=? AND date=?`,
-        [uid, item.date_eaten]
+        [uid, item.date]
     );
 
     if (row) {
@@ -62,7 +62,7 @@ async function updateDailySummary(uid, item) {
             WHERE user_id=? AND date=? 
             RETURNING *`,
             [updated_cal, updated_fat, updated_carb, updated_prot,
-            uid, item.date_eaten]
+            uid, item.date]
         );
     } else {
         result = await db.get(`
@@ -70,7 +70,7 @@ async function updateDailySummary(uid, item) {
             (user_id, date, calories, fat, carbs, protein)
             VALUES (?, ?, ?, ?, ?, ?)
             RETURNING *`,
-            [uid, item.date_eaten, item.calories, item.fat, item.carbs, item.protein]
+            [uid, item.date, item.calories, item.fat, item.carbs, item.protein]
         );        
     }
     await db.close();

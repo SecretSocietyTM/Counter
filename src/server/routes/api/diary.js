@@ -40,7 +40,7 @@ router.route("/")
 
         let food_eaten = {
             food_id:    food_info.food_id,
-            date_eaten: food_info.date,
+            date:       food_info.date,
             meal_type:  food_info.meal_id,
             name:       base.name,
             servsize:   food_info.servsize,
