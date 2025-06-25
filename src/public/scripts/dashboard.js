@@ -63,6 +63,7 @@ const searchlist = document.getElementById("searchlist");
 // calorie numbers
 const remaining_calories = document.getElementById("remaining_calories");
 const over_calories = document.getElementById("over_calories");
+const average_calories = document.getElementById("average_calories");
 
 // macro numbers
 const main_fat = document.getElementById("main_fat");
@@ -263,6 +264,18 @@ diary.addEventListener("click", async (e) => {
             over_progress.style.strokeDashoffset = over_dashoffset;
             goal_progress.style.strokeDashoffset = goal_dashoffset * (100 - value) / 100;
         }
+
+        let avg_calories = 0;
+        let days_logged = 0;
+        week_summary.forEach(day => {
+            if (day) { 
+                days_logged++;
+                avg_calories += day.calories;
+            }
+        });
+        if (days_logged === 0) days_logged = 1;
+        avg_calories = Math.round(avg_calories / days_logged);
+        average_calories.textContent = avg_calories;
         
     } else {
         alert(data.errmsg);
@@ -421,6 +434,18 @@ searchlist.addEventListener("click", async (e) => {
                 over_progress.style.strokeDashoffset = over_dashoffset;
                 goal_progress.style.strokeDashoffset = goal_dashoffset * (100 - value) / 100;
             }
+            
+            let avg_calories = 0;
+            let days_logged = 0;
+            week_summary.forEach(day => {
+                if (day) { 
+                    days_logged++;
+                    avg_calories += day.calories;
+                }
+            });
+            if (days_logged === 0) days_logged = 1;
+            avg_calories = Math.round(avg_calories / days_logged);
+            average_calories.textContent = avg_calories;
 
             search_input.value = "";
             searchlist.replaceChildren();
@@ -476,6 +501,7 @@ date_input.addEventListener("change", (e) => {
     DashboardUI.resetUI(meals, MAINS);
 
     if (!(week_range.start <= now && now <= week_range.end)) {
+        week_range = DateUtil.getWeekRange(now);
 
         // TODO: turn this into a function
         const goal_tracks = document.querySelectorAll(".goal-progress-track");
@@ -487,6 +513,8 @@ date_input.addEventListener("change", (e) => {
             over_tracks[i].style.stroke = "var(--clr-neutral-30)";
             goal_progress_bars[i].style.strokeDashoffset = goal_dashoffset;
             over_progress_bars[i].style.strokeDashoffset = over_dashoffset;
+            goal_progress_bars[i].style.stroke = "var(--clr-primary-green)";
+            over_progress_bars[i].style.stroke = "var(--clr-primary-red)";
         }
 
         week_summary.length = 0;
@@ -554,7 +582,8 @@ async function fetchWeeklySummary(date) {
             week_summary.push(item);
         });
 
-        // update calorie bars
+        let avg_calories = 0;
+        let days_logged = 0;
         for (let i = 0; i < week_summary.length; i++) {
             if (!week_summary[i]) {
                 if (i < now.getDay()) {
@@ -574,6 +603,8 @@ async function fetchWeeklySummary(date) {
                     over_progress.style.strokeDashoffset = 0;                  
                 }
             } else {
+                days_logged++;
+                avg_calories += week_summary[i].calories;
                 const goal_progress = graph_bars[i].querySelector(".goal-progress-bar");
                 const over_progress = graph_bars[i].querySelector(".over-progress-bar");
                 let value = week_summary[i].calories / calories_obj.goal * 100;
@@ -587,6 +618,9 @@ async function fetchWeeklySummary(date) {
                 }
             }
         }
+        if (days_logged === 0) days_logged = 1;
+        avg_calories = Math.round(avg_calories / days_logged);
+        average_calories.textContent = avg_calories;
 
         // update calorie average
 
