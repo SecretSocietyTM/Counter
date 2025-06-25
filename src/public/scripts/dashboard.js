@@ -133,13 +133,13 @@ const progress_bar = document.getElementById("progress_bar");
 const indicator_pointer = document.getElementById("indicator_pointer");
 const indicator_text = document.getElementById("indicator_text");
 
-const arc_value = 189.5;
+const main_calories_dashoffset = 189.5;
 const initial_rotation_indication = -128;
 
 function updateCalorieProgressBar(value, goal) {
     let normalize = value / goal * 100;
     if (normalize > 100) normalize = 100;
-    const stroke_dashoffset_value = arc_value * (100 - normalize) / 100;
+    const stroke_dashoffset_value = main_calories_dashoffset * (100 - normalize) / 100;
     const rotate_zvalue = (initial_rotation_indication) * (50 - normalize) / 50;
 
     progress_bar.style.strokeDashoffset = stroke_dashoffset_value;
@@ -529,7 +529,6 @@ date_input.addEventListener("change", (e) => {
     now.setHours(0, 0, 0, 0);
     /* now = new Date(date_input.value); */
 
-
     updateTodayDate();
     updateWeekDate(); // TODO: can probably move this into the week range checker below
     DashboardUI.resetMealLists(MEAL_LISTS);
@@ -539,6 +538,11 @@ date_input.addEventListener("change", (e) => {
     let snacks = getActiveMealNumbers(MEALS[4].ui_numbers);
     let meals = [breakfast, lunch, dinner, snacks];
     DashboardUI.resetUI(meals, MAINS);
+
+    // reset progress bar
+    progress_bar.style.strokeDashoffset = main_calories_dashoffset;
+    indicator_pointer.style.transform = `rotateZ(${initial_rotation_indication}deg)`;
+    indicator_text.firstChild.textContent = 0;
 
     if (!(week_range.start <= now && now <= week_range.end)) {
         week_range = DateUtil.getWeekRange(now);
