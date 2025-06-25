@@ -29,7 +29,7 @@ function createSearchListItemForm(meal, date_in, item) {
 
     const meal_type = document.createElement("input");
     meal_type.type = "hidden";
-    meal_type.name = "meal_id";
+    meal_type.name = "meal_type";
     meal_type.value = meal;
 
     const date = document.createElement("input");

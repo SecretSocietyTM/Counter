@@ -38,7 +38,7 @@ let week_summary = [];
 
 const searchlist_array = new FoodManager();
 
-let meal_id = null;
+let meal_type = null;
 let active_form = null;
 
 const real_now = new Date();
@@ -316,7 +316,7 @@ diary.addEventListener("click", async (e) => {
 // open search dialog events
 addfood_btns.forEach(btn => {
     btn.addEventListener("click", (e) => {
-        meal_id = e.target.closest("button").dataset.meal_id;
+        meal_type = e.target.closest("button").dataset.meal_type;
         search_dialog.style.display = "flex";
         search_dialog.showModal();
     });
@@ -428,7 +428,7 @@ searchlist.addEventListener("click", async (e) => {
         const data = await DashboardAPI.addToDiary(form_obj);
 
         if (data.success) {
-            const meal = getActiveMeal(meal_id);
+            const meal = getActiveMeal(meal_type);
             const meal_numbers = getActiveMealNumbers(meal.ui_numbers);
 
             week_summary[now.getDay()] = data.summary;
@@ -508,7 +508,7 @@ searchlist.addEventListener("click", async (e) => {
     if (!searchlist_whole) return;
     if (searchlist_whole.children.length == 2) return;
     let item = searchlist_array.getFoodById(searchlist_whole.dataset.id, "food_id");
-    active_form = DashboardUI.createSearchListItemForm(meal_id, now.toDateString(), item);
+    active_form = DashboardUI.createSearchListItemForm(meal_type, now.toDateString(), item);
     searchlist_whole.appendChild(active_form);
     active_form.querySelector("[name='servsize']").focus();
 });
