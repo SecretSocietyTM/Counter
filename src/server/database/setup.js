@@ -8,8 +8,7 @@ async function setup() {
             user_id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
-            calorie_goal INTEGER,
-            last_log_date TEXT
+            calorie_goal INTEGER
         );
 
         CREATE TABLE IF NOT EXISTS foods (
