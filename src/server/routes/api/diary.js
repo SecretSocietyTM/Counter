@@ -32,7 +32,7 @@ router.route("/")
         }
 
         // TODO: calculations should be done elsewhere, possibly create a new file
-        let ratio = parseInt(food_info.servsize) / parseInt(base.serving_size);
+        let ratio = +food_info.servsize / +base.serving_size;
         let cal = Math.round(ratio * base.calories);
         let fat = Math.round(ratio * base.fat * 10) / 10;
         let carb = Math.round(ratio * base.carbs * 10) / 10;
