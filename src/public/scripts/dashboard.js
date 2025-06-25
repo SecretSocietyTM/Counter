@@ -713,6 +713,9 @@ async function fetchWeeklySummary(date) {
                 const carb_progress = macro_graph_bars[i].querySelector(".carb-progress-bar");
                 const prot_progress = macro_graph_bars[i].querySelector(".prot-progress-bar");
                 let total = week_summary[i].fat + week_summary[i].carbs + week_summary[i].protein;
+                if (!total) {
+                    continue;
+                }
                 let fat_perc = week_summary[i].fat / total;
                 let carb_perc = week_summary[i].carbs / total;
                 let prot_perc = week_summary[i].protein / total;
