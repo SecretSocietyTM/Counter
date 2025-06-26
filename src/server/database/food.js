@@ -6,7 +6,8 @@ async function addFood(uid, item) {
         INSERT INTO foods 
         (user_id, name, serving_size, unit, calories, fat, carbs, protein) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?) 
-        RETURNING *`,
+        RETURNING 
+        food_id, name, serving_size, unit, calories, fat, carbs, protein`,
         [uid, item.name, item.servsize, item.unit,
         item.cal, item.fat, item.carb, item.prot]
     );
@@ -20,7 +21,8 @@ async function editFood(uid, fid, item) {
         UPDATE foods 
         SET name=?, serving_size=?, unit=?, calories=?, fat=?, carbs=?, protein=?
         WHERE user_id=? AND food_id=? 
-        RETURNING *`,
+        RETURNING 
+        food_id, name, serving_size, unit, calories, fat, carbs, protein`,
         [item.name, item.servsize, item.unit, item.cal,
         item.fat, item.carb, item.prot, uid, fid]
     );
@@ -33,7 +35,8 @@ async function deleteFood(uid, fid) {
     const result = await db.get(`
         DELETE FROM foods 
         WHERE user_id=? AND food_id=? 
-        RETURNING food_id`,
+        RETURNING 
+        food_id, name, serving_size, unit, calories, fat, carbs, protein`,
         [uid, fid]
     );
     await db.close();
@@ -48,13 +51,16 @@ async function getNFoods(uid, last_fid, n = 15, str=undefined) {
         let result;
         if (!str) {
             result = await db.get(`
-                SELECT * 
+                SELECT 
+                food_id, name, serving_size, unit, calories, fat, carbs, protein 
                 FROM foods 
                 WHERE user_id=? AND food_id>?`,
                 [uid, fid]
             );
         } else {
-            result = await db.get(`SELECT * 
+            result = await db.get(`
+                SELECT 
+                food_id, name, serving_size, unit, calories, fat, carbs, protein 
                 FROM foods 
                 WHERE user_id=? AND food_id>? AND name LIKE ?`,
                 [uid, fid, `%${str}%`]
@@ -71,7 +77,8 @@ async function getNFoods(uid, last_fid, n = 15, str=undefined) {
 async function getFoodById(uid, fid) {
     const db = await connectDB();
     let result = await db.get(`
-        SELECT * 
+        SELECT 
+        food_id, name, serving_size, unit, calories, fat, carbs, protein 
         FROM foods 
         WHERE user_id=? AND food_id=?`,
         [uid, fid]
@@ -111,4 +118,4 @@ module.exports = {
     getNFoods,
     getFoodById,
     getFoodCount
-}
+};

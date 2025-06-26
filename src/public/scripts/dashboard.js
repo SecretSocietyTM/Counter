@@ -240,7 +240,7 @@ diary.addEventListener("click", async (e) => {
     const data = await DashboardAPI.deleteFromDiary(li.dataset.id);
 
     if (data.success) {
-        meal.array.delete(data.id, "entry_id");
+        meal.array.delete(data.item.entry_id, "entry_id");
         li.remove();
 
         week_summary[now.getDay()] = data.summary;

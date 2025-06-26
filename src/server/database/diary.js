@@ -7,7 +7,9 @@ async function addFood(uid, item) {
         (user_id, food_id, date, meal_type, name, 
         serving_size, unit, calories, fat, carbs, protein) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
-        RETURNING *`,
+        RETURNING 
+        entry_id, date, meal_type, 
+        food_id, name, serving_size, unit, calories, fat, carbs, protein`,
         [uid, item.food_id, item.date, item.meal_type, 
         item.name, item.servsize, item.unit, item.cal, 
         item.fat, item.carb, item.prot]
@@ -19,7 +21,9 @@ async function addFood(uid, item) {
 async function getFoodsByDate(uid, date) {
     const db = await connectDB();
     let result = await db.all(`
-        SELECT * 
+        SELECT 
+        entry_id, date, meal_type, 
+        food_id, name, serving_size, unit, calories, fat, carbs, protein 
         FROM diary 
         WHERE user_id=? AND date=?`,
         [uid, date]
@@ -33,7 +37,9 @@ async function deleteFood(uid, entry_id) {
     const result = await db.get(`
         DELETE FROM diary 
         WHERE user_id=? AND entry_id=? 
-        RETURNING *`,
+        RETURNING 
+        entry_id, date, meal_type, 
+        food_id, name, serving_size, unit, calories, fat, carbs, protein`,
         [uid, entry_id]
     );
     await db.close();
@@ -60,7 +66,7 @@ async function updateDailySummary(uid, item) {
             UPDATE daily_summary 
             SET calories=?, fat=?, carbs=?, protein=?
             WHERE user_id=? AND date=? 
-            RETURNING *`,
+            RETURNING calories, fat, carbs, protein`,
             [updated_cal, updated_fat, updated_carb, updated_prot,
             uid, item.date]
         );
@@ -69,7 +75,7 @@ async function updateDailySummary(uid, item) {
             INSERT INTO daily_summary 
             (user_id, date, calories, fat, carbs, protein)
             VALUES (?, ?, ?, ?, ?, ?)
-            RETURNING *`,
+            RETURNING calories, fat, carbs, protein`,
             [uid, item.date, item.calories, item.fat, item.carbs, item.protein]
         );        
     }
@@ -82,7 +88,7 @@ async function getWeeklySummary(uid, dates) {
     const db = await connectDB();
     for (const date of dates) {
         let result = await db.get(`
-            SELECT * 
+            SELECT calories, fat, carbs, protein 
             FROM daily_summary
             WHERE user_id=? AND date=?`,
             [uid, date]
@@ -99,4 +105,4 @@ module.exports = {
     deleteFood,
     updateDailySummary,
     getWeeklySummary
-}
+};

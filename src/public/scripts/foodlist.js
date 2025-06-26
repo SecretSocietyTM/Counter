@@ -167,10 +167,10 @@ delete_btn.addEventListener("click", async () => {
     if (data.success) {
         let total = getActiveTotalCount(); 
 
-        getActiveFoodList().delete(data.id, "food_id");
+        getActiveFoodList().delete(data.item.food_id, "food_id");
         if (flag_searching) {
-            if (foodlist_array.getFoodById(data.id, "food_id")) {
-                foodlist_array.delete(data.id, "food_id");
+            if (foodlist_array.getFoodById(data.item.food_id, "food_id")) {
+                foodlist_array.delete(data.item.food_id, "food_id");
                 total_count--;
             }
         }
