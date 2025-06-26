@@ -19,7 +19,7 @@ router.route("/")
         }
 
         let entries = mapper.mapEntries(result);
-        return res.json( {success: true, items: entries });
+        return res.json( {success: true, entries });
     })
     .post(async (req, res) => {
         const food_info = req.body;
@@ -40,7 +40,7 @@ router.route("/")
 
         let entry = mapper.mapEntry(result);
         let summary = mapper.mapSummary(_result);
-        return res.json({ success: true, item: entry, summary: summary });
+        return res.json({ success: true, entry, summary });
     });
 
 router.delete("/:id", async (req, res) => {
@@ -58,7 +58,7 @@ router.delete("/:id", async (req, res) => {
 
     let entry = mapper.mapEntry(result);
     let summary = mapper.mapSummary(_result)
-    return res.json({ success: true, item: entry, summary: summary });
+    return res.json({ success: true, entry, summary });
 });
 
 router.get("/summary",async (req, res) => {
@@ -74,10 +74,8 @@ router.get("/summary",async (req, res) => {
     }
 
     let summaries = mapper.mapSummaries(result);
-    return res.json({ success: true, weekly_summary: summaries });
+    return res.json({ success: true, summaries });
 });
 
 
 module.exports = router;
-
-// TODO: REMOVE ALL CONSOLE.LOGS, it looks good

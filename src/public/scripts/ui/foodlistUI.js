@@ -16,12 +16,12 @@ function createListItem(item) {
     div_numbers.className = "info__numbers";
 
     const servsizeunit = GenUI.createServingUnit(
-        item.serving_size, item.unit, ["servsize"], ["unit"]);
+        item.servsize, item.unit, ["servsize"], ["unit"]);
 
-    const cal = GenUI.createMacro(item.calories, "cal", ["cal"]);
+    const cal = GenUI.createMacro(item.cal, "cal", ["cal"]);
     const fat = GenUI.createMacro(item.fat, undefined, ["fat"]);
-    const carb = GenUI.createMacro(item.carbs, undefined, ["carb"]);
-    const prot = GenUI.createMacro(item.protein, undefined, ["prot"]);
+    const carb = GenUI.createMacro(item.carb, undefined, ["carb"]);
+    const prot = GenUI.createMacro(item.prot, undefined, ["prot"]);
 
     const dot = document.createElement("p");
     dot.className = "dot";
@@ -43,22 +43,22 @@ function createListItem(item) {
 
 function updateListItem(item, listitem) {
     listitem.querySelector(".name").textContent = item.name;
-    listitem.querySelector(".servsize").textContent = item.serving_size;
+    listitem.querySelector(".servsize").textContent = item.servsize;
     listitem.querySelector(".unit").textContent = item.unit;
-    listitem.querySelector(".cal").textContent = item.calories;
+    listitem.querySelector(".cal").textContent = item.cal;
     listitem.querySelector(".fat").textContent = item.fat;
-    listitem.querySelector(".carb").textContent = item.carbs;
-    listitem.querySelector(".prot").textContent = item.protein;
+    listitem.querySelector(".carb").textContent = item.carb;
+    listitem.querySelector(".prot").textContent = item.prot;
 }
 
 function updateForm(form, item) {
     form.querySelector("[name='name']").value = item.name;
-    form.querySelector("[name='servsize']").value = item.serving_size;
+    form.querySelector("[name='servsize']").value = item.servsize;
     form.querySelector("[name='unit']").value = item.unit;
-    form.querySelector("[name='cal']").value = item.calories;
+    form.querySelector("[name='cal']").value = item.cal;
     form.querySelector("[name='fat']").value = item.fat;
-    form.querySelector("[name='carb']").value = item.carbs;
-    form.querySelector("[name='prot']").value = item.protein;
+    form.querySelector("[name='carb']").value = item.carb;
+    form.querySelector("[name='prot']").value = item.prot;
 }
 
 export { 

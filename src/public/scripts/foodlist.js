@@ -115,6 +115,10 @@ submit_btn.addEventListener("click", async (e) => {
     const method = submit_btn.dataset.method;
     let endpoint = "api/food";
 
+    // TODO: instead of swapping the method of the button, just add another button
+    // for "SAVING" that is dislpayed when the edit button is pressed.
+    // allows for two event listeners, one for save and add
+    // new names: addfood_btn, addfood_submit_btn, editfood_btn, editfood_submit_btn
     if (method == "PATCH") endpoint += `/${cur_listitem.dataset.id}`
 
     const form_data = new FormData(foodform);
@@ -136,16 +140,17 @@ submit_btn.addEventListener("click", async (e) => {
         if (method == "POST") {
             if (!flag_searching) {
                 if (foodlist_array.size() == total_count) {
-                    foodlist_array.add(data.item);
-                    foodlist.appendChild(FoodlistUI.createListItem(data.item));
+                    foodlist_array.add(data.food);
+                    foodlist.appendChild(FoodlistUI.createListItem(data.food));
                     total_count++;
                 }
             }
         } 
         else if (method == "PATCH") {
-            getActiveFoodList().updateFood(data.item.food_id, data.item);
-            if (foodlist_array.getFoodById(data.item.food_id, "food_id")) foodlist_array.updateFood(data.item.food_id, data.item);
-            FoodlistUI.updateListItem(data.item, cur_listitem);
+            // TODO: below function .updateFood might need to be changed just for clarity
+            getActiveFoodList().updateFood(data.food.food_id, data.food);
+            if (foodlist_array.getFoodById(data.food.food_id, "food_id")) foodlist_array.updateFood(data.food.food_id, data.food);
+            FoodlistUI.updateListItem(data.food, cur_listitem);
         }
         dialog.close();
         addfood_btn.blur();
@@ -167,10 +172,10 @@ delete_btn.addEventListener("click", async () => {
     if (data.success) {
         let total = getActiveTotalCount(); 
 
-        getActiveFoodList().delete(data.item.food_id, "food_id");
+        getActiveFoodList().delete(data.food.food_id, "food_id");
         if (flag_searching) {
-            if (foodlist_array.getFoodById(data.item.food_id, "food_id")) {
-                foodlist_array.delete(data.item.food_id, "food_id");
+            if (foodlist_array.getFoodById(data.food.food_id, "food_id")) {
+                foodlist_array.delete(data.food.food_id, "food_id");
                 total_count--;
             }
         }
@@ -190,13 +195,13 @@ async function fetchInitFood() {
     const data = await res.json();
 
     if (data.success) {
-        if (data.items.length == 0) {
+        if (data.foods.length == 0) {
             total_count = 0;
             return;
         }
-        for (let i = 0; i < data.items.length; i++) {
-            foodlist_array.add(data.items[i]);
-            foodlist.appendChild(FoodlistUI.createListItem(data.items[i]));
+        for (let i = 0; i < data.foods.length; i++) {
+            foodlist_array.add(data.foods[i]);
+            foodlist.appendChild(FoodlistUI.createListItem(data.foods[i]));
         }
         observer.observe(foodlist.lastElementChild);
         cur_observed_listitem = foodlist.lastElementChild;
@@ -213,9 +218,9 @@ async function fetchMoreFood(str = undefined) {
     const data = await res.json();
 
     if (data.success) {
-        for (let i = 0; i < data.items.length; i++) {
-            activelist.add(data.items[i]);
-            foodlist.appendChild(FoodlistUI.createListItem(data.items[i]));
+        for (let i = 0; i < data.foods.length; i++) {
+            activelist.add(data.foods[i]);
+            foodlist.appendChild(FoodlistUI.createListItem(data.foods[i]));
         }
     } else {
         alert(data.errmsg);
@@ -248,9 +253,9 @@ search_input.addEventListener("input", async (e) => {
         if (data.success) {
             if (data.count == 0) return;
             flag_searching = true;
-            for (let i = 0; i < data.items.length; i++) {
-                s_foodlist_array.add(data.items[i]);
-                foodlist.appendChild(FoodlistUI.createListItem(data.items[i]));
+            for (let i = 0; i < data.foods.length; i++) {
+                s_foodlist_array.add(data.foods[i]);
+                foodlist.appendChild(FoodlistUI.createListItem(data.foods[i]));
             }
             observer.observe(foodlist.lastElementChild);
             cur_observed_listitem = foodlist.lastElementChild;

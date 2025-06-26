@@ -23,7 +23,7 @@ router.route("/")
 
         let foods = mapper.mapFoods(result);
         let count = _result.x;
-        return res.json( {success: true, items: foods, count });
+        return res.json( {success: true, foods, count });
     })
     .post(async (req, res) => {
         const item = req.body;
@@ -38,7 +38,7 @@ router.route("/")
         }
 
         let food = mapper.mapFood(result);
-        return res.json({ success: true, item: food });
+        return res.json({ success: true, food });
     });
 
 
@@ -57,7 +57,7 @@ router.route("/:id")
         }
 
         let food = mapper.mapFood(result);
-        return res.json({ success: true, item: food });      
+        return res.json({ success: true, food });      
     })
     .delete(async (req, res) => {
         const fid = req.params.id;
@@ -72,7 +72,7 @@ router.route("/:id")
         }
 
         let food = mapper.mapFood(result);
-        return res.json({ success: true, item: food })
+        return res.json({ success: true, food })
     });
 
 module.exports = router;
