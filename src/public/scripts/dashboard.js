@@ -401,7 +401,7 @@ search_input.addEventListener("input", async (e) => {
 
     if (searchterm.length == 0) return;
 
-    const data = await DashboardAPI.getFoods(searchterm);
+    const data = await DashboardAPI.getFoods(0, searchterm);
 
     if (data.success) {
         if (data.count == 0) return;

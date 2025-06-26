@@ -1,5 +1,6 @@
 import { FoodManager } from "./util/foodmanager.js";
 import * as FoodlistUI from "./ui/foodlistUI.js";
+import * as FoodlistAPI from "./api/foodlistAPI.js";
 
 
 const foodlist_array = new FoodManager()
@@ -121,13 +122,7 @@ addfood_submit_btn.addEventListener("click", async (e) => {
         return;
     }
 
-    const res = await fetch("api/food", {
-        method: "POST",
-        headers: { "Content-Type" : "application/json" },
-        body: JSON.stringify(form_obj)
-    });
-
-    const data = await res.json();
+    const data = await FoodlistAPI.addFood(form_obj);
 
     if (data.success) {
         if (!flag_searching) {
@@ -148,19 +143,14 @@ addfood_submit_btn.addEventListener("click", async (e) => {
 editfood_submit_btn.addEventListener("click", async (e) => {
     const form_data = new FormData(foodform);
     const form_obj = Object.fromEntries(form_data.entries());
+    const food_id = cur_listitem.dataset.id;
 
     if (!foodform.checkValidity()) {
         foodform.reportValidity();
         return;
     }
 
-    const res = await fetch(`api/food/${cur_listitem.dataset.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type" : "application/json" },
-        body: JSON.stringify(form_obj)
-    });
-
-    const data = await res.json();
+    const data = await FoodlistAPI.editFood(food_id, form_obj);
 
     if (data.success) {
         // TODO: below function .updateFood might need to be changed just for clarity
@@ -176,13 +166,9 @@ editfood_submit_btn.addEventListener("click", async (e) => {
 });
 
 delete_btn.addEventListener("click", async () => {
-    const id = cur_listitem.dataset.id;
+    const food_id = cur_listitem.dataset.id;
 
-    const res = await fetch(`api/food/${id}`, {
-        method: "DELETE"   
-    });
-
-    let data = await res.json();
+    const data = await FoodlistAPI.deleteFood(food_id);
 
     if (data.success) {
         let total = getActiveTotalCount(); 
@@ -206,8 +192,7 @@ delete_btn.addEventListener("click", async () => {
 
 // fetch food 
 async function fetchInitFood() {
-    const res = await fetch("api/food?last_item=0");
-    const data = await res.json();
+    const data = await FoodlistAPI.getFoods(0, undefined);
 
     if (data.success) {
         if (data.foods.length == 0) {
@@ -226,11 +211,11 @@ async function fetchInitFood() {
     }
 }
 
-async function fetchMoreFood(str = undefined) {
+async function fetchMoreFood(searchterm = undefined) {
     let activelist = getActiveFoodList();
     let last_listitem = activelist.foods[activelist.size() - 1];
-    const res = await fetch(`api/food?last_item=${last_listitem.food_id}&query=${str}`);
-    const data = await res.json();
+    
+    const data = await FoodlistAPI.getFoods(last_listitem.food_id, searchterm);
 
     if (data.success) {
         for (let i = 0; i < data.foods.length; i++) {
@@ -262,8 +247,7 @@ search_input.addEventListener("input", async (e) => {
         cur_observed_listitem = foodlist.lastElementChild;
         foodlist.scrollTop = 0;
     } else {
-        const res = await fetch(`api/food?last_item=0&query=${searchterm}`); 
-        const data = await res.json();
+        const data = await FoodlistAPI.getFoods(0, searchterm);
 
         if (data.success) {
             if (data.count == 0) return;
