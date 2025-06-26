@@ -26,7 +26,8 @@ const foodlist = document.getElementById("foodlist");
 const dialog = document.querySelector("dialog");
 const dlg_title = document.getElementById("dialog_title");
 const delete_btn = document.getElementById("delete_btn");
-const submit_btn = document.getElementById("submit_btn");
+const editfood_submit_btn = document.getElementById("editfood_submit_btn");
+const addfood_submit_btn = document.getElementById("addfood_submit_btn");
 const foodform = document.getElementById("foodform");
 
 const search_input = document.getElementById("searchbar_input");
@@ -64,8 +65,8 @@ const observer = new IntersectionObserver(async entries => {
 addfood_btn.addEventListener("click", () => {
     dlg_title.textContent = "Add New Food";
     delete_btn.style.visibility = "hidden";
-    submit_btn.textContent = "Add Food";
-    submit_btn.dataset.method = "POST";
+    editfood_submit_btn.style.display = "none";
+    addfood_submit_btn.style.display = "";
     dialog.showModal();
 });
 
@@ -75,8 +76,8 @@ foodlist.addEventListener("click", (e) => {
     if (editfood_btn) {
         dlg_title.textContent = "Edit Your Food";
         delete_btn.style.visibility = "visible";
-        submit_btn.textContent = "Save";
-        submit_btn.dataset.method = "PATCH";
+        editfood_submit_btn.style.display = "";
+        addfood_submit_btn.style.display = "none"
 
         const li = e.target.closest("li");
         const item = getActiveFoodList().getFoodById(li.dataset.id, "food_id");
@@ -111,16 +112,7 @@ dialog.addEventListener("click", (e) => {
 });
 
 /* form button events */
-submit_btn.addEventListener("click", async (e) => {
-    const method = submit_btn.dataset.method;
-    let endpoint = "api/food";
-
-    // TODO: instead of swapping the method of the button, just add another button
-    // for "SAVING" that is dislpayed when the edit button is pressed.
-    // allows for two event listeners, one for save and add
-    // new names: addfood_btn, addfood_submit_btn, editfood_btn, editfood_submit_btn
-    if (method == "PATCH") endpoint += `/${cur_listitem.dataset.id}`
-
+addfood_submit_btn.addEventListener("click", async (e) => {
     const form_data = new FormData(foodform);
     const form_obj = Object.fromEntries(form_data.entries());
 
@@ -129,36 +121,59 @@ submit_btn.addEventListener("click", async (e) => {
         return;
     }
 
-    const res = await fetch(endpoint, {
-        method: method,
+    const res = await fetch("api/food", {
+        method: "POST",
         headers: { "Content-Type" : "application/json" },
         body: JSON.stringify(form_obj)
     });
+
     const data = await res.json();
 
     if (data.success) {
-        if (method == "POST") {
-            if (!flag_searching) {
-                if (foodlist_array.size() == total_count) {
-                    foodlist_array.add(data.food);
-                    foodlist.appendChild(FoodlistUI.createListItem(data.food));
-                    total_count++;
-                }
+        if (!flag_searching) {
+            if (foodlist_array.size() == total_count) {
+                foodlist_array.add(data.food);
+                foodlist.appendChild(FoodlistUI.createListItem(data.food));
+                total_count++;
             }
-        } 
-        else if (method == "PATCH") {
-            // TODO: below function .updateFood might need to be changed just for clarity
-            getActiveFoodList().updateFood(data.food.food_id, data.food);
-            if (foodlist_array.getFoodById(data.food.food_id, "food_id")) foodlist_array.updateFood(data.food.food_id, data.food);
-            FoodlistUI.updateListItem(data.food, cur_listitem);
         }
         dialog.close();
         addfood_btn.blur();
-        foodform.reset();
+        foodform.reset();   
     } else {
         error_message.textContent = data.errmsg;
     }
-})
+});
+
+editfood_submit_btn.addEventListener("click", async (e) => {
+    const form_data = new FormData(foodform);
+    const form_obj = Object.fromEntries(form_data.entries());
+
+    if (!foodform.checkValidity()) {
+        foodform.reportValidity();
+        return;
+    }
+
+    const res = await fetch(`api/food/${cur_listitem.dataset.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type" : "application/json" },
+        body: JSON.stringify(form_obj)
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+        // TODO: below function .updateFood might need to be changed just for clarity
+        getActiveFoodList().updateFood(data.food.food_id, data.food);
+        if (foodlist_array.getFoodById(data.food.food_id, "food_id")) foodlist_array.updateFood(data.food.food_id, data.food);
+        FoodlistUI.updateListItem(data.food, cur_listitem);
+        dialog.close();
+        addfood_btn.blur();
+        foodform.reset();   
+    } else {
+        error_message.textContent = data.errmsg;
+    }
+});
 
 delete_btn.addEventListener("click", async () => {
     const id = cur_listitem.dataset.id;
