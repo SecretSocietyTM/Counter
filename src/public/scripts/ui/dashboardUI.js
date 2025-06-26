@@ -29,7 +29,7 @@ function createSearchListItemForm(meal, date_in, item) {
 
     const meal_type = document.createElement("input");
     meal_type.type = "hidden";
-    meal_type.name = "meal_id";
+    meal_type.name = "meal_type";
     meal_type.value = meal;
 
     const date = document.createElement("input");
@@ -99,23 +99,23 @@ function createSearchListItemForm(meal, date_in, item) {
     return form;
 }
 
-function createMealListItem(item) {
+function createEntry(entry) {
     const li = document.createElement("li");
     li.className = "whole-item";
-    li.dataset.id = item.entry_id;
+    li.dataset.id = entry.entry_id;
 
-    const entry = document.createElement("div");
-    entry.className = "item";
+    const div1 = document.createElement("div");
+    div1.className = "item";
 
     const name = document.createElement("p");
     name.classList.add("truncate", "max-w-75");
-    name.textContent = item.name;
+    name.textContent = entry.name;
 
-    const div = document.createElement("div");
-    div.className = "item__info";
+    const div2 = document.createElement("div");
+    div2.className = "item__info";
 
     const servsizeunit = GenUI.createServingUnit(
-        item.serving_size, item.unit, ["servsize"], ["unit"]);
+        entry.servsize, entry.unit, ["servsize"], ["unit"]);
 
     const trash_button = document.createElement("button");
     trash_button.type = "button";
@@ -126,22 +126,22 @@ function createMealListItem(item) {
 
     trash_button.appendChild(trash_image);
     
-    div.append(servsizeunit, trash_button);
-    entry.append(name, div);
-    li.append(entry, createEntryInfoElement(item));
+    div2.append(servsizeunit, trash_button);
+    div1.append(name, div2);
+    li.append(div1, createEntryInfo(entry));
     return li;
 }
 
-function createEntryInfoElement(item) {
+function createEntryInfo(entry) {
     const div = document.createElement("div");
     div.className = "item__subinfo";
 
-    const cals = GenUI.createMacro(item.calories, "cal", ["txt-prim-green"]);
-    const fat = GenUI.createMacro(item.fat, undefined, ["txt-acnt-yellow"]);
-    const carb = GenUI.createMacro(item.carbs, undefined, ["txt-acnt-lightblue"]);
-    const prot = GenUI.createMacro(item.protein, undefined, ["txt-acnt-purple2"]);
+    const cal = GenUI.createMacro(entry.cal, "cal", ["txt-prim-green"]);
+    const fat = GenUI.createMacro(entry.fat, undefined, ["txt-acnt-yellow"]);
+    const carb = GenUI.createMacro(entry.carb, undefined, ["txt-acnt-lightblue"]);
+    const prot = GenUI.createMacro(entry.prot, undefined, ["txt-acnt-purple2"]);
 
-    div.append(cals, fat, carb, prot);
+    div.append(cal, fat, carb, prot);
     return div;
 }
 
@@ -190,7 +190,7 @@ function resetUI(meals, mains) {
 export {
     createSearchListItem,
     createSearchListItemForm,
-    createMealListItem,
+    createEntry,
     updateMealNumbers,
     resetMealNumbers,
     resetMealLists,

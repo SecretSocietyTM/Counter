@@ -5,7 +5,7 @@ async function addUser(username, password) {
     const result = await db.get(`
         INSERT INTO users (username, password, calorie_goal) 
         VALUES (?, ?, ?) 
-        RETURNING *`,
+        RETURNING user_id`,
         [username, password, 0]
     );
     await db.close();
@@ -15,7 +15,7 @@ async function addUser(username, password) {
 async function authUser(username, password) {
     const db = await connectDB();
     const result = await db.get(`
-        SELECT * 
+        SELECT user_id 
         FROM users 
         WHERE username=? AND password=?`,
         [username, password]
@@ -54,4 +54,4 @@ module.exports = {
     authUser,
     getCalorieGoal,
     editCalorieGoal
-}
+};

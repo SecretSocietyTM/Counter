@@ -1,6 +1,7 @@
 const express = require("express");
 const router  = express.Router();
 const db      = require("../../database/index.js");
+const mapper  = require("./utils/mapper.js");
 
 
 router.route("/")
@@ -10,17 +11,19 @@ router.route("/")
         if (food_query === "undefined") food_query = undefined;
         const uid = req.session.user.id;
         let result;
-        let count;
+        let _result;
 
         try {
             result = await db.foodDB.getNFoods(uid, last_fid, undefined, food_query);
-            count = await db.foodDB.getFoodCount(uid, food_query);
+            _result = await db.foodDB.getFoodCount(uid, food_query);
         } catch (err) {
             console.error(err);
             return res.json({ success: false, errmsg: "Something went wrong, please try again" });
         }
 
-        return res.json( {success: true, items: result, count: count.x });
+        let foods = mapper.mapFoods(result);
+        let count = _result.x;
+        return res.json( {success: true, foods, count });
     })
     .post(async (req, res) => {
         const item = req.body;
@@ -34,7 +37,8 @@ router.route("/")
             return res.json({ success: false, errmsg: "Something went wrong, please try again" });
         }
 
-        return res.json({ success: true, item: result });
+        let food = mapper.mapFood(result);
+        return res.json({ success: true, food });
     });
 
 
@@ -52,7 +56,8 @@ router.route("/:id")
             return res.json({ success: false, errmsg: "Something went wrong, please try again" });
         }
 
-        return res.json({ success: true, item: result });      
+        let food = mapper.mapFood(result);
+        return res.json({ success: true, food });      
     })
     .delete(async (req, res) => {
         const fid = req.params.id;
@@ -66,7 +71,8 @@ router.route("/:id")
             return res.json({ success: false, errmsg: "Something went wrong, please try again "});
         }
 
-        return res.json({ success: true, id: result.food_id })
+        let food = mapper.mapFood(result);
+        return res.json({ success: true, food })
     });
 
 module.exports = router;

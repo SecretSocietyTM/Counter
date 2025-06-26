@@ -6,4 +6,4 @@ module.exports = {
     userDB,
     foodDB,
     diaryDB
-}
+};
