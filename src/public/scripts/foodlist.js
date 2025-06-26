@@ -75,15 +75,14 @@ addfood_btn.addEventListener("click", () => {
 foodlist.addEventListener("click", (e) => {
     const editfood_btn = e.target.closest(".editfood_btn");
     if (editfood_btn) {
-        dlg_title.textContent = "Edit Your Food";
-        delete_btn.style.visibility = "visible";
-        editfood_submit_btn.style.display = "";
-        addfood_submit_btn.style.display = "none"
-
         const li = e.target.closest("li");
         const item = getActiveFoodList().getFoodById(li.dataset.id, "food_id");
         cur_listitem = li;
         FoodlistUI.updateForm(foodform, item);
+        dlg_title.textContent = "Edit Your Food";
+        delete_btn.style.visibility = "visible";
+        editfood_submit_btn.style.display = "";
+        addfood_submit_btn.style.display = "none"
         dialog.showModal();
     }
 });
@@ -158,7 +157,6 @@ editfood_submit_btn.addEventListener("click", async (e) => {
         if (foodlist_array.getFoodById(data.food.food_id, "food_id")) foodlist_array.updateFood(data.food.food_id, data.food);
         FoodlistUI.updateListItem(data.food, cur_listitem);
         dialog.close();
-        addfood_btn.blur();
         foodform.reset();   
     } else {
         error_message.textContent = data.errmsg;
@@ -172,7 +170,6 @@ delete_btn.addEventListener("click", async () => {
 
     if (data.success) {
         let total = getActiveTotalCount(); 
-
         getActiveFoodList().delete(data.food.food_id, "food_id");
         if (flag_searching) {
             if (foodlist_array.getFoodById(data.food.food_id, "food_id")) {

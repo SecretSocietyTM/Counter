@@ -329,22 +329,6 @@ search_dialog.addEventListener("cancel", (e) => {
     search_dialog.close();
 });
 
-// close search dialog event (click outside of dialog)
-search_dialog.addEventListener("click", (e) => {
-    const dialog_dimensions = search_dialog.getBoundingClientRect();
-    if (
-        e.clientX < dialog_dimensions.left  ||
-        e.clientX > dialog_dimensions.right ||
-        e.clientY < dialog_dimensions.top   ||
-        e.clientY > dialog_dimensions.bottom
-    ) {
-        search_dialog.style.display = "none";
-        search_input.value = "";
-        searchlist.replaceChildren();
-        search_dialog.close();
-    }
-});
-
 // edit calorie goal events
 edit_goal_btn.addEventListener("click", (e) => {
     goal_calories.style.display = "none";
@@ -414,14 +398,14 @@ search_input.addEventListener("input", async (e) => {
     }
 });
 
-searchlist.addEventListener("click", async (e) => {
-    if (e.target.closest("#searchform_submit_btn")) {
-
-        const form_data = new FormData(active_form);
+function setupForm(form) {
+    form.addEventListener("click", async (e) => {
+        if (!e.target.closest("#searchform_submit_btn")) return;
+        const form_data = new FormData(form);
         const form_obj = Object.fromEntries(form_data.entries());
 
-        if (!active_form.checkValidity()) {
-            active_form.reportValidity();
+        if (!form.checkValidity()) {
+            form.reportValidity();
             return;
         }
 
@@ -491,26 +475,47 @@ searchlist.addEventListener("click", async (e) => {
             average_prot.textContent = avg_prot;
 
             search_input.value = "";
+            search_input.focus();
             searchlist.replaceChildren();
             active_form.remove();
             active_form = null;
         } else {
             alert(data.errmsg);
         }
+    });
+}
+
+/* git commit -am "refactor: improve searchlist event listener" */
+
+search_dialog.addEventListener("click", async (e) => {
+    const dialog_dimensions = search_dialog.getBoundingClientRect();
+    if (
+        e.clientX < dialog_dimensions.left  ||
+        e.clientX > dialog_dimensions.right ||
+        e.clientY < dialog_dimensions.top   ||
+        e.clientY > dialog_dimensions.bottom
+    ) {
+        search_dialog.style.display = "none";
+        search_input.value = "";
+        searchlist.replaceChildren();
+        search_dialog.close();
     }
 
-    if (e.target.closest(".item__form")) return;
-    if (active_form) {
+    if (e.target.closest("form")) return;
+    const searchlist_whole = e.target.closest(".searchlist__whole-item");
+    if (searchlist_whole && active_form) {
+        let remove = (searchlist_whole.children.length > 1) ? true : false;
         active_form.remove();
         active_form = null;
+        if (remove) return;
     }
-    const searchlist_whole = e.target.closest(".searchlist__whole-item")
-    if (!searchlist_whole) return;
-    if (searchlist_whole.children.length == 2) return;
-    let item = searchlist_array.getFoodById(searchlist_whole.dataset.id, "food_id");
-    active_form = DashboardUI.createSearchListItemForm(meal_type, now.toDateString(), item);
-    searchlist_whole.appendChild(active_form);
-    active_form.querySelector("[name='servsize']").focus();
+    if (!searchlist_whole.querySelector("form")) {
+        const item = searchlist_array.getFoodById(searchlist_whole.dataset.id, "food_id");
+        active_form = DashboardUI.createSearchListItemForm(meal_type, now.toDateString(), item);
+        setupForm(active_form);
+        searchlist_whole.appendChild(active_form);
+        active_form.querySelector("[name='servsize']").focus();
+    }  
 });
 
 date_input.addEventListener("change", (e) => {
@@ -672,6 +677,8 @@ async function fetchWeeklySummary(date) {
                     over_progress.style.stroke = "var(--clr-neutral-40)";
                     over_progress.style.strokeDashoffset = 0;
                     whole_progress.style.strokeDashoffset = 0;                    
+                } else if (now > real_week_range.end) {
+                    continue;
                 } else {
                     if (i < real_now.getDay()) {
                         // TODO: refactor into a function
