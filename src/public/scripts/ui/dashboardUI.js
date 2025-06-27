@@ -7,7 +7,7 @@ const text_colors = {
     prot: "txt-acnt-purple"
 }
 
-// Helper functions
+// helpers
 function createEntryInfo(entry) {
     const div = document.createElement("div");
     div.className = "item__subinfo";
@@ -36,6 +36,7 @@ function setUnitSelect(select, unit) {
 }
 
 
+// element creators
 export function createSearchResult(food) {
     const li = document.createElement("li");
     li.className = "searchlist__whole-item";
@@ -141,63 +142,53 @@ export function createEntry(entry) {
 }
 
 
-export function setMealNutritionUI(ui, obj) {
+
+// setters
+export function setCalorieStatsUI(ui, obj) {
     for (const key in ui) {
-        if (obj[key] > 0) {
-            ui[key].classList.toggle("fw-b", true);
-            ui[key].classList.toggle(text_colors[key], true);
-        } else {
-            ui[key].classList.toggle("fw-b");
-            ui[key].classList.toggle(text_colors[key]);
-        }
         ui[key].textContent = obj[key];
     }
 }
 
-export function setMacrosUI(ui, obj) {
-    for (const key in macros) {
-        if (macros_obj[key] > 0) ui[key].className = "card__value on";
-        else ui[key].className = "card__value off";
-        ui[key].textContent = obj[i];
-    }
-}
-
-// TODO: since its "resetDiaryUI" could also use setMealNutritionUI here since this is likely used next to that anyway
-export function resetDiaryUI(ui) {
+export function setMacroStatsUI(ui, obj) {
     for (const key in ui) {
-        ui[key].replaceChildren();
+        if (obj[key] > 0) ui[key].className = "card__value on";
+        else ui[key].className = "card__value off";
+        ui[key].textContent = obj[key];
     }
 }
 
-// TODO:  could probably get rid of this... or use above export functions as a helper
-export function resetUI(meals, cal_type, macros) {
-    meals.forEach(meal => {
-        for (let val in meal) {
-            meal[val].textContent = 0;
+export function setMealStatsUI(ui, obj) {
+    const mealstats = {
+        cal: ui.querySelector(".cal"),
+        fat: ui.querySelector(".fat"),
+        carb: ui.querySelector(".carb"),
+        prot: ui.querySelector(".prot")
+    }
+    for (const key in mealstats) {
+        if (obj[key] > 0) {
+            mealstats[key].classList.toggle("fw-b", true);
+            mealstats[key].classList.toggle(text_colors[key], true);
+        } else {
+            mealstats[key].classList.toggle("fw-b", false);
+            mealstats[key].classList.toggle(text_colors[key], false);
         }
-    });
-
-    cal_type.forEach(type => {
-        type.textContent = 0;
-    });
-
-    macros.forEach(macro => {
-        macro.textContent = 0;
-    });
+        mealstats[key].textContent = obj[key];
+    }
 }
 
+export function setActiveDate(ui, date) {
+    ui.textContent = date;
+}
 
-// TODO: likely reuse to set total eaten as well.
-export function setCalorieInfoUI(ui, obj) {
-    ui.remaining.textContent = obj.remaining;
-    ui.over.textContent = obj.over;
+export function setWeekDate(ui, date) {
+    ui.textContent = `${date.start} - ${date.end}`;
 }
 
 export function setWeeklyAveragesUI(ui, obj) {
     for (const key in ui) { ui[key].textContent = obj[key]};
 }
 
-// sets the calorie dial
 export function setCalDial(ui, obj) {
     let normalize = obj.total / obj.goal * 100;
     if (normalize > 100) normalize = 100;
@@ -206,16 +197,9 @@ export function setCalDial(ui, obj) {
 
     ui.bar.style.strokeDashoffset = stroke_dashoffset_value;
     ui.pointer.style.transform = `rotateZ(${rotate_zvalue}deg)`;
-    ui.text.firstChild.textContent = total;
+    ui.text.firstChild.textContent = obj.total;
 }
 
-export function resetCalDial(dial) {
-    dial.bar.style.strokeDashoffset = dial.dashoffset;
-    dial.pointer.style.transform = `rotateZ(${dial.rotation}deg)`;
-    dial.text.firstChild.textContent = 0;    
-}
-
-// sets a single bar
 export function setCalorieGraphBar(bar, value, dashoffsets) {
     const goal = bar.querySelector(".goal-progress-bar");
     const over = bar.querySelector(".over-progress-bar");
@@ -253,7 +237,6 @@ export function setMacroGraphBar(bar, percentages) {
     }
 }
 
-// sets bar to inactive (null)
 export function setCalorieBarNull(bar) {
     const goal = bar.querySelector(".goal-progress-bar");
     const over = bar.querySelector(".over-progress-bar");
@@ -268,6 +251,69 @@ export function setMacroBarNull(bar) {
     const nill = bar.querySelector(".null-progress-bar");
     nill.style.strokeDashoffset = 0;
 }
+
+
+
+// resetters
+export function resetDiaryUI(meallists, mealstats) {
+    for (const key in meallists) {
+        meallists[key].replaceChildren();
+        setMealStatsUI(mealstats[key], {cal: 0, fat: 0, carb: 0, prot: 0});
+    }
+}
+
+export function resetCalDial(dial) {
+    dial.bar.style.strokeDashoffset = dial.dashoffset;
+    dial.pointer.style.transform = `rotateZ(${dial.rotation}deg)`;
+    dial.text.firstChild.textContent = 0;    
+}
+
+export function resetCalorieGraphBar(bar, dashoffsets) {
+    const goal = bar.querySelector(".goal-progress-bar");
+    const over = bar.querySelector(".over-progress-bar");
+    
+    goal.style.stroke = "var(--clr-primary-green)";
+    goal.style.strokeDashoffset = dashoffsets.goal;
+    over.style.stroke = "var(--clr-primary-red)";
+    over.style.strokeDashoffset = dashoffsets.over;
+}
+
+export function resetMacroGraphBar(bar) {
+    const macros = {
+        fat: bar.querySelector(".fat-progress-bar"),
+        carb: bar.querySelector(".carb-progress-bar"),
+        prot: bar.querySelector(".prot-progress-bar")
+    }
+    for (const key in macros) {
+        macros[key].setAttribute("y1", 0);
+        macros[key].setAttribute("y2", 0);
+        macros[key].style.opacity = "0";
+        macros[key].style.strokeDasharray = 0;
+        macros[key].style.strokeDashoffset = 0;
+    }
+}
+
+export function resetMacroBarNull(bar, dashoffsets) {
+    const nill = bar.querySelector(".null-progress-bar");
+    nill.style.strokeDashoffset = dashoffsets.null;
+}
+
+export function resetGraphs(graphs) {
+    for (let i = 0; i < 7; i++) {
+        resetCalorieGraphBar(graphs.cal_bars[i], graphs.dashoffsets);
+        resetMacroGraphBar(graphs.macro_bars[i]);
+        resetMacroBarNull(graphs.macro_bars[i], graphs.dashoffsets);
+    }
+}
+
+export function resetAllUI(meallists, mealstats, dial, calstats, macros) {
+    resetDiaryUI(meallists, mealstats);
+    setCalorieStatsUI(calstats, {goal: 0, remaining: 0, over: 0});
+    setMacroStatsUI(macros, {fat: 0, carb: 0, prot: 0});
+    resetCalDial(dial);
+}
+
+
 
 
 // getters
