@@ -141,33 +141,32 @@ export function createEntry(entry) {
 }
 
 
-export function setMealUI(ui_numbers, values) {
-    for (const key in ui_numbers) {
-        if (values[key] > 0) {
-            ui_numbers[key].classList.toggle("fw-b", true);
-            ui_numbers[key].classList.toggle(text_colors[key], true);
+export function setMealNutritionUI(ui, obj) {
+    for (const key in ui) {
+        if (obj[key] > 0) {
+            ui[key].classList.toggle("fw-b", true);
+            ui[key].classList.toggle(text_colors[key], true);
         } else {
-            ui_numbers[key].classList.toggle("fw-b");
-            ui_numbers[key].classList.toggle(text_colors[key]);
+            ui[key].classList.toggle("fw-b");
+            ui[key].classList.toggle(text_colors[key]);
         }
-        ui_numbers[key].textContent = values[key];
+        ui[key].textContent = obj[key];
     }
 }
 
-export function setMacrosUI(macros, macros_obj) {
-    const macros_obj_values = Object.values(macros_obj);
-    for (let i = 0; i < macros.length; i++) {
-        if (macros_obj_values[i] > 0) macros[i].className = "card__value on";
-        else macros[i].className = "card__value off";
-        macros[i].textContent = macros_obj_values[i];
+export function setMacrosUI(ui, obj) {
+    for (const key in macros) {
+        if (macros_obj[key] > 0) ui[key].className = "card__value on";
+        else ui[key].className = "card__value off";
+        ui[key].textContent = obj[i];
     }
 }
 
-// TODO: since its "resetDiaryUI" could also use setMealUI here since this is likely used next to that anyway
-export function resetDiaryUI(lists) {
-    lists.forEach(list => {
-        list.replaceChildren();
-    });
+// TODO: since its "resetDiaryUI" could also use setMealNutritionUI here since this is likely used next to that anyway
+export function resetDiaryUI(ui) {
+    for (const key in ui) {
+        ui[key].replaceChildren();
+    }
 }
 
 // TODO:  could probably get rid of this... or use above export functions as a helper
@@ -199,21 +198,21 @@ export function setWeeklyAveragesUI(ui, obj) {
 }
 
 // sets the calorie dial
-export function setCalDial(cal_dial, cal_obj) {
-    let normalize = cal_obj.total / cal_obj.goal * 100;
+export function setCalDial(ui, obj) {
+    let normalize = obj.total / obj.goal * 100;
     if (normalize > 100) normalize = 100;
-    const stroke_dashoffset_value = cal_dial.dashoffset * (100 - normalize) / 100;
-    const rotate_zvalue = (cal_dial.rotation) * (50 - normalize) / 50;
+    const stroke_dashoffset_value = ui.dashoffset * (100 - normalize) / 100;
+    const rotate_zvalue = (ui.rotation) * (50 - normalize) / 50;
 
-    cal_dial.bar.style.strokeDashoffset = stroke_dashoffset_value;
-    cal_dial.pointer.style.transform = `rotateZ(${rotate_zvalue}deg)`;
-    cal_dial.text.firstChild.textContent = total;
+    ui.bar.style.strokeDashoffset = stroke_dashoffset_value;
+    ui.pointer.style.transform = `rotateZ(${rotate_zvalue}deg)`;
+    ui.text.firstChild.textContent = total;
 }
 
-export function resetCalDial(cal_dial) {
-    cal_dial.bar.style.strokeDashoffset = cal_dial.dashoffset;
-    cal_dial.pointer.style.transform = `rotateZ(${cal_dial.rotation}deg)`;
-    cal_dial.text.firstChild.textContent = 0;    
+export function resetCalDial(dial) {
+    dial.bar.style.strokeDashoffset = dial.dashoffset;
+    dial.pointer.style.transform = `rotateZ(${dial.rotation}deg)`;
+    dial.text.firstChild.textContent = 0;    
 }
 
 // sets a single bar
@@ -268,4 +267,12 @@ export function setCalorieBarNull(bar) {
 export function setMacroBarNull(bar) {
     const nill = bar.querySelector(".null-progress-bar");
     nill.style.strokeDashoffset = 0;
+}
+
+
+// getters
+export function getDayBars(parent) {
+    return ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].map(
+        day => parent.querySelector(`.${day}-bar`)
+    );
 }
