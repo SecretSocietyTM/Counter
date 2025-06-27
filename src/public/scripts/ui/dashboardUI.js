@@ -7,7 +7,24 @@ const text_colors = {
     prot: "txt-acnt-purple"
 }
 
-function createSearchListItem(item) {
+// Helper functions
+function createEntryInfo(entry) {
+    const div = document.createElement("div");
+    div.className = "item__subinfo";
+
+    const cal = GenUI.createMacro(entry.cal, "cal", ["txt-prim-green"]);
+    const fat = GenUI.createMacro(entry.fat, undefined, ["txt-acnt-yellow"]);
+    const carb = GenUI.createMacro(entry.carb, undefined, ["txt-acnt-lightblue"]);
+    const prot = GenUI.createMacro(entry.prot, undefined, ["txt-acnt-purple2"]);
+
+    div.append(cal, fat, carb, prot);
+    return div;
+}
+
+
+// TODO: rename -> createSearchResult
+// replace item with "food"
+export function createSearchListItem(item) {
     const li = document.createElement("li");
     li.className = "searchlist__whole-item";
     li.dataset.id = item.food_id;
@@ -24,7 +41,10 @@ function createSearchListItem(item) {
     return li;
 }
 
-function createSearchListItemForm(meal, date_in, item) {
+// TODO: rename -> createSearchResultForm
+// replace item with "food"
+// replace date_in with _date
+export function createSearchListItemForm(meal, date_in, item) {
     const form = document.createElement("form");
     form.className = "item__form";
 
@@ -106,7 +126,7 @@ function createSearchListItemForm(meal, date_in, item) {
     return form;
 }
 
-function createEntry(entry) {
+export function createEntry(entry) {
     const li = document.createElement("li");
     li.className = "whole-item";
     li.dataset.id = entry.entry_id;
@@ -139,20 +159,8 @@ function createEntry(entry) {
     return li;
 }
 
-function createEntryInfo(entry) {
-    const div = document.createElement("div");
-    div.className = "item__subinfo";
-
-    const cal = GenUI.createMacro(entry.cal, "cal", ["txt-prim-green"]);
-    const fat = GenUI.createMacro(entry.fat, undefined, ["txt-acnt-yellow"]);
-    const carb = GenUI.createMacro(entry.carb, undefined, ["txt-acnt-lightblue"]);
-    const prot = GenUI.createMacro(entry.prot, undefined, ["txt-acnt-purple2"]);
-
-    div.append(cal, fat, carb, prot);
-    return div;
-}
-
-function updateMealNumbers(ui_numbers, values) {
+// TODO: rename -> updateMealUI
+export function updateMealNumbers(ui_numbers, values) {
     for (const key in ui_numbers) {
         if (values[key] > 0) {
             ui_numbers[key].classList.toggle("fw-b", true);
@@ -165,7 +173,8 @@ function updateMealNumbers(ui_numbers, values) {
     }
 }
 
-function updateMacrosNumbers(macros, macros_obj) {
+// TODO: rename -> updateMacrosUI
+export function updateMacrosNumbers(macros, macros_obj) {
     const macros_obj_values = Object.values(macros_obj);
     for (let i = 0; i < macros.length; i++) {
         if (macros_obj_values[i] > 0) macros[i].className = "card__value on";
@@ -174,13 +183,15 @@ function updateMacrosNumbers(macros, macros_obj) {
     }
 }
 
-function resetMealLists(lists) {
+// TODO: rename -> resetDiaryUI
+export function resetMealLists(lists) {
     lists.forEach(list => {
         list.replaceChildren();
     });
 }
 
-function resetUI(meals, cal_type, macros) {
+// could probably get rid of this... or use above export functions as a helper
+export function resetUI(meals, cal_type, macros) {
     meals.forEach(meal => {
         for (let val in meal) {
             meal[val].textContent = 0;
@@ -196,12 +207,16 @@ function resetUI(meals, cal_type, macros) {
     });
 }
 
-export {
-    createSearchListItem,
-    createSearchListItemForm,
-    createEntry,
-    updateMealNumbers,
-    updateMacrosNumbers,
-    resetMealLists,
-    resetUI
+export function updateCalorieGraph(bar, value, dashoffsets) {
+    const goal = bar.querySelector(".goal-progress-bar");
+    const over = bar.querySelector(".over-progress-bar");
+
+    if (value > 100) {
+        value -= 100;
+        goal.style.strokeDashoffset = 0;
+        over.style.strokeDashoffset = dashoffsets.over * (100 - value) / 100;
+    } else {
+        over.style.strokeDashoffset = dashoffsets.over;
+        goal.style.strokeDashoffset = dashoffsets.goal * (100 - value) / 100;
+    }
 }

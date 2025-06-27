@@ -1,7 +1,7 @@
 import { FoodManager } from "./util/foodmanager.js";
-import * as DateUtil from "./util/date.js"; // rename dateUtil
-import * as DashboardUI from "./ui/dashboardUI.js"; // rename ui
-import * as DashboardAPI from "./api/dashboardAPI.js"; // rename api
+import * as dateUtil from "./util/date.js";
+import * as ui from "./ui/dashboardUI.js";
+import * as api from "./api/dashboardAPI.js";
 import * as util from "./util/dashboardUtil.js"
 
 
@@ -15,21 +15,22 @@ const breakfast_obj = { cal: 0, fat: 0, carb: 0, prot: 0 }
 const lunch_obj     = { cal: 0, fat: 0, carb: 0, prot: 0 }
 const dinner_obj    = { cal: 0, fat: 0, carb: 0, prot: 0 }
 const snacks_obj    = { cal: 0, fat: 0, carb: 0, prot: 0 }
+const week_totals_obj  = { cal: 0, fat: 0, carb: 0, prot: 0 } // TODO: rename -> totals_obj after no conflicts
 const calories_obj  = { main: 0, goal: null, remaining: 0, over: 0 }
 const macros_obj    = { fat: 0, carb: 0, prot: 0 }
 
 let week_summary = [];
 
-// TODO: look for instances of meal_type, why is it null?
-let meal_type = null;
+let meal_type = null;       // TODO: look for instances of meal_type, why is it null?
 let active_form = null;
+let global_days_logged = 0; // TODO: rename to days_logged after fetchSummary refactor
 
 const real_now = new Date();
 real_now.setHours(0, 0, 0, 0);
 let now = new Date();
 now.setHours(0, 0, 0, 0);
-const real_week_range = DateUtil.getWeekRange(real_now);
-let week_range = DateUtil.getWeekRange(now);
+const real_week_range = dateUtil.getWeekRange(real_now);
+let week_range = dateUtil.getWeekRange(now);
 
 
 const diary = document.getElementById("diary");
@@ -46,7 +47,7 @@ const search_input = document.getElementById("searchbar_input");
 const searchlist = document.getElementById("searchlist");
 
 // calorie numbers
-const total_calories = document.getElementById("total_calories");
+const total_calories = document.getElementById("indicator_text");
 const goal_calories = document.getElementById("goal_calories");
 const remaining_calories = document.getElementById("remaining_calories");
 const over_calories = document.getElementById("over_calories");
@@ -56,7 +57,7 @@ const average_calories = document.getElementById("average_calories");
 const main_fat = document.getElementById("main_fat");
 const main_carb = document.getElementById("main_carb");
 const main_prot = document.getElementById("main_prot");
-const average_fat = document.getElementById("average_fat");
+const average_fat =  document.getElementById("average_fat");
 const average_carb = document.getElementById("average_carb");
 const average_prot = document.getElementById("average_prot");
 
@@ -79,15 +80,19 @@ const date_input = document.getElementById("date_input");
 
 const MEAL_LISTS = [breakfast_list, lunch_list, dinner_list, snacks_list];
 const MAINS_CALORIES = [goal_calories, remaining_calories, over_calories];
-// TODO: TURN MAINS_CALORIES ^^^^ INTO AN OBJECT (JUST DELETE IT BUT UPDATE ALL THINGS THAT USED IT);
+// TODO: TURN MAINS_CALORIES ^^^^ INTO AN OBJECT (JUST DELETE IT BUT UPDATE ALL THINGS THAT USED IT, TO USE THE OBJECT VERSION BELOW);
 const CALORIES_UI = Object.freeze({
-    total:     document.getElementById("total_calories"), 
+    total:     document.getElementById("indicator_text"), 
     goal:      document.getElementById("goal_calories"),
     remaining: document.getElementById("remaining_calories"),
     over:      document.getElementById("over_calories"),
-    average:   document.getElementById("average_prot")
 });
-
+const AVERAGE_UI = Object.freeze({
+    cal:  document.getElementById("average_calories"),
+    fat:  document.getElementById("average_fat"),
+    carb: document.getElementById("average_carb"),
+    prot: document.getElementById("average_prot"),
+});
 const MAIN_MACROS = [main_fat, main_carb, main_prot]
 const MEALS = {
     1: { array: breakfast_array, values: breakfast_obj, ui_list: breakfast_list, ui_numbers: breakfast_numbers },
@@ -105,6 +110,7 @@ const initial_idicator_rotation = -128;
 // bar graph elements
 const calorie_bargraph = document.getElementById("calorie-bar-graph");
 const macro_bargraph = document.getElementById("macro-bar-graph");
+const DASHOFFSETS = { total: 189.5, null: 84, goal: 56, over: 9}
 const null_dashoffset = 84;
 const goal_dashoffset = 56;
 const over_dashoffset = 9;
@@ -130,15 +136,15 @@ const macro_graph_bars =
     macro_bargraph.querySelector(".sat-bar")
 ]
 
-function updateCalorieProgressBar(value, goal) {
-    let normalize = value / goal * 100;
+function updateCalorieProgressBar(total, goal) {
+    let normalize = total / goal * 100;
     if (normalize > 100) normalize = 100;
     const stroke_dashoffset_value = main_calories_dashoffset * (100 - normalize) / 100;
     const rotate_zvalue = (initial_idicator_rotation) * (50 - normalize) / 50;
 
     progress_bar.style.strokeDashoffset = stroke_dashoffset_value;
     indicator_pointer.style.transform = `rotateZ(${rotate_zvalue}deg)`;
-    total_calories.firstChild.textContent = value;
+    total_calories.firstChild.textContent = total;
 }
 
 function getActiveMeal(meal) {
@@ -154,14 +160,14 @@ function getActiveMealNumbers(numbers_ui) {
 }
 
 function updateTodayDate() {
-    let format_date = DateUtil.formatDate(now);
+    let format_date = dateUtil.formatDate(now);
     sub_date.textContent = format_date;
 }
 
 function updateWeekDate() {
-    let { start, end } = DateUtil.getWeekRange(now);
-    let format_start = DateUtil.formatDate(start).split(",")[0];
-    let format_end = DateUtil.formatDate(end).split(",")[0];
+    let { start, end } = dateUtil.getWeekRange(now);
+    let format_start = dateUtil.formatDate(start).split(",")[0];
+    let format_end = dateUtil.formatDate(end).split(",")[0];
     week_date.textContent = `${format_start} - ${format_end}`;
 }
 
@@ -217,64 +223,28 @@ diary.addEventListener("click", async (e) => {
     const entry = meal.array.getFoodById(li.dataset.id, "entry_id");
 
 
-    const data = await DashboardAPI.deleteFromDiary(li.dataset.id);
+    const data = await api.deleteFromDiary(li.dataset.id);
 
     if (data.success) {
         meal.array.delete(data.entry.entry_id, "entry_id");
+        if (!meal.array.size()) global_days_logged--;
         li.remove();
 
         week_summary[now.getDay()] = data.summary;
 
         updateMealValues(meal.values, entry, "sub");
-        DashboardUI.updateMealNumbers(meal_numbers, meal.values);
+        ui.updateMealNumbers(meal_numbers, meal.values);
         util.updateCalorieInfo(CALORIES_UI, calories_obj, data.entry, "sub");
         updateCalorieProgressBar(calories_obj.main, calories_obj.goal);
 
         updateMacrosObj(entry, "sub");
-        DashboardUI.updateMacrosNumbers(MAIN_MACROS, macros_obj);
+        ui.updateMacrosNumbers(MAIN_MACROS, macros_obj);
 
-        // TODO: turn this into a function (2)
-        // start
-        const goal_progress = calorie_graph_bars[now.getDay()].querySelector(".goal-progress-bar");
-        const over_progress = calorie_graph_bars[now.getDay()].querySelector(".over-progress-bar");
         let value = week_summary[now.getDay()].cal / calories_obj.goal * 100;
-        if (value > 100) {
-            value -= 100;
-            goal_progress.style.strokeDashoffset = 0;
-            over_progress.style.strokeDashoffset = over_dashoffset * (100 - value) / 100;
-        } else {
-            over_progress.style.strokeDashoffset = over_dashoffset;
-            goal_progress.style.strokeDashoffset = goal_dashoffset * (100 - value) / 100;
-        }
-        // end
+        ui.updateCalorieGraph(calorie_graph_bars[now.getDay()], value, DASHOFFSETS);
 
-        // TODO: turn this into a function (3)
-        // start
-        let avg_calories = 0;
-        let avg_fat = 0;
-        let avg_carb = 0;
-        let avg_prot = 0;
-        let days_logged = 0;
-        week_summary.forEach(day => {
-            if (day) { 
-                days_logged++;
-                avg_calories += day.cal;
-                avg_fat += day.fat;
-                avg_carb += day.carb;
-                avg_prot += day.prot;
-            }
-        });
-        if (days_logged === 0) days_logged = 1;
-        avg_calories = Math.round(avg_calories / days_logged);
-        avg_fat = Math.round(avg_fat / days_logged);
-        avg_carb = Math.round(avg_carb / days_logged);
-        avg_prot = Math.round(avg_prot / days_logged);
-        average_calories.textContent = avg_calories;
-        average_fat.textContent = avg_fat;
-        average_carb.textContent = avg_carb;
-        average_prot.textContent = avg_prot;
-        // end
-        
+        util.updateWeeklyAverages(
+            AVERAGE_UI, week_totals_obj, data.entry, global_days_logged, "sub");        
     } else {
         alert(data.errmsg);
     }
@@ -329,7 +299,7 @@ goal_calories_input.addEventListener("blur", async (e) => {
         return;
     }
 
-    const data = await DashboardAPI.updateCalorieGoal(goal_calories_input.value);
+    const data = await api.updateCalorieGoal(goal_calories_input.value);
 
     calories_obj.goal = data.goal;
     updateCalorieProgressBar(calories_obj.main, calories_obj.goal);
@@ -355,13 +325,13 @@ search_input.addEventListener("input", async (e) => {
 
     if (searchterm.length == 0) return;
 
-    const data = await DashboardAPI.getFoods(0, searchterm);
+    const data = await api.getFoods(0, searchterm);
 
     if (data.success) {
         if (data.count == 0) return;
         for (let i = 0; i < data.foods.length; i++) {
             searchlist_array.add(data.foods[i]);
-            searchlist.appendChild(DashboardUI.createSearchListItem(data.foods[i]));
+            searchlist.appendChild(ui.createSearchListItem(data.foods[i]));
         }
     } else {
         alert(data.errmsg);
@@ -380,66 +350,31 @@ function setupForm(form) {
             return;
         }
 
-        const data = await DashboardAPI.addToDiary(form_obj);
+        const data = await api.addToDiary(form_obj);
 
         if (data.success) {
             const meal = getActiveMeal(meal_type);
             const meal_numbers = getActiveMealNumbers(meal.ui_numbers);
 
+            if (!meal.array.size()) global_days_logged++;
             meal.array.add(data.entry);
-            meal.ui_list.appendChild(DashboardUI.createEntry(data.entry));
+            meal.ui_list.appendChild(ui.createEntry(data.entry));
 
             week_summary[now.getDay()] = data.summary;
 
             updateMealValues(meal.values, data.entry);
-            DashboardUI.updateMealNumbers(meal_numbers, meal.values);
+            ui.updateMealNumbers(meal_numbers, meal.values);
             util.updateCalorieInfo(CALORIES_UI, calories_obj, data.entry);
             updateCalorieProgressBar(calories_obj.main, calories_obj.goal);
 
             updateMacrosObj(data.entry);
-            DashboardUI.updateMacrosNumbers(MAIN_MACROS, macros_obj);
+            ui.updateMacrosNumbers(MAIN_MACROS, macros_obj);
 
-            // TODO: turn this into a function (2)
-            // start
-            const goal_progress = calorie_graph_bars[now.getDay()].querySelector(".goal-progress-bar");
-            const over_progress = calorie_graph_bars[now.getDay()].querySelector(".over-progress-bar");
             let value = week_summary[now.getDay()].cal / calories_obj.goal * 100;
-            if (value > 100) {
-                value -= 100;
-                goal_progress.style.strokeDashoffset = 0;
-                over_progress.style.strokeDashoffset = over_dashoffset * (100 - value) / 100;
-            } else {
-                over_progress.style.strokeDashoffset = over_dashoffset;
-                goal_progress.style.strokeDashoffset = goal_dashoffset * (100 - value) / 100;
-            }
-            // end
-            
-            // TODO: turn this into a function (3)
-            // start
-            let avg_calories = 0;
-            let avg_fat = 0;
-            let avg_carb = 0;
-            let avg_prot = 0;
-            let days_logged = 0;
-            week_summary.forEach(day => {
-                if (day) { 
-                    days_logged++;
-                    avg_calories += day.cal;
-                    avg_fat += day.fat;
-                    avg_carb += day.carb;
-                    avg_prot += day.prot;
-                }
-            });
-            if (days_logged === 0) days_logged = 1;
-            avg_calories = Math.round(avg_calories / days_logged);
-            avg_fat = Math.round(avg_fat / days_logged);
-            avg_carb = Math.round(avg_carb / days_logged);
-            avg_prot = Math.round(avg_prot / days_logged);
-            average_calories.textContent = avg_calories;
-            average_fat.textContent = avg_fat;
-            average_carb.textContent = avg_carb;
-            average_prot.textContent = avg_prot;
-            // end
+            ui.updateCalorieGraph(calorie_graph_bars[now.getDay()], value, DASHOFFSETS);
+
+            util.updateWeeklyAverages(
+                AVERAGE_UI, week_totals_obj, data.entry, global_days_logged);
 
             search_input.value = "";
             search_input.focus();
@@ -467,6 +402,7 @@ search_dialog.addEventListener("click", async (e) => {
 
     if (e.target.closest("form")) return;
     const searchlist_whole = e.target.closest(".searchlist__whole-item");
+    if (!searchlist_whole) return;
     if (searchlist_whole && active_form) {
         let remove = (searchlist_whole.children.length > 1) ? true : false;
         active_form.remove();
@@ -475,7 +411,7 @@ search_dialog.addEventListener("click", async (e) => {
     }
     if (!searchlist_whole.querySelector("form")) {
         const item = searchlist_array.getFoodById(searchlist_whole.dataset.id, "food_id");
-        active_form = DashboardUI.createSearchListItemForm(meal_type, now.toDateString(), item);
+        active_form = ui.createSearchListItemForm(meal_type, now.toDateString(), item);
         setupForm(active_form);
         searchlist_whole.appendChild(active_form);
         active_form.querySelector("[name='servsize']").focus();
@@ -508,7 +444,7 @@ date_input.addEventListener("change", (e) => {
     updateWeekDate(); // TODO: can probably move this into the week range checker below
 
 
-    DashboardUI.resetMealLists(MEAL_LISTS);
+    ui.resetMealLists(MEAL_LISTS);
 
     // TODO: figure out why i did it this way
     let breakfast = getActiveMealNumbers(MEALS[1].ui_numbers);
@@ -516,7 +452,7 @@ date_input.addEventListener("change", (e) => {
     let dinner = getActiveMealNumbers(MEALS[3].ui_numbers);
     let snacks = getActiveMealNumbers(MEALS[4].ui_numbers);
     let meals = [breakfast, lunch, dinner, snacks];
-    DashboardUI.resetUI(meals, MAINS_CALORIES, MAIN_MACROS);
+    ui.resetUI(meals, MAINS_CALORIES, MAIN_MACROS);
 
     // reset progress bar
     // TODO: turn this into a function
@@ -525,7 +461,7 @@ date_input.addEventListener("change", (e) => {
     total_calories.firstChild.textContent = 0;
 
     if (!(week_range.start <= now && now <= week_range.end)) {
-        week_range = DateUtil.getWeekRange(now);
+        week_range = dateUtil.getWeekRange(now);
 
         // TODO: turn this into a function
         // TODO: rename goal-progress-track and over-progress-track to just progress-track
@@ -571,7 +507,7 @@ date_input.addEventListener("change", (e) => {
 
 
 async function fetchDiary(date) {
-    const data = await DashboardAPI.getDiary(date);
+    const data = await api.getDiary(date);
 
     if (data.success) {
         for (let i = 0; i < data.entries.length; i++) {
@@ -581,15 +517,15 @@ async function fetchDiary(date) {
             const meal_numbers = getActiveMealNumbers(meal.ui_numbers);
 
             meal.array.add(data.entries[i]);
-            meal.ui_list.appendChild(DashboardUI.createEntry(data.entries[i]));
+            meal.ui_list.appendChild(ui.createEntry(data.entries[i]));
 
             updateMealValues(meal.values, data.entries[i]);
-            DashboardUI.updateMealNumbers(meal_numbers, meal.values);
+            ui.updateMealNumbers(meal_numbers, meal.values);
             util.updateCalorieInfo(CALORIES_UI, calories_obj, data.entries[i]);
             updateCalorieProgressBar(calories_obj.main, calories_obj.goal);
 
             updateMacrosObj(data.entries[i]);
-            DashboardUI.updateMacrosNumbers(MAIN_MACROS, macros_obj);
+            ui.updateMacrosNumbers(MAIN_MACROS, macros_obj);
         }
     } else {
         alert(data.errmsg);
@@ -597,7 +533,7 @@ async function fetchDiary(date) {
 }
 
 async function fetchFoodGoal() {
-    const data = await DashboardAPI.getCalorieGoal();
+    const data = await api.getCalorieGoal();
 
     if (data.success) {
         calories_obj.goal = data.goal;
@@ -610,7 +546,7 @@ async function fetchFoodGoal() {
 }
 
 async function fetchWeeklySummary(date) {
-    const data = await DashboardAPI.getWeeklySummary(date);
+    const data = await api.getWeeklySummary(date);
 
     if (data.success) {
         data.summaries.forEach(item => {
@@ -659,6 +595,15 @@ async function fetchWeeklySummary(date) {
                     }
                 }
             } else {
+                // TODO: NOT PROPER MAKE SOMETHING BETTER
+                if (week_summary[i].cal || week_summary[i].fat ||
+                    week_summary[i].carb || week_summary[i].prot) {
+                        global_days_logged++;
+                }
+                week_totals_obj.cal += week_summary[i].cal;
+                week_totals_obj.carb += week_summary[i].carb;
+                week_totals_obj.fat += week_summary[i].fat;
+                week_totals_obj.prot += week_summary[i].prot;
                 days_logged++;
                 avg_calories += week_summary[i].cal;
                 avg_fat += week_summary[i].fat;
