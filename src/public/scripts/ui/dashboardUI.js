@@ -188,33 +188,35 @@ export function resetUI(meals, cal_type, macros) {
 }
 
 
-
+// TODO: likely reuse to set total eaten as well.
 export function setCalorieInfoUI(ui, obj) {
     ui.remaining.textContent = obj.remaining;
     ui.over.textContent = obj.over;
 }
 
-export function setWeeklyAveragesUI(avg_ui, avg_obj) {
-    for (const key in avg_ui) { avg_ui[key].textContent = avg_obj[key]};
+export function setWeeklyAveragesUI(ui, obj) {
+    for (const key in ui) { ui[key].textContent = obj[key]};
 }
 
-// paints an inactive bar
-export function setCalorieBarNull(bar) {
-    const goal = bar.querySelector(".goal-progress-bar");
-    const over = bar.querySelector(".over-progress-bar");
+// sets the calorie dial
+export function setCalDial(cal_dial, cal_obj) {
+    let normalize = cal_obj.total / cal_obj.goal * 100;
+    if (normalize > 100) normalize = 100;
+    const stroke_dashoffset_value = cal_dial.dashoffset * (100 - normalize) / 100;
+    const rotate_zvalue = (cal_dial.rotation) * (50 - normalize) / 50;
 
-    goal.style.stroke = "var(--clr-neutral-40)";
-    goal.style.strokeDashoffset = 0;
-    over.style.stroke = "var(--clr-neutral-40)";
-    over.style.strokeDashoffset = 0;
+    cal_dial.bar.style.strokeDashoffset = stroke_dashoffset_value;
+    cal_dial.pointer.style.transform = `rotateZ(${rotate_zvalue}deg)`;
+    cal_dial.text.firstChild.textContent = total;
 }
 
-export function setMacroBarNull(bar) {
-    const nill = bar.querySelector(".null-progress-bar");
-    nill.style.strokeDashoffset = 0;
+export function resetCalDial(cal_dial) {
+    cal_dial.bar.style.strokeDashoffset = cal_dial.dashoffset;
+    cal_dial.pointer.style.transform = `rotateZ(${cal_dial.rotation}deg)`;
+    cal_dial.text.firstChild.textContent = 0;    
 }
 
-// updates a single bar
+// sets a single bar
 export function setCalorieGraphBar(bar, value, dashoffsets) {
     const goal = bar.querySelector(".goal-progress-bar");
     const over = bar.querySelector(".over-progress-bar");
@@ -250,4 +252,20 @@ export function setMacroGraphBar(bar, percentages) {
         cur_start = cur_end - 16;
         cur_end = cur_start - (usable_space * percentages[macros_keys[i]]);         
     }
+}
+
+// sets bar to inactive (null)
+export function setCalorieBarNull(bar) {
+    const goal = bar.querySelector(".goal-progress-bar");
+    const over = bar.querySelector(".over-progress-bar");
+
+    goal.style.stroke = "var(--clr-neutral-40)";
+    goal.style.strokeDashoffset = 0;
+    over.style.stroke = "var(--clr-neutral-40)";
+    over.style.strokeDashoffset = 0;
+}
+
+export function setMacroBarNull(bar) {
+    const nill = bar.querySelector(".null-progress-bar");
+    nill.style.strokeDashoffset = 0;
 }
