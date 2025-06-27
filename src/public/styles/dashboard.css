@@ -116,6 +116,14 @@
     grid-area: c;
 }
 
+.off {
+    color: var(--clr-neutral-70);
+}
+
+.on {
+    color: var(--clr-neutral-10);
+}
+
 .meal-section {
     display: flex;
     flex-direction: column;

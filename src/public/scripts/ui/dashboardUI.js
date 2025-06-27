@@ -1,5 +1,12 @@
 import * as GenUI from "./generalUI.js";
 
+const text_colors = {
+    cal: "txt-prim-green",
+    fat: "txt-acnt-yellow",
+    carb: "txt-acnt-lightblue",
+    prot: "txt-acnt-purple"
+}
+
 function createSearchListItem(item) {
     const li = document.createElement("li");
     li.className = "searchlist__whole-item";
@@ -146,27 +153,25 @@ function createEntryInfo(entry) {
 }
 
 function updateMealNumbers(ui_numbers, values) {
-    ui_numbers.cal.classList.add("fw-b", "txt-prim-green");
-    ui_numbers.fat.classList.add("fw-b", "txt-acnt-yellow");
-    ui_numbers.carb.classList.add("fw-b", "txt-acnt-lightblue");
-    ui_numbers.prot.classList.add("fw-b", "txt-acnt-purple");
-
-    ui_numbers.cal.textContent = values.cal;
-    ui_numbers.fat.textContent = values.fat;
-    ui_numbers.carb.textContent = values.carb;
-    ui_numbers.prot.textContent = values.prot;
+    for (const key in ui_numbers) {
+        if (values[key] > 0) {
+            ui_numbers[key].classList.toggle("fw-b", true);
+            ui_numbers[key].classList.toggle(text_colors[key], true);
+        } else {
+            ui_numbers[key].classList.toggle("fw-b");
+            ui_numbers[key].classList.toggle(text_colors[key]);
+        }
+        ui_numbers[key].textContent = values[key];
+    }
 }
 
-function resetMealNumbers(ui_numbers) {
-    ui_numbers.cal.classList.remove("fw-b", "txt-prim-green");
-    ui_numbers.fat.classList.remove("fw-b", "txt-acnt-yellow");
-    ui_numbers.carb.classList.remove("fw-b", "txt-acnt-lightblue");
-    ui_numbers.prot.classList.remove("fw-b", "txt-acnt-purple");
-
-    ui_numbers.cal.textContent = 0;
-    ui_numbers.fat.textContent = 0;
-    ui_numbers.carb.textContent = 0;
-    ui_numbers.prot.textContent = 0;
+function updateMacrosNumbers(macros, macros_obj) {
+    const macros_obj_values = Object.values(macros_obj);
+    for (let i = 0; i < macros.length; i++) {
+        if (macros_obj_values[i] > 0) macros[i].className = "card__value on";
+        else macros[i].className = "card__value off";
+        macros[i].textContent = macros_obj_values[i];
+    }
 }
 
 function resetMealLists(lists) {
@@ -175,15 +180,19 @@ function resetMealLists(lists) {
     });
 }
 
-function resetUI(meals, mains) {
+function resetUI(meals, cal_type, macros) {
     meals.forEach(meal => {
         for (let val in meal) {
             meal[val].textContent = 0;
         }
     });
 
-    mains.forEach(main => {
-        main.textContent = 0;
+    cal_type.forEach(type => {
+        type.textContent = 0;
+    });
+
+    macros.forEach(macro => {
+        macro.textContent = 0;
     });
 }
 
@@ -192,7 +201,7 @@ export {
     createSearchListItemForm,
     createEntry,
     updateMealNumbers,
-    resetMealNumbers,
+    updateMacrosNumbers,
     resetMealLists,
     resetUI
 }

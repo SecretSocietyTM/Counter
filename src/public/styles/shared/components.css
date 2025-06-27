@@ -124,30 +124,11 @@
     width: 5rem;
 }
 
-/* possibly use this and create new classes for on and off */
-/* .card__value {
+.card__value {
     text-align: center;
     font-size: var(--fs-24);
     font-weight: var(--fw-bold); 
-} */
-
-.card__value-off {
-    margin-block-start: 0.25rem;
-    text-align: center;
-    font-size: var(--fs-24);
-    font-weight: var(--fw-bold);
-
-    color: var(--clr-neutral-70);
 }
-
-.card__value-on {
-    text-align: center;
-    font-size: var(--fs-24);
-    font-weight: var(--fw-bold);
-
-    color: var(--clr-neutral-10);
-}
-
 
 /* input styles */
 .input-label {
