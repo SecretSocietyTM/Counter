@@ -47,6 +47,8 @@ function mapEntries(entries) {
 
 function mapSummary(summary) {
     if (!summary) return undefined;
+    if (!summary.calories && !summary.fat && 
+        !summary.carbs && !summary.protein) return undefined;
     return {
         cal: summary.calories,
         fat: summary.fat,

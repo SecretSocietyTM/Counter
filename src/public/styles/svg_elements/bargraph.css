@@ -8,7 +8,7 @@
     transition: stroke-dashoffset 800ms ease-in;    
 }
 
-.whole-progress-bar {
+.null-progress-bar {
     stroke: var(--clr-neutral-40);
     transition: stroke-dashoffset 800ms ease-in;       
 }

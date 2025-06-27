@@ -21,30 +21,39 @@ function createEntryInfo(entry) {
     return div;
 }
 
+function setUnitSelect(select, unit) {
+    select.replaceChildren();
+    const units = ["g", "x", "oz", "ml"];
 
-// TODO: rename -> createSearchResult
-// replace item with "food"
-export function createSearchListItem(item) {
+    units
+    .sort((a, b) => (a === unit ? -1 : b === unit ? 1 : 0))
+    .forEach(u => {
+        const option = document.createElement("option");
+        option.value = u;
+        option.textContent = u === "ml" ? "mL" : u;
+        select.appendChild(option);
+    });    
+}
+
+
+export function createSearchResult(food) {
     const li = document.createElement("li");
     li.className = "searchlist__whole-item";
-    li.dataset.id = item.food_id;
+    li.dataset.id = food.food_id;
 
     const div = document.createElement("div");
     div.className = "searchlist__item";
 
     const name = document.createElement("p");
     name.className = "truncate";
-    name.textContent = item.name;
+    name.textContent = food.name;
 
     div.appendChild(name);
     li.appendChild(div);
     return li;
 }
 
-// TODO: rename -> createSearchResultForm
-// replace item with "food"
-// replace date_in with _date
-export function createSearchListItemForm(meal, date_in, item) {
+export function createSearchResultForm(meal, _date, food) {
     const form = document.createElement("form");
     form.className = "item__form";
 
@@ -62,12 +71,12 @@ export function createSearchListItemForm(meal, date_in, item) {
     const date = document.createElement("input");
     date.type = "hidden";
     date.name = "date";
-    date.value = date_in;
+    date.value = _date;
 
     const food_id = document.createElement("input");
     food_id.type = "hidden";
     food_id.name = "food_id";
-    food_id.value = item.food_id;
+    food_id.value = food.food_id;
 
     const servsize = document.createElement("input");
     servsize.type = "number";
@@ -78,35 +87,7 @@ export function createSearchListItemForm(meal, date_in, item) {
 
     const unit = document.createElement("select");
     unit.name = "unit";
-    if (item.unit == "g") {
-        unit.innerHTML = `
-            <option value="g">g</option>
-            <option value="x">x</option>
-            <option value="oz">oz</option>
-            <option value="ml">mL</option>
-        `;
-    } else if (item.unit == "x") {
-        unit.innerHTML = `
-            <option value="x">x</option>
-            <option value="g">g</option>
-            <option value="oz">oz</option>
-            <option value="ml">mL</option>
-        `;        
-    } else if (item.unit == "oz") {
-        unit.innerHTML = `
-            <option value="oz">oz</option>
-            <option value="x">x</option>
-            <option value="g">g</option>
-            <option value="ml">mL</option>
-        `;        
-    } else if (item.unit == "ml") {
-        unit.innerHTML = `
-            <option value="ml">mL</option>
-            <option value="x">x</option>
-            <option value="g">g</option>
-            <option value="oz">oz</option>
-        `;        
-    }
+    setUnitSelect(unit, food.unit);
 
     const check_button = document.createElement("button");
     check_button.type = "button";
@@ -159,8 +140,8 @@ export function createEntry(entry) {
     return li;
 }
 
-// TODO: rename -> updateMealUI
-export function updateMealNumbers(ui_numbers, values) {
+
+export function setMealUI(ui_numbers, values) {
     for (const key in ui_numbers) {
         if (values[key] > 0) {
             ui_numbers[key].classList.toggle("fw-b", true);
@@ -173,8 +154,7 @@ export function updateMealNumbers(ui_numbers, values) {
     }
 }
 
-// TODO: rename -> updateMacrosUI
-export function updateMacrosNumbers(macros, macros_obj) {
+export function setMacrosUI(macros, macros_obj) {
     const macros_obj_values = Object.values(macros_obj);
     for (let i = 0; i < macros.length; i++) {
         if (macros_obj_values[i] > 0) macros[i].className = "card__value on";
@@ -183,14 +163,14 @@ export function updateMacrosNumbers(macros, macros_obj) {
     }
 }
 
-// TODO: rename -> resetDiaryUI
-export function resetMealLists(lists) {
+// TODO: since its "resetDiaryUI" could also use setMealUI here since this is likely used next to that anyway
+export function resetDiaryUI(lists) {
     lists.forEach(list => {
         list.replaceChildren();
     });
 }
 
-// could probably get rid of this... or use above export functions as a helper
+// TODO:  could probably get rid of this... or use above export functions as a helper
 export function resetUI(meals, cal_type, macros) {
     meals.forEach(meal => {
         for (let val in meal) {
@@ -207,7 +187,35 @@ export function resetUI(meals, cal_type, macros) {
     });
 }
 
-export function updateCalorieGraph(bar, value, dashoffsets) {
+
+
+export function setCalorieInfoUI(ui, obj) {
+    ui.remaining.textContent = obj.remaining;
+    ui.over.textContent = obj.over;
+}
+
+export function setWeeklyAveragesUI(avg_ui, avg_obj) {
+    for (const key in avg_ui) { avg_ui[key].textContent = avg_obj[key]};
+}
+
+// paints an inactive bar
+export function setCalorieBarNull(bar) {
+    const goal = bar.querySelector(".goal-progress-bar");
+    const over = bar.querySelector(".over-progress-bar");
+
+    goal.style.stroke = "var(--clr-neutral-40)";
+    goal.style.strokeDashoffset = 0;
+    over.style.stroke = "var(--clr-neutral-40)";
+    over.style.strokeDashoffset = 0;
+}
+
+export function setMacroBarNull(bar) {
+    const nill = bar.querySelector(".null-progress-bar");
+    nill.style.strokeDashoffset = 0;
+}
+
+// updates a single bar
+export function setCalorieGraphBar(bar, value, dashoffsets) {
     const goal = bar.querySelector(".goal-progress-bar");
     const over = bar.querySelector(".over-progress-bar");
 
@@ -218,5 +226,28 @@ export function updateCalorieGraph(bar, value, dashoffsets) {
     } else {
         over.style.strokeDashoffset = dashoffsets.over;
         goal.style.strokeDashoffset = dashoffsets.goal * (100 - value) / 100;
+    }
+}
+
+export function setMacroGraphBar(bar, percentages) {
+    const macros = {
+        fat: bar.querySelector(".fat-progress-bar"),
+        carb: bar.querySelector(".carb-progress-bar"),
+        prot: bar.querySelector(".prot-progress-bar")
+    }
+    const macros_keys = Object.keys(macros);
+    const usable_space = 84 - (2 * 16); // subject to change
+    let cur_start = 92;
+    let cur_end = cur_start - (usable_space * percentages[macros_keys[0]]);
+    for (let i = 1; i < macros_keys.length+1; i++) {
+        macros[macros_keys[i-1]].setAttribute("y1", cur_start);
+        macros[macros_keys[i-1]].setAttribute("y2", cur_end);
+        macros[macros_keys[i-1]].style.opacity = "1";
+        macros[macros_keys[i-1]].style.strokeDasharray = Math.ceil(cur_start - cur_end);
+        macros[macros_keys[i-1]].style.strokeDashoffset = 0;
+
+        if (i === macros_keys.length) break;
+        cur_start = cur_end - 16;
+        cur_end = cur_start - (usable_space * percentages[macros_keys[i]]);         
     }
 }
