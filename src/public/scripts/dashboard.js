@@ -12,6 +12,7 @@ let daily_summaries = [];
 let meal_type = null;
 let active_form = null;
 let days_logged = 0;
+let total_entries = 0;
 
 const NOW = new Date(new Date().setHours(0, 0, 0, 0));
 const WEEKRANGE = dateUtil.getWeekRange(NOW);
@@ -118,13 +119,15 @@ function updateStateUI(entry, meal_type, flag, li) {
         MEALLISTS[meal_type].add(entry);
         MEALLISTS_UI[meal_type].appendChild(ui.createEntry(entry));
     } else if (flag == "add") { // add
+        total_entries++
+        if (total_entries === 1) days_logged++;
         MEALLISTS[meal_type].add(entry);
         MEALLISTS_UI[meal_type].appendChild(ui.createEntry(entry));
-        if (MEALLISTS[meal_type].size() === 1) days_logged++;
     } else if (flag == "sub") { // delete
+        total_entries--
+        if (total_entries === 0) days_logged--;
         MEALLISTS[meal_type].delete(entry.entry_id, "entry_id");
         li.remove();
-        if (MEALLISTS[meal_type].size() === 0) days_logged--;
     }
 
     util.updateMealStats(MEALSTATS[meal_type], entry, flag);
@@ -248,6 +251,7 @@ search_dialog.addEventListener("click", async (e) => {
 
 date_input.addEventListener("change", (e) => {
 
+    total_entries = 0;
     util.resetAll(MEALLISTS, MEALSTATS, CALORIESTATS, MACROSTATS);
     ui.resetAllUI(MEALLISTS_UI, MEALSTATS_UI, CALORIEDIAL_UI, CALORIESTATS_UI, MACROSTATS_UI);
     ui.resetCalDialUI(CALORIEDIAL_UI);
@@ -256,6 +260,7 @@ date_input.addEventListener("change", (e) => {
     ui.setActiveDate(sub_date, dateUtil.formatDate(now));
 
     if (!(week_range.start <= now && now <= week_range.end)) {
+        days_logged = 0;
         util.resetWeekTotals(WEEKTOTALS);
         week_range = dateUtil.getWeekRange(now);
         ui.setWeekDate(week_date, dateUtil.formatWeekRange(now));
@@ -321,7 +326,7 @@ diary.addEventListener("click", async (e) => {
 
         if (!daily_summaries[now.getDay()]) {
             if (now < WEEKRANGE.start || 
-                (!(now > WEEKRANGE.end) && i < NOW.getDay())) {
+                (!(now > WEEKRANGE.end) && now < NOW.getDay())) {
                 ui.setCalorieBarNull(BARGRAPHS_UI.cal_bars[now.getDay()]);
                 ui.setMacroBarNull(BARGRAPHS_UI.macro_bars[now.getDay()]);
             }
@@ -357,6 +362,7 @@ async function initDiary(date) {
     const data = await api.getDiary(date);
 
     if (data.success) {
+        total_entries = data.entries.length;
         for (let i = 0; i < data.entries.length; i++) {
             let meal_type = data.entries[i].meal_type;
             updateStateUI(data.entries[i], meal_type, undefined, undefined);

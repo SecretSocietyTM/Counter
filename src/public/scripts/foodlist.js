@@ -97,12 +97,9 @@ cancel_btn.addEventListener("click", () => {
 
 // cancel dialog event (click outside of dialog)
 dialog.addEventListener("click", (e) => {
-    const dialog_dimensions = dialog.getBoundingClientRect();
-    if (
-        e.clientX < dialog_dimensions.left  ||
-        e.clientX > dialog_dimensions.right ||
-        e.clientY < dialog_dimensions.top   ||
-        e.clientY > dialog_dimensions.bottom
+    const d = dialog.getBoundingClientRect();
+    if (e.clientX < d.left || e.clientX > d.right ||
+        e.clientY < d.top  || e.clientY > d.bottom
     ) {
         dialog.close();
         foodform.reset();
@@ -113,6 +110,7 @@ dialog.addEventListener("click", (e) => {
 
 /* form button events */
 addfood_submit_btn.addEventListener("click", async (e) => {
+    // make functoin out of this for both dashboard.js and here
     const form_data = new FormData(foodform);
     const form_obj = Object.fromEntries(form_data.entries());
 

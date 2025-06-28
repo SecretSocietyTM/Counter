@@ -1,6 +1,6 @@
 import * as GenUI from "./generalUI.js";
 
-function createListItem(item) {
+export function createListItem(item) {
     const li = document.createElement("li");
     li.className = "item";
     li.dataset.id = item.food_id;
@@ -41,7 +41,7 @@ function createListItem(item) {
     return li;
 }
 
-function updateListItem(item, listitem) {
+export function updateListItem(item, listitem) {
     listitem.querySelector(".name").textContent = item.name;
     listitem.querySelector(".servsize").textContent = item.servsize;
     listitem.querySelector(".unit").textContent = item.unit;
@@ -51,7 +51,7 @@ function updateListItem(item, listitem) {
     listitem.querySelector(".prot").textContent = item.prot;
 }
 
-function updateForm(form, item) {
+export function updateForm(form, item) {
     form.querySelector("[name='name']").value = item.name;
     form.querySelector("[name='servsize']").value = item.servsize;
     form.querySelector("[name='unit']").value = item.unit;
@@ -59,10 +59,4 @@ function updateForm(form, item) {
     form.querySelector("[name='fat']").value = item.fat;
     form.querySelector("[name='carb']").value = item.carb;
     form.querySelector("[name='prot']").value = item.prot;
-}
-
-export { 
-    createListItem,
-    updateListItem,
-    updateForm
 }
