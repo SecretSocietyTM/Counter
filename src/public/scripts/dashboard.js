@@ -1,8 +1,8 @@
-import { FoodManager } from "./util/foodmanager.js";
-import * as dateUtil from "./util/date.js";
-import * as ui from "./ui/dashboardUI.js";
 import * as api from "./api/dashboardAPI.js";
 import * as util from "./util/dashboardUtil.js"
+import * as ui from "./ui/dashboardUI.js";
+import * as dateUtil from "./util/shared/date.js";
+import { FoodManager } from "./util/shared/foodmanager.js";
 
 
 const SEARCHLIST = new FoodManager();
@@ -19,7 +19,6 @@ const WEEKRANGE = dateUtil.getWeekRange(NOW);
 
 let now = new Date(new Date().setHours(0, 0, 0, 0));
 let week_range = dateUtil.getWeekRange(now);
-
 
 const diary = document.getElementById("diary");
 // buttons
@@ -158,11 +157,7 @@ addfood_btns.forEach(btn => {
 
 // closing search dialog with Esc
 search_dialog.addEventListener("cancel", (e) => {
-    // TODO: add ui function closeSearchDialog()
-    search_dialog.style.display = "none";
-    search_input.value = "";
-    searchlist.replaceChildren();
-    search_dialog.close();
+    ui.closeSearchDialog();
 });
 
 // sets up calorie goal input
@@ -221,14 +216,8 @@ search_input.addEventListener("input", async (e) => {
 });
 
 search_dialog.addEventListener("click", async (e) => {
-    const d = search_dialog.getBoundingClientRect();
-    if (e.clientX < d.left || e.clientX > d.right ||
-        e.clientY < d.top  || e.clientY > d.bottom
-    ) {
-        search_dialog.style.display = "none";
-        search_input.value = "";
-        searchlist.replaceChildren();
-        search_dialog.close();
+    if (ui.isClickingOutside(e, search_dialog)) {
+        ui.closeSearchDialog(search_dialog);
     }
 
     if (e.target.closest("form")) return;
@@ -277,15 +266,9 @@ date_input.addEventListener("change", (e) => {
 function setupForm(form) {
     form.addEventListener("click", async (e) => {
         if (!e.target.closest("#searchform_submit_btn")) return;
-        const form_data = new FormData(form);
-        const form_obj = Object.fromEntries(form_data.entries());
+        let entry_data = ui.checkFormValidity(form);
 
-        if (!form.checkValidity()) {
-            form.reportValidity();
-            return;
-        }
-
-        const data = await api.addToDiary(form_obj);
+        const data = await api.addToDiary(entry_data);
 
         if (data.success) {
             daily_summaries[now.getDay()] = data.summary;
@@ -376,7 +359,7 @@ async function initWeeklySummary(date) {
     const data = await api.getWeeklySummary(date);
 
     if (data.success) {
-        data.summaries.forEach(item => { daily_summaries.push(item); });
+        data.summaries.forEach(summary => { daily_summaries.push(summary); });
 
         for (let i = 0; i < daily_summaries.length; i++) {
             if (!daily_summaries[i]) {

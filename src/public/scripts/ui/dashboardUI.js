@@ -159,6 +159,17 @@ export function deactivateGoalInput(span, input) {
     input.value = "";   
 }
 
+export function closeSearchDialog(search_dialog) {
+    search_dialog.style.display = "none";
+    search_dialog.querySelector("#searchbar_input").style.value="";
+    search_dialog.querySelector("#searchlist").replaceChildren();
+    search_dialog.close();
+}
+
+export const isClickingOutside = GenUI.isClickingOutside;
+
+export const checkFormValidity = GenUI.checkFormValidity;
+
 
 
 // setters

@@ -21,3 +21,23 @@ export function createMacro(value, unit = "g", span_classes = []) {
     p.append(unit);
     return p;
 }
+
+export function isClickingOutside(event, container) {
+    const dimensions = container.getBoundingClientRect();
+    return event.clientX < dimensions.left  || 
+           event.clientX > dimensions.right ||
+           event.clientY < dimensions.top   || 
+           event.clientY > dimensions.bottom
+}
+
+export function checkFormValidity(form) {
+    const data = new FormData(form);
+    const obj = Object.fromEntries(data.entries());
+
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return 0;
+    } else {
+        return obj;
+    }
+}

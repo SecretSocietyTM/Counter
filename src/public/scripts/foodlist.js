@@ -1,7 +1,6 @@
-import { FoodManager } from "./util/foodmanager.js";
-import * as FoodlistUI from "./ui/foodlistUI.js";
-import * as FoodlistAPI from "./api/foodlistAPI.js";
-
+import * as ui from "./ui/foodlistUI.js";
+import * as api from "./api/foodlistAPI.js";
+import { FoodManager } from "./util/shared/foodmanager.js";
 
 const foodlist_array = new FoodManager()
 const s_foodlist_array = new FoodManager()
@@ -30,10 +29,20 @@ const delete_btn = document.getElementById("delete_btn");
 const editfood_submit_btn = document.getElementById("editfood_submit_btn");
 const addfood_submit_btn = document.getElementById("addfood_submit_btn");
 const foodform = document.getElementById("foodform");
+const error_message = document.getElementById("error_message");
+
+const DIALOG_UI = Object.freeze({
+    dialog: dialog,
+    title: dlg_title,
+    open_btn: addfood_btn,
+    delete_btn: delete_btn,
+    edit_btn: editfood_submit_btn,
+    add_btn: addfood_submit_btn,
+    form: foodform,
+    err_msg: error_message
+});
 
 const search_input = document.getElementById("searchbar_input");
-
-const error_message = document.getElementById("error_message");
 
 
 function getActiveFoodList() {
@@ -49,7 +58,8 @@ const observer = new IntersectionObserver(async entries => {
     const last_entry = entries[0];
     const active_foodlist_array = getActiveFoodList();
 
-    if (!last_entry.isIntersecting || (active_foodlist_array.size() == getActiveTotalCount())) return;
+    if (!last_entry.isIntersecting || 
+        (active_foodlist_array.size() == getActiveTotalCount())) return;
 
     observer.unobserve(last_entry.target);
     cur_observed_listitem = null;
@@ -61,14 +71,11 @@ const observer = new IntersectionObserver(async entries => {
     }
 });
 
-/* icon button events */
+
+
 // add food button event
 addfood_btn.addEventListener("click", () => {
-    dlg_title.textContent = "Add New Food";
-    delete_btn.style.visibility = "hidden";
-    editfood_submit_btn.style.display = "none";
-    addfood_submit_btn.style.display = "";
-    dialog.showModal();
+    ui.showDialogAddMode(DIALOG_UI);
 });
 
 // edit button event
@@ -78,48 +85,28 @@ foodlist.addEventListener("click", (e) => {
         const li = e.target.closest("li");
         const item = getActiveFoodList().getFoodById(li.dataset.id, "food_id");
         cur_listitem = li;
-        FoodlistUI.updateForm(foodform, item);
-        dlg_title.textContent = "Edit Your Food";
-        delete_btn.style.visibility = "visible";
-        editfood_submit_btn.style.display = "";
-        addfood_submit_btn.style.display = "none"
-        dialog.showModal();
+        ui.setFormUI(foodform, item);
+        ui.showDialogEditMode(DIALOG_UI);
     }
 });
 
 // cancel dialog event (cancel button)
 cancel_btn.addEventListener("click", () => {
-    dialog.close();
-    foodform.reset();
-    error_message.textContent = "";
-    addfood_btn.blur();
+    ui.closeDialog(DIALOG_UI);
 });
 
 // cancel dialog event (click outside of dialog)
 dialog.addEventListener("click", (e) => {
-    const d = dialog.getBoundingClientRect();
-    if (e.clientX < d.left || e.clientX > d.right ||
-        e.clientY < d.top  || e.clientY > d.bottom
-    ) {
-        dialog.close();
-        foodform.reset();
-        error_message.textContent = "";
-        addfood_btn.blur();
+    if (ui.isClickingOutside(e, dialog)) {
+        ui.closeDialog(DIALOG_UI);
     }
 });
 
 /* form button events */
 addfood_submit_btn.addEventListener("click", async (e) => {
-    // make functoin out of this for both dashboard.js and here
-    const form_data = new FormData(foodform);
-    const form_obj = Object.fromEntries(form_data.entries());
+    const food_data = ui.checkFormValidity(foodform)
 
-    if (!foodform.checkValidity()) {
-        foodform.reportValidity();
-        return;
-    }
-
-    const data = await FoodlistAPI.addFood(form_obj);
+    const data = await api.addFood(food_data);
 
     if (data.success) {
         if (!flag_searching) {
@@ -129,33 +116,25 @@ addfood_submit_btn.addEventListener("click", async (e) => {
                 total_count++;
             }
         }
-        dialog.close();
-        addfood_btn.blur();
-        foodform.reset();   
+        ui.closeDialog(DIALOG_UI);
     } else {
         error_message.textContent = data.errmsg;
     }
 });
 
 editfood_submit_btn.addEventListener("click", async (e) => {
-    const form_data = new FormData(foodform);
-    const form_obj = Object.fromEntries(form_data.entries());
     const food_id = cur_listitem.dataset.id;
+    const food_data = ui.checkFormValidity(foodform);
 
-    if (!foodform.checkValidity()) {
-        foodform.reportValidity();
-        return;
-    }
-
-    const data = await FoodlistAPI.editFood(food_id, form_obj);
+    const data = await api.editFood(food_id, food_data);
 
     if (data.success) {
-        // TODO: below function .updateFood might need to be changed just for clarity
         getActiveFoodList().updateFood(data.food.food_id, data.food);
-        if (foodlist_array.getFoodById(data.food.food_id, "food_id")) foodlist_array.updateFood(data.food.food_id, data.food);
-        FoodlistUI.updateListItem(data.food, cur_listitem);
-        dialog.close();
-        foodform.reset();   
+        if (foodlist_array.getFoodById(data.food.food_id, "food_id")) { 
+            foodlist_array.updateFood(data.food.food_id, data.food);
+        }
+        ui.setFoodUI(data.food, cur_listitem);
+        ui.closeDialog(DIALOG_UI); 
     } else {
         error_message.textContent = data.errmsg;
     }
@@ -164,21 +143,20 @@ editfood_submit_btn.addEventListener("click", async (e) => {
 delete_btn.addEventListener("click", async () => {
     const food_id = cur_listitem.dataset.id;
 
-    const data = await FoodlistAPI.deleteFood(food_id);
+    const data = await api.deleteFood(food_id);
 
     if (data.success) {
         let total = getActiveTotalCount(); 
+        total--;
         getActiveFoodList().delete(data.food.food_id, "food_id");
+        cur_listitem.remove();
         if (flag_searching) {
             if (foodlist_array.getFoodById(data.food.food_id, "food_id")) {
                 foodlist_array.delete(data.food.food_id, "food_id");
                 total_count--;
             }
         }
-        total--;
-        cur_listitem.remove();
-        dialog.close();
-        foodform.reset();
+        ui.closeDialog(DIALOG_UI);
     } else {
         error_message.textContent = data.errmsg;
     }
@@ -187,7 +165,7 @@ delete_btn.addEventListener("click", async () => {
 
 // fetch food 
 async function fetchInitFood() {
-    const data = await FoodlistAPI.getFoods(0, undefined);
+    const data = await api.getFoods(0, undefined);
 
     if (data.success) {
         if (data.foods.length == 0) {
@@ -196,7 +174,7 @@ async function fetchInitFood() {
         }
         for (let i = 0; i < data.foods.length; i++) {
             foodlist_array.add(data.foods[i]);
-            foodlist.appendChild(FoodlistUI.createListItem(data.foods[i]));
+            foodlist.appendChild(ui.createListItem(data.foods[i]));
         }
         observer.observe(foodlist.lastElementChild);
         cur_observed_listitem = foodlist.lastElementChild;
@@ -210,12 +188,12 @@ async function fetchMoreFood(searchterm = undefined) {
     let activelist = getActiveFoodList();
     let last_listitem = activelist.foods[activelist.size() - 1];
     
-    const data = await FoodlistAPI.getFoods(last_listitem.food_id, searchterm);
+    const data = await api.getFoods(last_listitem.food_id, searchterm);
 
     if (data.success) {
         for (let i = 0; i < data.foods.length; i++) {
             activelist.add(data.foods[i]);
-            foodlist.appendChild(FoodlistUI.createListItem(data.foods[i]));
+            foodlist.appendChild(ui.createListItem(data.foods[i]));
         }
     } else {
         alert(data.errmsg);
@@ -223,8 +201,7 @@ async function fetchMoreFood(searchterm = undefined) {
 }
 
 search_input.addEventListener("input", async (e) => {
-    let searchterm = e.target.value;
-    glob_searchterm = searchterm;
+    let searchterm = glob_searchterm = e.target.value;
     foodlist.replaceChildren();
     if (cur_observed_listitem) {
         observer.unobserve(cur_observed_listitem);
@@ -236,20 +213,20 @@ search_input.addEventListener("input", async (e) => {
         flag_searching = false;
         glob_searchterm = undefined;
         for (let i = 0; i < foodlist_array.foods.length; i++) {
-            foodlist.appendChild(FoodlistUI.createListItem(foodlist_array.foods[i]));
+            foodlist.appendChild(ui.createListItem(foodlist_array.foods[i]));
         }
         observer.observe(foodlist.lastElementChild);
         cur_observed_listitem = foodlist.lastElementChild;
         foodlist.scrollTop = 0;
     } else {
-        const data = await FoodlistAPI.getFoods(0, searchterm);
+        const data = await api.getFoods(0, searchterm);
 
         if (data.success) {
             if (data.count == 0) return;
             flag_searching = true;
             for (let i = 0; i < data.foods.length; i++) {
                 s_foodlist_array.add(data.foods[i]);
-                foodlist.appendChild(FoodlistUI.createListItem(data.foods[i]));
+                foodlist.appendChild(ui.createListItem(data.foods[i]));
             }
             observer.observe(foodlist.lastElementChild);
             cur_observed_listitem = foodlist.lastElementChild;
