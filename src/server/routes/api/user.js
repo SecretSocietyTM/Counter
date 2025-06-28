@@ -20,7 +20,6 @@ router.post("/signup", async (req, res) => {
     return res.json({ success: true, redirect: "/dashboard" });
 });
 
-// TODO: figure out elegeant way to convert to GET req on frontend on file src/public/scripts/auth.js
 router.post("/login", async (req, res) => {
     const { username, password } = req.body;
     let user;

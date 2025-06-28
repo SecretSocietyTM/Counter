@@ -1,23 +1,61 @@
 import * as GenUI from "./generalUI.js";
 
-function createSearchListItem(item) {
+const text_colors = {
+    cal: "txt-prim-green",
+    fat: "txt-acnt-yellow",
+    carb: "txt-acnt-lightblue",
+    prot: "txt-acnt-purple"
+}
+
+// helpers
+function createEntryInfo(entry) {
+    const div = document.createElement("div");
+    div.className = "item__subinfo";
+
+    const cal = GenUI.createMacro(entry.cal, "cal", ["txt-prim-green"]);
+    const fat = GenUI.createMacro(entry.fat, undefined, ["txt-acnt-yellow"]);
+    const carb = GenUI.createMacro(entry.carb, undefined, ["txt-acnt-lightblue"]);
+    const prot = GenUI.createMacro(entry.prot, undefined, ["txt-acnt-purple2"]);
+
+    div.append(cal, fat, carb, prot);
+    return div;
+}
+
+function setUnitSelect(select, unit) {
+    select.replaceChildren();
+    const units = ["g", "x", "oz", "ml"];
+
+    units
+    .sort((a, b) => (a === unit ? -1 : b === unit ? 1 : 0))
+    .forEach(u => {
+        const option = document.createElement("option");
+        option.value = u;
+        option.textContent = u === "ml" ? "mL" : u;
+        select.appendChild(option);
+    });    
+}
+
+
+
+// element creators
+export function createSearchResult(food) {
     const li = document.createElement("li");
     li.className = "searchlist__whole-item";
-    li.dataset.id = item.food_id;
+    li.dataset.id = food.food_id;
 
     const div = document.createElement("div");
     div.className = "searchlist__item";
 
     const name = document.createElement("p");
     name.className = "truncate";
-    name.textContent = item.name;
+    name.textContent = food.name;
 
     div.appendChild(name);
     li.appendChild(div);
     return li;
 }
 
-function createSearchListItemForm(meal, date_in, item) {
+export function createSearchResultForm(meal, _date, food) {
     const form = document.createElement("form");
     form.className = "item__form";
 
@@ -35,12 +73,12 @@ function createSearchListItemForm(meal, date_in, item) {
     const date = document.createElement("input");
     date.type = "hidden";
     date.name = "date";
-    date.value = date_in;
+    date.value = _date;
 
     const food_id = document.createElement("input");
     food_id.type = "hidden";
     food_id.name = "food_id";
-    food_id.value = item.food_id;
+    food_id.value = food.food_id;
 
     const servsize = document.createElement("input");
     servsize.type = "number";
@@ -51,35 +89,7 @@ function createSearchListItemForm(meal, date_in, item) {
 
     const unit = document.createElement("select");
     unit.name = "unit";
-    if (item.unit == "g") {
-        unit.innerHTML = `
-            <option value="g">g</option>
-            <option value="x">x</option>
-            <option value="oz">oz</option>
-            <option value="ml">mL</option>
-        `;
-    } else if (item.unit == "x") {
-        unit.innerHTML = `
-            <option value="x">x</option>
-            <option value="g">g</option>
-            <option value="oz">oz</option>
-            <option value="ml">mL</option>
-        `;        
-    } else if (item.unit == "oz") {
-        unit.innerHTML = `
-            <option value="oz">oz</option>
-            <option value="x">x</option>
-            <option value="g">g</option>
-            <option value="ml">mL</option>
-        `;        
-    } else if (item.unit == "ml") {
-        unit.innerHTML = `
-            <option value="ml">mL</option>
-            <option value="x">x</option>
-            <option value="g">g</option>
-            <option value="oz">oz</option>
-        `;        
-    }
+    setUnitSelect(unit, food.unit);
 
     const check_button = document.createElement("button");
     check_button.type = "button";
@@ -99,7 +109,7 @@ function createSearchListItemForm(meal, date_in, item) {
     return form;
 }
 
-function createEntry(entry) {
+export function createEntry(entry) {
     const li = document.createElement("li");
     li.className = "whole-item";
     li.dataset.id = entry.entry_id;
@@ -132,67 +142,217 @@ function createEntry(entry) {
     return li;
 }
 
-function createEntryInfo(entry) {
-    const div = document.createElement("div");
-    div.className = "item__subinfo";
 
-    const cal = GenUI.createMacro(entry.cal, "cal", ["txt-prim-green"]);
-    const fat = GenUI.createMacro(entry.fat, undefined, ["txt-acnt-yellow"]);
-    const carb = GenUI.createMacro(entry.carb, undefined, ["txt-acnt-lightblue"]);
-    const prot = GenUI.createMacro(entry.prot, undefined, ["txt-acnt-purple2"]);
 
-    div.append(cal, fat, carb, prot);
-    return div;
+// element actions 
+export function activateGoalInput(span, input) {
+    span.style.display = "none";
+    input.style.display = "inline-block";
+    input.value = CALORIESTATS_UI.goal.textContent;
+    input.select();
+    input.focus();    
 }
 
-function updateMealNumbers(ui_numbers, values) {
-    ui_numbers.cal.classList.add("fw-b", "txt-prim-green");
-    ui_numbers.fat.classList.add("fw-b", "txt-acnt-yellow");
-    ui_numbers.carb.classList.add("fw-b", "txt-acnt-lightblue");
-    ui_numbers.prot.classList.add("fw-b", "txt-acnt-purple");
-
-    ui_numbers.cal.textContent = values.cal;
-    ui_numbers.fat.textContent = values.fat;
-    ui_numbers.carb.textContent = values.carb;
-    ui_numbers.prot.textContent = values.prot;
+export function deactivateGoalInput(span, input) {
+    span.style.display = "inline";
+    input.style.display = "none";
+    input.value = "";   
 }
 
-function resetMealNumbers(ui_numbers) {
-    ui_numbers.cal.classList.remove("fw-b", "txt-prim-green");
-    ui_numbers.fat.classList.remove("fw-b", "txt-acnt-yellow");
-    ui_numbers.carb.classList.remove("fw-b", "txt-acnt-lightblue");
-    ui_numbers.prot.classList.remove("fw-b", "txt-acnt-purple");
-
-    ui_numbers.cal.textContent = 0;
-    ui_numbers.fat.textContent = 0;
-    ui_numbers.carb.textContent = 0;
-    ui_numbers.prot.textContent = 0;
+export function closeSearchDialog(search_dialog) {
+    search_dialog.style.display = "none";
+    search_dialog.querySelector("#searchbar_input").style.value="";
+    search_dialog.querySelector("#searchlist").replaceChildren();
+    search_dialog.close();
 }
 
-function resetMealLists(lists) {
-    lists.forEach(list => {
-        list.replaceChildren();
-    });
+export const isClickingOutside = GenUI.isClickingOutside;
+
+export const checkFormValidity = GenUI.checkFormValidity;
+
+
+
+// setters
+export function setCalorieStatsUI(ui, obj) {
+    for (const key in ui) {
+        ui[key].textContent = obj[key];
+    }
 }
 
-function resetUI(meals, mains) {
-    meals.forEach(meal => {
-        for (let val in meal) {
-            meal[val].textContent = 0;
-        }
-    });
-
-    mains.forEach(main => {
-        main.textContent = 0;
-    });
+export function setMacroStatsUI(ui, obj) {
+    for (const key in ui) {
+        if (obj[key] > 0) ui[key].className = "card__value on";
+        else ui[key].className = "card__value off";
+        ui[key].textContent = obj[key];
+    }
 }
 
-export {
-    createSearchListItem,
-    createSearchListItemForm,
-    createEntry,
-    updateMealNumbers,
-    resetMealNumbers,
-    resetMealLists,
-    resetUI
+export function setMealStatsUI(ui, obj) {
+    const mealstats = {
+        cal: ui.querySelector(".cal"),
+        fat: ui.querySelector(".fat"),
+        carb: ui.querySelector(".carb"),
+        prot: ui.querySelector(".prot")
+    }
+    const is_active = obj.cal > 0 || obj.fat > 0 || obj.carb > 0 || obj.prot > 0;
+    for (const key in mealstats) {
+        mealstats[key].classList.toggle("fw-b", is_active);
+        mealstats[key].classList.toggle(text_colors[key], is_active);
+        mealstats[key].textContent = obj[key];
+    }
+}
+
+export function setWeeklyAveragesUI(ui, obj) {
+    for (const key in ui) { ui[key].textContent = obj[key]};
+}
+
+export function setCalDialUI(ui, obj) {
+    let normalize = obj.total / obj.goal * 100;
+    if (normalize > 100) normalize = 100;
+    const stroke_dashoffset_value = ui.dashoffset * (100 - normalize) / 100;
+    const rotate_zvalue = (ui.rotation) * (50 - normalize) / 50;
+
+    ui.bar.style.strokeDashoffset = stroke_dashoffset_value;
+    ui.pointer.style.transform = `rotateZ(${rotate_zvalue}deg)`;
+    ui.text.firstChild.textContent = obj.total;
+}
+
+export function setActiveDate(ui, date) {
+    ui.textContent = date;
+}
+
+export function setWeekDate(ui, date) {
+    ui.textContent = `${date.start} - ${date.end}`;
+}
+
+export function setCalorieGraphBar(bar, value, dashoffsets) {
+    const goal = bar.querySelector(".goal-progress-bar");
+    const over = bar.querySelector(".over-progress-bar");
+
+    if (value > 100) {
+        value -= 100;
+        goal.style.strokeDashoffset = 0;
+        over.style.strokeDashoffset = dashoffsets.over * (100 - value) / 100;
+    } else {
+        over.style.strokeDashoffset = dashoffsets.over;
+        goal.style.strokeDashoffset = dashoffsets.goal * (100 - value) / 100;
+    }
+}
+
+export function setMacroGraphBar(bar, percentages) {
+    const macros = {
+        fat: bar.querySelector(".fat-progress-bar"),
+        carb: bar.querySelector(".carb-progress-bar"),
+        prot: bar.querySelector(".prot-progress-bar")
+    }
+    const macros_keys = Object.keys(macros);
+    const usable_space = 84 - (2 * 16); // subject to change
+    let cur_start = 92;
+    let cur_end = cur_start - (usable_space * percentages[macros_keys[0]]);
+    for (let i = 1; i < macros_keys.length+1; i++) {
+        macros[macros_keys[i-1]].setAttribute("y1", cur_start);
+        macros[macros_keys[i-1]].setAttribute("y2", cur_end);
+        macros[macros_keys[i-1]].style.opacity = "1";
+        macros[macros_keys[i-1]].style.strokeDasharray = Math.ceil(cur_start - cur_end);
+        macros[macros_keys[i-1]].style.strokeDashoffset = 0;
+
+        if (i === macros_keys.length) break;
+        cur_start = cur_end - 16;
+        cur_end = cur_start - (usable_space * percentages[macros_keys[i]]);         
+    }
+}
+
+export function setCalorieBarNull(bar) {
+    const goal = bar.querySelector(".goal-progress-bar");
+    const over = bar.querySelector(".over-progress-bar");
+
+    goal.style.stroke = "var(--clr-neutral-40)";
+    goal.style.strokeDashoffset = 0;
+    over.style.stroke = "var(--clr-neutral-40)";
+    over.style.strokeDashoffset = 0;
+}
+
+export function setMacroBarNull(bar) {
+    const nill = bar.querySelector(".null-progress-bar");
+    nill.style.strokeDashoffset = 0;
+}
+
+export function setAllCalorieGraphBars(graphs, values) {
+    for (let i = 0; i < 7; i++) {
+        values[i] != undefined ? 
+        setCalorieGraphBar(graphs.cal_bars[i], values[i], graphs.dashoffsets)
+        : setCalorieBarNull(graphs.cal_bars[i]);
+    }
+}
+
+
+
+
+// resetters
+export function resetDiaryUI(meallists, mealstats) {
+    for (const key in meallists) {
+        meallists[key].replaceChildren();
+        setMealStatsUI(mealstats[key], {cal: 0, fat: 0, carb: 0, prot: 0});
+    }
+}
+
+export function resetCalDialUI(dial) {
+    dial.bar.style.strokeDashoffset = dial.dashoffset;
+    dial.pointer.style.transform = `rotateZ(${dial.rotation}deg)`;
+    dial.text.firstChild.textContent = 0;    
+}
+
+export function resetCalorieGraphBar(bar, dashoffsets) {
+    const goal = bar.querySelector(".goal-progress-bar");
+    const over = bar.querySelector(".over-progress-bar");
+    
+    goal.style.stroke = "var(--clr-primary-green)";
+    goal.style.strokeDashoffset = dashoffsets.goal;
+    over.style.stroke = "var(--clr-primary-red)";
+    over.style.strokeDashoffset = dashoffsets.over;
+}
+
+export function resetMacroGraphBar(bar) {
+    const macros = {
+        fat: bar.querySelector(".fat-progress-bar"),
+        carb: bar.querySelector(".carb-progress-bar"),
+        prot: bar.querySelector(".prot-progress-bar")
+    }
+    for (const key in macros) {
+        macros[key].setAttribute("y1", 0);
+        macros[key].setAttribute("y2", 0);
+        macros[key].style.opacity = "0";
+        macros[key].style.strokeDasharray = 0;
+        macros[key].style.strokeDashoffset = 0;
+    }
+}
+
+export function resetMacroBarNull(bar, dashoffsets) {
+    const nill = bar.querySelector(".null-progress-bar");
+    nill.style.strokeDashoffset = dashoffsets.null;
+}
+
+export function resetGraphs(graphs) {
+    for (let i = 0; i < 7; i++) {
+        resetCalorieGraphBar(graphs.cal_bars[i], graphs.dashoffsets);
+        resetMacroGraphBar(graphs.macro_bars[i]);
+        resetMacroBarNull(graphs.macro_bars[i], graphs.dashoffsets);
+    }
+}
+
+export function resetAllUI(meallists, mealstats, dial, calstats, macros) {
+    resetDiaryUI(meallists, mealstats);
+    setCalorieStatsUI(calstats, {goal: 0, remaining: 0, over: 0});
+    setMacroStatsUI(macros, {fat: 0, carb: 0, prot: 0});
+    resetCalDialUI(dial);
+}
+
+
+
+
+// getters
+export function getDayBars(parent) {
+    return ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].map(
+        day => parent.querySelector(`.${day}-bar`)
+    );
 }

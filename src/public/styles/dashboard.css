@@ -116,6 +116,14 @@
     grid-area: c;
 }
 
+.off {
+    color: var(--clr-neutral-70);
+}
+
+.on {
+    color: var(--clr-neutral-10);
+}
+
 .meal-section {
     display: flex;
     flex-direction: column;
@@ -362,6 +370,10 @@ dialog::backdrop {
     }
 }
 
+.date_input {
+    width: 2rem;
+    height: 1rem;
+}
 
 
 
@@ -369,12 +381,4 @@ dialog::backdrop {
 .searchlist__item:hover {
     transition: 500ms;
     background-color: var(--clr-neutral-50);
-}
-
-
-
-/* TODO: remove */
-.date_input {
-    width: 2rem;
-    height: 1rem;
 }
