@@ -7,9 +7,9 @@ import * as util from "./util/dashboardUtil.js"
 
 const SEARCHLIST = new FoodManager();
 
-let week_summary = [];
+let daily_summaries = [];
 
-let meal_type = null;       // TODO: look for instances of meal_type, why is it null?
+let meal_type = null;
 let active_form = null;
 let days_logged = 0;
 
@@ -164,17 +164,22 @@ goal_input.addEventListener("blur", async (e) => {
 
     const data = await api.updateCalorieGoal(goal_input.value);
 
-    CALORIESTATS.total = data.goal;
+    CALORIESTATS.goal = data.goal;
+    util.updateCalorieStats(CALORIESTATS);
+    ui.setCalorieStatsUI(CALORIESTATS_UI, CALORIESTATS);
     ui.setCalDial(CALORIEDIAL_UI, CALORIESTATS);
-    CALORIESTATS.remaining = CALORIESTATS.total - CALORIESTATS.main;
-    CALORIESTATS.over = 0;
-    if (CALORIESTATS.remaining < 0) {
-        CALORIESTATS.over += Math.abs(CALORIESTATS.remaining);
-        CALORIESTATS.remaining = 0;
+    
+    // TODO: need to implement clean logic for checking if 
+    // (now < WEEKRANGE.start || (!(now > WEEKRANGE.end) && i < NOW.getDay()))
+    const daily_totals = []
+    for (let i = 0; i < 7; i++) {
+        if (!daily_summaries[i]) {
+            if (now < WEEKRANGE.start || (!(now > WEEKRANGE.end) && i < NOW.getDay())) {
+                daily_totals.push(undefined);
+            } else daily_totals.push(0);
+        } else daily_totals.push(daily_summaries[i].cal / CALORIESTATS.goal * 100);
     }
-    CALORIESTATS_UI.remaining.textContent = CALORIESTATS.remaining;
-    CALORIESTATS_UI.over.textContent = CALORIESTATS.over;
-    CALORIESTATS_UI.goal.textContent = data.goal;
+    ui.setAllCalorieGraphBars(BARGRAPHS_UI, daily_totals);
 
     CALORIESTATS_UI.goal.style.display = "inline";
     goal_input.style.display = "none";
@@ -219,24 +224,24 @@ function setupForm(form) {
             if (MEALLISTS[meal_type].size()) days_logged++;
             MEALLISTS[meal_type].add(data.entry);
             MEALLISTS_UI[meal_type].appendChild(ui.createEntry(data.entry));
-            week_summary[now.getDay()] = data.summary;
+            daily_summaries[now.getDay()] = data.summary;
             util.updateMealStats(MEALSTATS[meal_type], data.entry);
             ui.setMealStatsUI(MEALSTATS_UI[meal_type], MEALSTATS[meal_type]);
-            util.updateCalorieStats(CALORIESTATS, data.entry);
+            util.updateCalorieStatsOnEntry(CALORIESTATS, data.entry);
             ui.setCalorieStatsUI(CALORIESTATS_UI, CALORIESTATS);
             ui.setCalDial(CALORIEDIAL_UI, CALORIESTATS);
             util.updateMacrosStats(MACROSTATS, data.entry);
             ui.setMacroStatsUI(MACROSTATS_UI, MACROSTATS);
 
-            const macros_sum = week_summary[now.getDay()].fat + 
-                week_summary[now.getDay()].carb + week_summary[now.getDay()].prot;
+            const macros_sum = daily_summaries[now.getDay()].fat + 
+                daily_summaries[now.getDay()].carb + daily_summaries[now.getDay()].prot;
             if (!macros_sum) macros_sum = 1;
             const macro_percentages = {};
             for (const key of ["fat", "carb", "prot"]) {
-                macro_percentages[key] = week_summary[now.getDay()][key] / macros_sum;
+                macro_percentages[key] = daily_summaries[now.getDay()][key] / macros_sum;
             }
 
-            let value = week_summary[now.getDay()].cal / CALORIESTATS.goal * 100;
+            let value = daily_summaries[now.getDay()].cal / CALORIESTATS.goal * 100;
             ui.setCalorieGraphBar(BARGRAPHS_UI.cal_bars[now.getDay()], value, BARGRAPHS_UI.dashoffsets);
             ui.setMacroGraphBar(BARGRAPHS_UI.macro_bars[now.getDay()], macro_percentages);
 
@@ -251,7 +256,7 @@ function setupForm(form) {
         } else {
             alert(data.errmsg);
         }
-        console.log(week_summary);
+        console.log(daily_summaries);
     });
 }
 
@@ -271,31 +276,31 @@ diary.addEventListener("click", async (e) => {
         MEALLISTS[meal_type].delete(data.entry.entry_id, "entry_id");
         if (!MEALLISTS[meal_type].size()) days_logged--;
         li.remove();
-        week_summary[now.getDay()] = data.summary;
+        daily_summaries[now.getDay()] = data.summary;
         util.updateMealStats(MEALSTATS[meal_type], entry, "sub");
         ui.setMealStatsUI(MEALSTATS_UI[meal_type], MEALSTATS[meal_type]);
-        util.updateCalorieStats(CALORIESTATS, data.entry, "sub");
+        util.updateCalorieStatsOnEntry(CALORIESTATS, data.entry, "sub");
         ui.setCalorieStatsUI(CALORIESTATS_UI, CALORIESTATS);
         ui.setCalDial(CALORIEDIAL_UI, CALORIESTATS);
         util.updateMacrosStats(MACROSTATS, entry, "sub");
         ui.setMacroStatsUI(MACROSTATS_UI, MACROSTATS);
 
-        if (!week_summary[now.getDay()]) {
+        if (!daily_summaries[now.getDay()]) {
             if (now < WEEKRANGE.start || 
                 (!(now > WEEKRANGE.end) && i < NOW.getDay())) {
                 ui.setCalorieBarNull(BARGRAPHS_UI.cal_bars[now.getDay()]);
                 ui.setMacroBarNull(BARGRAPHS_UI.macro_bars[now.getDay()]);
             }
         } else {
-            const macros_sum = week_summary[now.getDay()].fat + 
-                week_summary[now.getDay()].carb + week_summary[now.getDay()].prot;
+            const macros_sum = daily_summaries[now.getDay()].fat + 
+                daily_summaries[now.getDay()].carb + daily_summaries[now.getDay()].prot;
             if (!macros_sum) macros_sum = 1;
             const macro_percentages = {};
             for (const key of ["fat", "carb", "prot"]) {
-                macro_percentages[key] = week_summary[now.getDay()][key] / macros_sum;
+                macro_percentages[key] = daily_summaries[now.getDay()][key] / macros_sum;
             }
 
-            let value = week_summary[now.getDay()].cal / CALORIESTATS.goal * 100;
+            let value = daily_summaries[now.getDay()].cal / CALORIESTATS.goal * 100;
             ui.setCalorieGraphBar(BARGRAPHS_UI.cal_bars[now.getDay()], value, BARGRAPHS_UI.dashoffsets);
             ui.setMacroGraphBar(BARGRAPHS_UI.macro_bars[now.getDay()], macro_percentages); 
         }
@@ -305,7 +310,7 @@ diary.addEventListener("click", async (e) => {
         } else {
             alert(data.errmsg);
         }
-    console.log(week_summary);
+    console.log(daily_summaries);
 });
 
 search_dialog.addEventListener("click", async (e) => {
@@ -353,7 +358,7 @@ date_input.addEventListener("change", (e) => {
         week_range = dateUtil.getWeekRange(now);
         ui.setWeekDate(week_date, dateUtil.formatWeekRange(now));
         ui.resetGraphs(BARGRAPHS_UI);
-        week_summary.length = 0;
+        daily_summaries.length = 0;
         fetchWeeklySummary(now);
     }
     fetchFoodGoal();
@@ -384,7 +389,7 @@ async function fetchDiary(date) {
             MEALLISTS_UI[meal_type].appendChild(ui.createEntry(data.entries[i]));
             util.updateMealStats(MEALSTATS[meal_type], data.entries[i]);
             ui.setMealStatsUI(MEALSTATS_UI[meal_type], MEALSTATS[meal_type]);            
-            util.updateCalorieStats(CALORIESTATS, data.entries[i]);
+            util.updateCalorieStatsOnEntry(CALORIESTATS, data.entries[i]);
             ui.setCalorieStatsUI(CALORIESTATS_UI, CALORIESTATS);
             ui.setCalDial(CALORIEDIAL_UI, CALORIESTATS);
             util.updateMacrosStats(MACROSTATS, data.entries[i]);
@@ -399,30 +404,30 @@ async function fetchWeeklySummary(date) {
     const data = await api.getWeeklySummary(date);
 
     if (data.success) {
-        data.summaries.forEach(item => { week_summary.push(item); });
+        data.summaries.forEach(item => { daily_summaries.push(item); });
 
-        for (let i = 0; i < week_summary.length; i++) {
-            if (!week_summary[i]) {
+        for (let i = 0; i < daily_summaries.length; i++) {
+            if (!daily_summaries[i]) {
                 if (now < WEEKRANGE.start || 
                     (!(now > WEEKRANGE.end) && i < NOW.getDay())) {
                     ui.setCalorieBarNull(BARGRAPHS_UI.cal_bars[i]);
                     ui.setMacroBarNull(BARGRAPHS_UI.macro_bars[i]);
                 }
             } else {
-                if (!util.dayIsEmpty(week_summary[i])) days_logged++;
+                if (!util.dayIsEmpty(daily_summaries[i])) days_logged++;
 
                 for (const key in WEEKTOTALS) {
-                    WEEKTOTALS[key] += week_summary[i][key];
+                    WEEKTOTALS[key] += daily_summaries[i][key];
                 }
 
-                const macros_sum = week_summary[i].fat + week_summary[i].carb + week_summary[i].prot;
+                const macros_sum = daily_summaries[i].fat + daily_summaries[i].carb + daily_summaries[i].prot;
                 if (!macros_sum) continue;
                 const macro_percentages = {};
                 for (const key of ["fat", "carb", "prot"]) {
-                    macro_percentages[key] = week_summary[i][key] / macros_sum;
+                    macro_percentages[key] = daily_summaries[i][key] / macros_sum;
                 }
 
-                let value = week_summary[i].cal / CALORIESTATS.goal * 100;
+                let value = daily_summaries[i].cal / CALORIESTATS.goal * 100;
                 ui.setCalorieGraphBar(BARGRAPHS_UI.cal_bars[i], value, BARGRAPHS_UI.dashoffsets)
                 ui.setMacroGraphBar(BARGRAPHS_UI.macro_bars[i], macro_percentages);
             }
@@ -430,7 +435,7 @@ async function fetchWeeklySummary(date) {
         const avg_obj = util.initWeeklyAverage(WEEKTOTALS, days_logged);
         ui.setWeeklyAveragesUI(AVERAGE_UI, avg_obj);
     }
-    console.log(week_summary);
+    console.log(daily_summaries);
 }
 
 // add function that boldens P element of graphs

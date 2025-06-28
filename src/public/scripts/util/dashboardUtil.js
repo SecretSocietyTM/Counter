@@ -1,14 +1,18 @@
 // updaters
-export function updateCalorieStats(obj, entry, flag="add") {
+export function updateCalorieStatsOnEntry(obj, entry, flag="add") {
     const sign = flag === "sub" ? -1 : 1;
     obj.total += sign * entry.cal
+    updateCalorieStats(obj);
+}
+
+export function updateCalorieStats(obj) {
     if (obj.total <= obj.goal) {
         obj.remaining = obj.goal - obj.total;
         obj.over = 0;
     } else {
         obj.over = obj.total - obj.goal;
         obj.remaining = 0;
-    }
+    }   
 }
 
 function _update(obj, entry, flag="add") {

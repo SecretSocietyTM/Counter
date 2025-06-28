@@ -252,6 +252,13 @@ export function setMacroBarNull(bar) {
     nill.style.strokeDashoffset = 0;
 }
 
+export function setAllCalorieGraphBars(graphs, values) {
+    for (let i = 0; i < 7; i++) {
+        values[i] != undefined ? 
+        setCalorieGraphBar(graphs.cal_bars[i], values[i], graphs.dashoffsets)
+        : setCalorieBarNull(graphs.cal_bars[i]);
+    }
+}
 
 
 // resetters
