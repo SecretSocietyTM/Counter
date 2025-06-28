@@ -36,6 +36,7 @@ function setUnitSelect(select, unit) {
 }
 
 
+
 // element creators
 export function createSearchResult(food) {
     const li = document.createElement("li");
@@ -143,6 +144,23 @@ export function createEntry(entry) {
 
 
 
+// element actions 
+export function activateGoalInput(span, input) {
+    span.style.display = "none";
+    input.style.display = "inline-block";
+    input.value = CALORIESTATS_UI.goal.textContent;
+    input.select();
+    input.focus();    
+}
+
+export function deactivateGoalInput(span, input) {
+    span.style.display = "inline";
+    input.style.display = "none";
+    input.value = "";   
+}
+
+
+
 // setters
 export function setCalorieStatsUI(ui, obj) {
     for (const key in ui) {
@@ -165,31 +183,19 @@ export function setMealStatsUI(ui, obj) {
         carb: ui.querySelector(".carb"),
         prot: ui.querySelector(".prot")
     }
+    const is_active = obj.cal > 0 || obj.fat > 0 || obj.carb > 0 || obj.prot > 0;
     for (const key in mealstats) {
-        if (obj[key] > 0) {
-            mealstats[key].classList.toggle("fw-b", true);
-            mealstats[key].classList.toggle(text_colors[key], true);
-        } else {
-            mealstats[key].classList.toggle("fw-b", false);
-            mealstats[key].classList.toggle(text_colors[key], false);
-        }
+        mealstats[key].classList.toggle("fw-b", is_active);
+        mealstats[key].classList.toggle(text_colors[key], is_active);
         mealstats[key].textContent = obj[key];
     }
-}
-
-export function setActiveDate(ui, date) {
-    ui.textContent = date;
-}
-
-export function setWeekDate(ui, date) {
-    ui.textContent = `${date.start} - ${date.end}`;
 }
 
 export function setWeeklyAveragesUI(ui, obj) {
     for (const key in ui) { ui[key].textContent = obj[key]};
 }
 
-export function setCalDial(ui, obj) {
+export function setCalDialUI(ui, obj) {
     let normalize = obj.total / obj.goal * 100;
     if (normalize > 100) normalize = 100;
     const stroke_dashoffset_value = ui.dashoffset * (100 - normalize) / 100;
@@ -198,6 +204,14 @@ export function setCalDial(ui, obj) {
     ui.bar.style.strokeDashoffset = stroke_dashoffset_value;
     ui.pointer.style.transform = `rotateZ(${rotate_zvalue}deg)`;
     ui.text.firstChild.textContent = obj.total;
+}
+
+export function setActiveDate(ui, date) {
+    ui.textContent = date;
+}
+
+export function setWeekDate(ui, date) {
+    ui.textContent = `${date.start} - ${date.end}`;
 }
 
 export function setCalorieGraphBar(bar, value, dashoffsets) {
@@ -261,6 +275,8 @@ export function setAllCalorieGraphBars(graphs, values) {
 }
 
 
+
+
 // resetters
 export function resetDiaryUI(meallists, mealstats) {
     for (const key in meallists) {
@@ -269,7 +285,7 @@ export function resetDiaryUI(meallists, mealstats) {
     }
 }
 
-export function resetCalDial(dial) {
+export function resetCalDialUI(dial) {
     dial.bar.style.strokeDashoffset = dial.dashoffset;
     dial.pointer.style.transform = `rotateZ(${dial.rotation}deg)`;
     dial.text.firstChild.textContent = 0;    
@@ -317,7 +333,7 @@ export function resetAllUI(meallists, mealstats, dial, calstats, macros) {
     resetDiaryUI(meallists, mealstats);
     setCalorieStatsUI(calstats, {goal: 0, remaining: 0, over: 0});
     setMacroStatsUI(macros, {fat: 0, carb: 0, prot: 0});
-    resetCalDial(dial);
+    resetCalDialUI(dial);
 }
 
 

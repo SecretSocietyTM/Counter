@@ -1,4 +1,10 @@
 // updaters
+export function updateWeekTotal(obj, summary) {
+    for (const key in obj) {
+        obj[key] += summary[key];
+    }
+}
+
 export function updateCalorieStatsOnEntry(obj, entry, flag="add") {
     const sign = flag === "sub" ? -1 : 1;
     obj.total += sign * entry.cal
@@ -61,9 +67,10 @@ export function resetAllMealStats(obj) {
 }
 
 export function resetCalorieStats(obj) {
-    for (const key of ["total", "remaining", "over"]) {
+    for (const key of ["total", "over"]) {
         obj[key] = 0;
     }
+    obj.remaining = obj.goal;
 }
 
 export function resetMacros(obj) {
@@ -89,6 +96,28 @@ export function initWeeklyAverage(obj, days_logged) {
         averages[key] = Math.round(obj[key] / days_logged);
     }
     return averages;
+}
+
+export function generateTotalsList(summaries, goal, date, now, weekrange) {
+    const daily_totals = []
+    for (let i = 0; i < 7; i++) {
+        if (!summaries[i]) {
+            if (date < weekrange.start || (!(date > weekrange.end) && i < now.getDay())) {
+                daily_totals.push(undefined);
+            } else daily_totals.push(0);
+        } else daily_totals.push(summaries[i].cal / goal * 100);
+    }    
+}
+
+export function generatePercentagesObj(summary) {
+    const macros_sum = summary.fat + summary.carb + summary.prot;
+    if (!macros_sum) macros_sum = 1;
+    const macro_percentages = {};
+    for (const key of ["fat", "carb", "prot"]) {
+        macro_percentages[key] = summary[key] / macros_sum;
+    }
+    
+    return macro_percentages;
 }
 
 export function roundMacros(obj) {
