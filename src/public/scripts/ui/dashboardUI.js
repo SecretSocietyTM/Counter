@@ -166,6 +166,10 @@ export function closeSearchDialog(search_dialog) {
     search_dialog.close();
 }
 
+export function subDateVisible(ui, flag) {
+    flag ? ui.style.display = "" : ui.style.display = "none";
+}
+
 export const isClickingOutside = GenUI.isClickingOutside;
 
 export const checkFormValidity = GenUI.checkFormValidity;
@@ -217,7 +221,19 @@ export function setCalDialUI(ui, obj) {
     ui.text.firstChild.textContent = obj.total;
 }
 
-export function setActiveDate(ui, date) {
+export function setMainDate(ui, flag, date) {
+    if (flag == "today") {
+        ui.textContent = "Today";
+    } else if (flag == "yest") {
+        ui.textContent = "Yesterday";
+    } else if (flag == "tmrw") {
+        ui.textContent = "Tomorrow";
+    } else {
+        ui.textContent = date;
+    }
+}
+
+export function setSubDate(ui, date) {
     ui.textContent = date;
 }
 

@@ -370,9 +370,15 @@ dialog::backdrop {
     }
 }
 
+/* LOL */
 .date_input {
-    width: 2rem;
-    height: 1rem;
+    width: 0.4rem;
+    height: 0.4rem;
+    position: relative;
+    left: -14.8px;
+    top: 7px;
+    background-color: var(--clr-neutral-80);
+    border: none;
 }
 
 

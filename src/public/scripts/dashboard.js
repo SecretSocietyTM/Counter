@@ -34,8 +34,10 @@ const search_input = document.getElementById("searchbar_input");
 const searchlist = document.getElementById("searchlist");
 
 // dates
+const main_date = document.getElementById("main_date");
 const sub_date = document.getElementById("sub_date");
 const week_date = document.getElementById("week_date");
+const date_dropdown = document.getElementById("date_dropdown");
 const date_input = document.getElementById("date_input");
 
 const WEEKTOTALS = { 
@@ -246,7 +248,14 @@ date_input.addEventListener("change", (e) => {
     ui.resetCalDialUI(CALORIEDIAL_UI);
 
     now = dateUtil.getNewNowDate(date_input.value);
-    ui.setActiveDate(sub_date, dateUtil.formatDate(now));
+    let label = dateUtil.getLabel(now, NOW);
+    if (label) {
+        ui.setMainDate(main_date, label);
+        ui.setSubDate(sub_date, dateUtil.formatDate(now));
+    } else {
+        ui.setMainDate(main_date, undefined, dateUtil.dowToString(now));
+        ui.setSubDate(sub_date, dateUtil.formatDateNoDow(now));
+    }
 
     if (!(week_range.start <= now && now <= week_range.end)) {
         days_logged = 0;
@@ -385,7 +394,7 @@ async function initWeeklySummary(date) {
 
 
 
-ui.setActiveDate(sub_date, dateUtil.formatDate(now));
+ui.setSubDate(sub_date, dateUtil.formatDate(now));
 ui.setWeekDate(week_date, dateUtil.formatWeekRange(now));
 initCalorieGoal();
 initDiary(now);
