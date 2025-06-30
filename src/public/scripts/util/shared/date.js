@@ -15,8 +15,8 @@ export function formatDateNoDow(date) {
 
 export function formatWeekRange(date) {
     let range = getWeekRange(date);
-    let start = formatDate(range.start).split(",")[0];
-    let end = formatDate(range.end).split(",")[0];
+    let start = formatDate(range.start).split(",")[1];
+    let end = formatDate(range.end).split(",")[1];
     return {start, end};
 }
 

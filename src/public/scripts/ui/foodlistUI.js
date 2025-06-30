@@ -5,7 +5,7 @@ import * as GenUI from "./generalUI.js";
 
 
 // element creators
-export function createListItem(food) {
+export function createFood(food) {
     const li = document.createElement("li");
     li.className = "item";
     li.dataset.id = food.food_id;

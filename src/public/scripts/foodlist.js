@@ -112,10 +112,17 @@ addfood_submit_btn.addEventListener("click", async (e) => {
         if (!flag_searching) {
             if (foodlist_array.size() == total_count) {
                 foodlist_array.add(data.food);
-                foodlist.appendChild(FoodlistUI.createListItem(data.food));
-                total_count++;
+                foodlist.appendChild(ui.createFood(data.food));
+            }
+        } else {
+            if (data.food.name.includes(glob_searchterm) &&  
+                    s_foodlist_array.size() == s_total_count) {
+                s_foodlist_array.add(data.food);
+                foodlist.appendChild(ui.createFood(data.food));
+                s_total_count++;
             }
         }
+        total_count++;
         ui.closeDialog(DIALOG_UI);
     } else {
         error_message.textContent = data.errmsg;
@@ -133,7 +140,7 @@ editfood_submit_btn.addEventListener("click", async (e) => {
         if (foodlist_array.getFoodById(data.food.food_id, "food_id")) { 
             foodlist_array.updateFood(data.food.food_id, data.food);
         }
-        ui.setFoodUI(data.food, cur_listitem);
+        ui.setFoodUI(cur_listitem, data.food);
         ui.closeDialog(DIALOG_UI); 
     } else {
         error_message.textContent = data.errmsg;
@@ -174,7 +181,7 @@ async function fetchInitFood() {
         }
         for (let i = 0; i < data.foods.length; i++) {
             foodlist_array.add(data.foods[i]);
-            foodlist.appendChild(ui.createListItem(data.foods[i]));
+            foodlist.appendChild(ui.createFood(data.foods[i]));
         }
         observer.observe(foodlist.lastElementChild);
         cur_observed_listitem = foodlist.lastElementChild;
@@ -193,7 +200,7 @@ async function fetchMoreFood(searchterm = undefined) {
     if (data.success) {
         for (let i = 0; i < data.foods.length; i++) {
             activelist.add(data.foods[i]);
-            foodlist.appendChild(ui.createListItem(data.foods[i]));
+            foodlist.appendChild(ui.createFood(data.foods[i]));
         }
     } else {
         alert(data.errmsg);
@@ -213,7 +220,7 @@ search_input.addEventListener("input", async (e) => {
         flag_searching = false;
         glob_searchterm = undefined;
         for (let i = 0; i < foodlist_array.foods.length; i++) {
-            foodlist.appendChild(ui.createListItem(foodlist_array.foods[i]));
+            foodlist.appendChild(ui.createFood(foodlist_array.foods[i]));
         }
         observer.observe(foodlist.lastElementChild);
         cur_observed_listitem = foodlist.lastElementChild;
@@ -226,7 +233,7 @@ search_input.addEventListener("input", async (e) => {
             flag_searching = true;
             for (let i = 0; i < data.foods.length; i++) {
                 s_foodlist_array.add(data.foods[i]);
-                foodlist.appendChild(ui.createListItem(data.foods[i]));
+                foodlist.appendChild(ui.createFood(data.foods[i]));
             }
             observer.observe(foodlist.lastElementChild);
             cur_observed_listitem = foodlist.lastElementChild;
