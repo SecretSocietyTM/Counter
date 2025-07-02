@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Recipes - Counter</title>
+    <link rel="stylesheet" href="../styles/shared/base.css">
+    <link rel="stylesheet" href="../styles/shared/components.css">
+    <link rel="stylesheet" href="../styles/recipes.css">
+</head>
+<body>
+<div class="body">
+    <div class="sidebar">
+        <div class="sidebar__logo">
+            <img src="../assets/shared/logos/logo.svg" alt="">
+            <a href="/dashboard">
+                <h1 class="fs-24 txt-ntrl-10">Counter</h1>
+            </a>
+        </div>
+        <ul class="sidebar__list">
+            <li class="bg-acnt-yellow">
+                <a href="/dashboard">
+                    <img src="../assets/shared/sidebar/dashboard.svg" alt="">
+                    <p>Dashboard</p>
+                </a>
+            </li>
+            <li class="bg-acnt-lblue">
+                <a href="/foodlist">
+                    <img src="../assets/shared/sidebar/foodlist.svg" alt="">
+                    <p>Food List</p>
+                </a>
+            </li>
+            <li class="bg-acnt-purple">
+                <a href="/recipes">
+                    <img src="../assets/shared/sidebar/recipes.svg" alt="">
+                    <p>Recipes</p>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main">
+        <p class="section-title margin">My Recipes</p>
+        <div class="margin">
+            <button type="button" id="addfood_btn" class="icon_button">
+                <img class="searchbar__icon" src="../assets/shared/icons/search.png" alt="">
+            </button>
+        </div>
+        <div class="categories">
+            <div class="category shadow">
+                <div class="category__header">
+                    <div class="header__title">
+                        <div class="flex gap-1_0 ai-cntr">
+                            <img src="../assets/recipes/meat.svg" alt="">
+                            <p class="fs-24 fw-b">Mains</p>
+                        </div>
+                        <div class="flex gap-1_25 ai-cntr">
+                            <button class="icon_button">
+                                <img src="../assets/shared/icons/x-kebab.svg" alt="">
+                            </button>
+                            <button class="icon_button">
+                                <img src="../assets/recipes/yellow_plus.svg" alt="">
+                            </button>
+                        </div>
+                    </div>
+                    <p class="fs-14 txt-ntrl-60">The main attraction of a meal!</p>
+                </div>
+                <ul class="recipeslist">
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+                        <div class="category shadow">
+                <div class="category__header">
+                    <div class="header__title">
+                        <div class="flex gap-1_0 ai-cntr">
+                            <img src="../assets/recipes/meat.svg" alt="">
+                            <p class="fs-24 fw-b">Mains</p>
+                        </div>
+                        <div class="flex gap-1_25 ai-cntr">
+                            <button class="icon_button">
+                                <img src="../assets/shared/icons/x-kebab.svg" alt="">
+                            </button>
+                            <button class="icon_button">
+                                <img src="../assets/recipes/yellow_plus.svg" alt="">
+                            </button>
+                        </div>
+                    </div>
+                    <p class="fs-14 txt-ntrl-60">The main attraction of a meal!</p>
+                </div>
+                <ul class="recipeslist">
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+                        <div class="category shadow">
+                <div class="category__header">
+                    <div class="header__title">
+                        <div class="flex gap-1_0 ai-cntr">
+                            <img src="../assets/recipes/meat.svg" alt="">
+                            <p class="fs-24 fw-b">Mains</p>
+                        </div>
+                        <div class="flex gap-1_25 ai-cntr">
+                            <button class="icon_button">
+                                <img src="../assets/shared/icons/x-kebab.svg" alt="">
+                            </button>
+                            <button class="icon_button">
+                                <img src="../assets/recipes/yellow_plus.svg" alt="">
+                            </button>
+                        </div>
+                    </div>
+                    <p class="fs-14 txt-ntrl-60">The main attraction of a meal!</p>
+                </div>
+                <ul class="recipeslist">
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+                        <div class="category shadow">
+                <div class="category__header">
+                    <div class="header__title">
+                        <div class="flex gap-1_0 ai-cntr">
+                            <img src="../assets/recipes/meat.svg" alt="">
+                            <p class="fs-24 fw-b">Mains</p>
+                        </div>
+                        <div class="flex gap-1_25 ai-cntr">
+                            <button class="icon_button">
+                                <img src="../assets/shared/icons/x-kebab.svg" alt="">
+                            </button>
+                            <button class="icon_button">
+                                <img src="../assets/recipes/yellow_plus.svg" alt="">
+                            </button>
+                        </div>
+                    </div>
+                    <p class="fs-14 txt-ntrl-60">The main attraction of a meal!</p>
+                </div>
+                <ul class="recipeslist">
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+                        <div class="category shadow">
+                <div class="category__header">
+                    <div class="header__title">
+                        <div class="flex gap-1_0 ai-cntr">
+                            <img src="../assets/recipes/meat.svg" alt="">
+                            <p class="fs-24 fw-b">Mains</p>
+                        </div>
+                        <div class="flex gap-1_25 ai-cntr">
+                            <button class="icon_button">
+                                <img src="../assets/shared/icons/x-kebab.svg" alt="">
+                            </button>
+                            <button class="icon_button">
+                                <img src="../assets/recipes/yellow_plus.svg" alt="">
+                            </button>
+                        </div>
+                    </div>
+                    <p class="fs-14 txt-ntrl-60">The main attraction of a meal!</p>
+                </div>
+                <ul class="recipeslist">
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+                        <div class="category shadow">
+                <div class="category__header">
+                    <div class="header__title">
+                        <div class="flex gap-1_0 ai-cntr">
+                            <img src="../assets/recipes/meat.svg" alt="">
+                            <p class="fs-24 fw-b">Mains</p>
+                        </div>
+                        <div class="flex gap-1_25 ai-cntr">
+                            <button class="icon_button">
+                                <img src="../assets/shared/icons/x-kebab.svg" alt="">
+                            </button>
+                            <button class="icon_button">
+                                <img src="../assets/recipes/yellow_plus.svg" alt="">
+                            </button>
+                        </div>
+                    </div>
+                    <p class="fs-14 txt-ntrl-60">The main attraction of a meal!</p>
+                </div>
+                <ul class="recipeslist">
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="recipe shadow">
+                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
+                        <div>
+                            <p class="txt-ntrl-50">Per Serving:</p>
+                            <div class="recipe__stats">
+                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
+                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
+                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
+                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<dialog open>
+    <div class="flex ai-cntr jc-btwn">
+        <button class="icon_button">
+            <img src="../assets/shared/icons/cancel.svg" alt="">
+        </button>
+        <button class="icon_button">
+            <img src="../assets/shared/icons/edit.svg" alt="">
+        </button>
+    </div>
+    <form>
+        <div class="form__title">
+            <span>Placeholder Recipe Name</span>
+            <input type="text" placeholder="Recipe Name">
+        </div>
+        <div class="form-ingredients-section">
+            <div class="form__inputs">
+                <button type="button" class="flex ai-cntr gap-0_5 icon_button">
+                    <img src="../assets/shared/icons/add.svg" alt="">
+                    <p class="txt-prim-green">Add Ingredient</p>
+                </button>
+                <input type="text" placeholder="main" class="input">
+                <input type="number" placeholder="serves" class="input">
+                <input type="text" placeholder="link to source">
+            </div>
+            <ul class="ingredientlist">
+                <li class="ingredient">
+                    <div class="ingredient__name-section ">
+                        <p class="ingredient__name truncate">jenni-o ground turkey 93/7</p>
+                        <button class="ingredient-delete-button icon_button">
+                            <img src="../assets/dashboard/trash.svg" alt="">
+                        </button>
+                    </div>
+                    <div class="ingredient__servsize-section">
+                        <p class="txt-ntrl-40"><span class="txt-ntrl-10">24</span>oz</p>
+                        <button class="ingredient-edit-button icon_button">
+                            <img src="../assets/shared/icons/edit.svg" alt="">
+                        </button>
+                    </div>
+                    <span class="ingredient__info txt-prim-green">644</span>
+                    <span class="ingredient__info txt-acnt-yellow">8</span>
+                    <span class="ingredient__info txt-acnt-lightblue">0</span>
+                    <span class="ingredient__info txt-acnt-purple">2244</span>
+                </li>
+            </ul>
+            <div class="ingredients__report">
+                <div class="report__total">
+                    <p class="report__subtext">Total:</p>
+                    <span class="report__info txt-prim-green">1415</span>
+                    <span class="report__info txt-acnt-yellow">65</span>
+                    <span class="report__info txt-acnt-lightblue">55</span>
+                    <span class="report__info txt-acnt-purple">139</span>
+
+                </div>
+                <div class="report__total">
+                    <p class="report__subtext">Per Serving:</p>
+                    <span class="report__info txt-prim-green">353</span>
+                    <span class="report__info txt-acnt-yellow">16</span>
+                    <span class="report__info txt-acnt-lightblue">14</span>
+                    <span class="report__info txt-acnt-purple">35</span>
+                </div>
+            </div>
+        </div>
+        <div>
+            <button type="button" class="flex ai-cntr gap-0_5 icon_button">
+                <img src="../assets/shared/icons/add.svg" alt="">
+                <p class="fs-14 txt-prim-green">Add Instructions</p>
+            </button>
+            <ol class="stepslist">
+                <li class="steps">
+                    <p>Prepare by mincing the garlic (or grate it) and combine the ingredients for the sauce in a bowl. Tedex is the independent part of text created in 2009. So now instead of a rich person telling us how their non expressive  products</p>
+                    <div class="flex gap-1_0">
+                        <button class="icon_button">
+                            <img src="../assets/shared/icons/edit.svg" alt="">
+                        </button>
+                        <button class="icon_button">
+                            <img src="../assets/dashboard/trash.svg" alt="">
+                        </button>
+                    </div>
+                </li>
+            </ol>
+        </div>
+    </form>
+</dialog>
+</body>
+</html>
