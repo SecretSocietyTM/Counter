@@ -7,6 +7,7 @@ const pagesRouter = require("./routes/pages.js");
 const userRouter = require("./routes/api/user.js");
 const foodRouter = require("./routes/api/food.js");
 const diaryRouter = require("./routes/api/diary.js");
+const recipesRouter = require("./routes/api/recipes.js");
 
 const app = express();
 const port = 3000;
@@ -27,6 +28,7 @@ app.use("/", pagesRouter);
 app.use("/api/user", userRouter);
 app.use("/api/food", foodRouter);
 app.use("/api/diary", diaryRouter);
+app.use("/api/recipes", recipesRouter);
 
 
 // run server
