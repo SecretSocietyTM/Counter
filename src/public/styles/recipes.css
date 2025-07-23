@@ -39,7 +39,7 @@
     width: 23.5vw;
     flex-shrink: 0;
 
-    outline: 2px solid var(--clr-accent-yellow);
+    /* outline: 2px solid var(--clr-accent-yellow); */
 
     border-radius: 1.5rem;
 }
@@ -85,6 +85,16 @@
     .recipe__stats {
         margin-inline-start: 1rem;
     }
+}
+
+select {
+    outline: none;
+    border: none;
+    border-bottom: 2px solid white;
+    background: none;
+    
+    color: var(--clr-neutral-10);
+    background-color: var(--clr-neutral-80);
 }
 
 .cal, .fat, .carb, .prot {
