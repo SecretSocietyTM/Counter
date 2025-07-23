@@ -3,7 +3,7 @@ const { connectDB } = require("./connect.js");
 async function getCategories(uid) {
     let db = await connectDB();;
     let result = await db.all(`
-        SELECT category_id, name
+        SELECT category_id, name, blurb, color, emoji
         FROM categories
         WHERE user_id=?`,
         [uid]
