@@ -23,5 +23,10 @@ router.get("/foodlist", (req, res) => {
     return res.sendFile(path.join(viewsdir, "foodlist.html"));
 });
 
+router.get("/recipes", (req, res) => {
+    if (!req.session.user) return res.redirect("/accounts");
+    return res.sendFile(path.join(viewsdir, "recipes.html"));
+})
+
 
 module.exports = router;
