@@ -50,4 +50,23 @@ async function fixDailySummary() {
     await db.close();
 }
 
-fixDailySummary();
+async function addDefaultCategories() {
+    const db = await connectDB();
+
+    let users = await db.all(`SELECT user_id FROM users`);
+
+    for (const user of users) {
+        await db.run(`
+            INSERT INTO categories
+            (user_id, name)
+            VALUES
+            (?, ?),
+            (?, ?)`,
+            [user.user_id, "Mains", user.user_id, "Sides"]
+        );
+    }
+}
+
+/* fixDailySummary(); */
+
+addDefaultCategories();
