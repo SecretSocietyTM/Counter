@@ -164,6 +164,8 @@ form {
         outline: none;
         border: none;
         background-color: transparent;
+
+        color: var(--clr-neutral-10);
     }
 }
 

@@ -13,6 +13,28 @@ const EMOJIS = {
     2: "../assets/recipes/bowl.svg"
 }
 
+let category_names = {};
+
+export function addCategoryName(category) {
+    category_names[category.category_id] = category.name;
+}
+
+export function setCategorySelect(dialog, category_id) {
+    const category_select = dialog.querySelector("[name='category']");
+
+    let option = document.createElement("option");
+    option.value = category_id;
+    option.textContent = category_names[category_id];
+    category_select.appendChild(option);
+
+    for (const category in category_names) {
+        if (category == category_id) continue;
+        let option = document.createElement("option");
+        option.value = category;
+        option.textContent = category_names[category];
+        category_select.appendChild(option);
+    }   
+}
 
 export function createCategory(category) {
     const main_container = document.createElement("div");
@@ -40,11 +62,12 @@ export function createCategory(category) {
     name.textContent = category.name;
 
     const kebab_button = document.createElement("button");
-    kebab_button.className = "icon_button";
+    kebab_button.className = "kebab_btn icon_button";
     kebab_button.type = "button";
 
     const add_button = document.createElement("button");
-    add_button.className = "icon_button";
+    add_button.className = "addrecipe_btn icon_button";
+    add_button.dataset.category_id = category.category_id;
     add_button.type = "button";
 
     const kebab_image = document.createElement("img");
@@ -61,9 +84,6 @@ export function createCategory(category) {
     const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
     use.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", "../assets/icons.svg#plus");
     add_svg.appendChild(use);
-/*     add_svg.innerHTML = `        
-        <line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`; */
 
     const blurb = document.createElement("p");
     blurb.className = "fs-14 txt-ntrl-60";
@@ -81,6 +101,3 @@ export function createCategory(category) {
     main_container.appendChild(list)
     return main_container;
 }
-
-
-// TODO: almost finished #39, need to figure out svg shit...
