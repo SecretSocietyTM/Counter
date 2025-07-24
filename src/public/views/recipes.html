@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../styles/shared/base.css">
     <link rel="stylesheet" href="../styles/shared/components.css">
     <link rel="stylesheet" href="../styles/recipes.css">
+    <link rel="stylesheet" href="../components/searchbar.css">
     <script type="module" src="../scripts/recipes.js" defer></script>
 </head>
 <body>
@@ -55,7 +56,7 @@
 
 <dialog id="recipe_dialog">
     <div class="flex ai-cntr jc-btwn">
-        <button class="icon_button">
+        <button id="close_dialog_btn" class="icon_button">
             <img src="../assets/shared/icons/cancel.svg" alt="">
         </button>
         <button class="icon_button">
@@ -69,7 +70,7 @@
         </div>
         <div class="form-ingredients-section">
             <div class="form__inputs">
-                <button type="button" class="flex ai-cntr gap-0_5 icon_button">
+                <button type="button" id="addingredient_btn" class="flex ai-cntr gap-0_5 icon_button">
                     <img src="../assets/shared/icons/add.svg" alt="">
                     <p class="txt-prim-green">Add Ingredient</p>
                 </button>
@@ -106,7 +107,7 @@
             </div>
         </div>
         <div>
-            <button type="button" class="flex ai-cntr gap-0_5 icon_button">
+            <button type="button" id="addstep_btn" class="flex ai-cntr gap-0_5 icon_button">
                 <img src="../assets/shared/icons/add.svg" alt="">
                 <p class="fs-14 txt-prim-green">Add Instructions</p>
             </button>
@@ -116,6 +117,8 @@
         <button type="button" class="button-1 bg-prim-green">Save</button>
     </form>
 </dialog>
+
+<div id="searchbar_target"></div>
 </body>
 </html>
 

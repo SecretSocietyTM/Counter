@@ -157,9 +157,9 @@ addfood_btns.forEach(btn => {
     });
 });
 
-// closing search dialog with Esc
+// closing search dialog with Esc // TODO REMOVE;
 search_dialog.addEventListener("cancel", (e) => {
-    ui.closeSearchDialog();
+    ui.closeSearchDialog(search_dialog);
 });
 
 // sets up calorie goal input
@@ -276,6 +276,7 @@ function setupForm(form) {
     form.addEventListener("click", async (e) => {
         if (!e.target.closest("#searchform_submit_btn")) return;
         let entry_data = ui.checkFormValidity(form);
+        if (!entry_data) return;
 
         const data = await api.addToDiary(entry_data);
 
@@ -336,7 +337,7 @@ diary.addEventListener("click", async (e) => {
 
 
 
-
+// page init functions
 async function initCalorieGoal() {
     const data = await api.getCalorieGoal();
 
