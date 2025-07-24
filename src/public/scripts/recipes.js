@@ -133,8 +133,10 @@ addrecipe_submit_btn.addEventListener("click", async (e) => {
 
     if (data.success) {
         RECIPES.add(data.recipe);
-        CATEGORY_RECIPESLISTS[data.recipe.category_id].
-            appendChild(ui.createRecipe(data.recipe));
+        console.log(data);
+        // TODO: see what is returned with data, need to add recipe to obj with info, ingredients, steps
+        CATEGORY_RECIPESLISTS[data.recipe.info.category_id].
+            appendChild(ui.createRecipe(data.recipe.info));
 
         recipeform.reset();
         INGREDIENTSLIST.deleteAll();
@@ -195,6 +197,18 @@ async function initCategories() {
     }
 }
 
+async function initRecipes() {
+    const data = await api.getRecipes();
+
+    if (data.success) {
+        data.recipes.forEach(recipe => {
+            RECIPES.add(recipe);
+            CATEGORY_RECIPESLISTS[recipe.info.category_id].
+                appendChild(ui.createRecipe(recipe.info));
+        })
+    }
+}
+
 
 
 await searchbar.loadSearchbar(searchbar_target);
@@ -208,4 +222,6 @@ searchbar_target.querySelector("#search_dialog").
     ui.setReportUI(REPORT_UI, REPORT);
 });
 
+
 initCategories();
+initRecipes();
