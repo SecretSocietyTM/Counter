@@ -1,9 +1,4 @@
 // getters
-export async function getFoods(last_food_id, searchterm) {
-    const res = await fetch(`api/food?last_item=${last_food_id}&query=${searchterm}`);
-    return await res.json();
-}
-
 export async function getCalorieGoal() {
     const res = await fetch("api/user/calorie-goal");
     return await res.json();

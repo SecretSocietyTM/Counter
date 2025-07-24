@@ -65,7 +65,7 @@ async function handleDialogClick(e) {
         const form_data = await submitFormData(active_form);
 
         dialog.dispatchEvent(new CustomEvent("searchbar:submit", {
-            detail: form_data
+            detail: { food, form_data }
         }));
     }
 }

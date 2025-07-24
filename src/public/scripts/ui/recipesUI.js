@@ -1,3 +1,5 @@
+import * as GenUI from "./generalUI.js";
+
 const COLORS = {
     1: "--clr-primary-blue",
     2: "--clr-primary-green",
@@ -100,4 +102,60 @@ export function createCategory(category) {
     header.appendChild(blurb);
     main_container.appendChild(list)
     return main_container;
+}
+
+export function createIngredient(food) {
+    const li = document.createElement("li");
+    li.className = "ingredient";
+    li.dataset.id = food.food_id;
+
+    const name_div = document.createElement("div");
+    name_div.className = "ingredient__name-section";
+
+    const servsize_div = document.createElement("div");
+    servsize_div.className = "ingredient__servsize-section";
+
+    const name = document.createElement("p");
+    name.className = "ingredient__name truncate"
+    name.textContent = food.name;
+
+    const trash_button = document.createElement("button");
+    trash_button.type = "button";
+    trash_button.classList.add("delete_btn", "icon_button");
+
+    const trash_image = document.createElement("img");
+    trash_image.src = "../assets/dashboard/trash.svg";
+    trash_button.appendChild(trash_image);
+
+    const servsizeunit = GenUI.createServingUnit(
+        food.servsize, food.unit, ["txt-ntrl-10"], ["txt-ntrl-40"]);
+
+    const edit_button = document.createElement("button");
+    edit_button.type = "button";
+    edit_button.className = "editfood_btn icon_button";
+
+    const edit_image = document.createElement("img");
+    edit_image.src = "../assets/shared/icons/edit.svg";
+    edit_button.appendChild(edit_image);
+
+    const cal = document.createElement("span");
+    cal.className = "ingredient__info txt-prim-green";
+    cal.textContent = food.cal;
+
+    const fat = document.createElement("span");
+    fat.className = "ingredient__info txt-acnt-yellow";
+    fat.textContent = food.fat;
+
+    const carb = document.createElement("span");
+    carb.className = "ingredient__info txt-acnt-lightblue";
+    carb.textContent = food.carb;
+
+    const prot = document.createElement("span");
+    prot.className = "ingredient__info txt-acnt-purple";
+    prot.textContent = food.prot;
+
+    li.append(name_div, servsize_div, cal, fat, carb, prot);
+    name_div.append(name, trash_button);
+    servsize_div.append(servsizeunit, edit_button);
+    return li;
 }
