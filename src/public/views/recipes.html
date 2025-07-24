@@ -63,9 +63,9 @@
             <img src="../assets/shared/icons/edit.svg" alt="">
         </button>
     </div>
-    <form>
+    <form id="recipe_form">
         <div class="form__title">
-            <input id="recipe_name_input" type="text" placeholder="Recipe Name" required>
+            <input type="text" name="name" id="recipe_name_input" placeholder="Recipe Name" required>
             <span id="recipe_name">Placeholder Recipe Name</span>
         </div>
         <div class="form-ingredients-section">
@@ -76,15 +76,15 @@
                 </button>
                 <select name="category">
                 </select>
-                <input id="serves" type="number" placeholder="serves" class="input">
-                <input type="number" placeholder="serv sz" class="input">
+                <input type="number" name="serves" id="serves" placeholder="serves" class="input">
+                <input type="number" name="servsize" placeholder="serv sz" step="0.01" required class="input">
                 <select name="unit">
                     <option value="g">g</option>
                     <option value="x">x</option>
                     <option value="oz">oz</option>
                     <option value="ml">mL</option>
                 </select>
-                <input type="text" placeholder="link to source">
+                <input type="text" name="link" placeholder="link to source">
             </div>
             <ul id="ingredientlist" class="ingredientlist">
             </ul>

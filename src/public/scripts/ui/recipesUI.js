@@ -17,6 +17,7 @@ const EMOJIS = {
 
 let category_names = {};
 
+// helpers
 export function addCategoryName(category) {
     category_names[category.category_id] = category.name;
 }
@@ -38,6 +39,7 @@ export function setCategorySelect(dialog, category_id) {
     }   
 }
 
+// element creators
 export function createCategory(category) {
     const main_container = document.createElement("div");
     main_container.className = "category shadow";
@@ -159,6 +161,14 @@ export function createIngredient(food) {
     servsize_div.append(servsizeunit, edit_button);
     return li;
 }
+
+
+
+
+// element actions
+export const isClickingOutside = GenUI.isClickingOutside;
+
+export const checkFormValidity = GenUI.checkFormValidity;
 
 
 

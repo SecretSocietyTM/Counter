@@ -80,6 +80,7 @@ async function addNewTables(){
         CREATE TABLE IF NOT EXISTS recipe_ingredients (
             ingredient_id INTEGER PRIMARY KEY AUTOINCREMENT,
             recipe_id INTEGER NOT NULL,
+            food_id INTEGER NOT NULL,
             name TEXT NOT NULL,
             serving_size INTEGER NOT NULL,
             unit TEXT NOT NULL,
@@ -99,6 +100,15 @@ async function addNewTables(){
     );
 }
 
+async function alter() {
+    const db = await connectDB();
+    await db.run(`
+        ALTER TABLE recipe_ingredients2 RENAME TO recipe_ingredients;`
+    )
+}
+
 /* setup(); */
 
-addNewTables();
+/* addNewTables(); */
+
+alter();

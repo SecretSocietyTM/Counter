@@ -5,11 +5,12 @@ import * as searchbar from "../components/searchbar.js";
 import { FoodManager } from "./util/shared/foodmanager.js";
 
 const INGREDIENTSLIST = new FoodManager();
+const STEPSLIST = [];
 
 let categories_list = [];
 
 let active_category = null;
-let serves = 1;  
+let serves = 1;
 
 const REPORT = {
     total: {
@@ -44,6 +45,7 @@ const categories = document.getElementById("categories");
 
 // recipe dialog elements
 const recipe_dialog = document.getElementById("recipe_dialog");
+const recipeform = document.getElementById("recipe_form");
 const recipe_name = document.getElementById("recipe_name");
 const close_dialog_btn = document.getElementById("close_dialog_btn");
 const addingredient_btn = document.getElementById("addingredient_btn");
@@ -113,7 +115,17 @@ addingredient_btn.addEventListener("click", (e) => {
 
 // recipe dialog button event listeners
 addrecipe_submit_btn.addEventListener("click", (e) => {
+    const recipe_data = ui.checkFormValidity(recipeform);
+    if (!recipe_data) return;
+
+    recipe_data.serves = serves;
+    recipe_data.ingredients = INGREDIENTSLIST.foods;
+    recipe_data.steps = STEPSLIST;
+    for (const key in REPORT.total) {
+        recipe_data[key] = REPORT.total[key];
+    }
     
+    const data = api.addRecipe(recipe_data);
 });
 
 close_dialog_btn.addEventListener("click", (e) => {
