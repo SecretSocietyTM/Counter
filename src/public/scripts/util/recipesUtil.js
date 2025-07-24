@@ -17,6 +17,18 @@ export function updateReportPerServ(obj, serves) {
     roundMacros(obj.perserv);
 }
 
+
+
+// resetters
+export function resetReport(obj) {
+    for (const key of ["cal", "fat", "carb", "prot"]) {
+        obj.total[key] = 0;
+        obj.perserv[key] = 0;
+    }
+}
+
+
+
 // misc
 export function roundMacros(obj) {
     for (let key of ["fat", "carb", "prot"]) {

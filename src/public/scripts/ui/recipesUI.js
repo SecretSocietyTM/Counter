@@ -24,6 +24,7 @@ export function addCategoryName(category) {
 
 export function setCategorySelect(dialog, category_id) {
     const category_select = dialog.querySelector("[name='category']");
+    category_select.replaceChildren();
 
     let option = document.createElement("option");
     option.value = category_id;
@@ -104,6 +105,35 @@ export function createCategory(category) {
     header.appendChild(blurb);
     main_container.appendChild(list)
     return main_container;
+}
+
+export function createRecipe(recipe) {
+    const li = document.createElement("li");
+    li.className = "recipe shadow";
+
+    const name = document.createElement("p");
+    name.className = "fs-20 fw-b";
+    name.textContent = recipe.name;
+
+    const info_div = document.createElement("div");
+
+    const text = document.createElement("p");
+    text.className = "txt-ntrl-50";
+    text.textContent = "Per Serving:"
+
+    const stats_div = document.createElement("div");
+    stats_div.className = "recipe__stats txt-ntrl-40";
+
+    const cal = GenUI.createMacro(recipe.cal, "calories", ["cal"]);
+    const fat = GenUI.createMacro(recipe.fat, "g fat", ["fat"]);
+    const carb = GenUI.createMacro(recipe.carb, "g carbs", ["carb"]);
+    const prot = GenUI.createMacro(recipe.prot, "g protein", ["prot"]);
+
+    li.append(name, info_div);
+    info_div.append(text, stats_div);
+    stats_div.append(cal, fat, carb, prot);
+
+    return li;    
 }
 
 export function createIngredient(food) {

@@ -116,8 +116,8 @@ addfood_submit_btn.addEventListener("click", async (e) => {
                 foodlist.appendChild(ui.createFood(data.food));
             }
         } else {
-            if (data.food.name.includes(glob_searchterm) &&  
-                    s_foodlist_array.size() == s_total_count) {
+            if (data.food.name.includes(glob_searchterm) 
+                && s_foodlist_array.size() == s_total_count) {
                 s_foodlist_array.add(data.food);
                 foodlist.appendChild(ui.createFood(data.food));
                 s_total_count++;

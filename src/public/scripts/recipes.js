@@ -4,10 +4,14 @@ import * as ui from "./ui/recipesUI.js";
 import * as searchbar from "../components/searchbar.js";
 import { FoodManager } from "./util/shared/foodmanager.js";
 
-const INGREDIENTSLIST = new FoodManager();
-const STEPSLIST = [];
 
-let categories_list = [];
+// below are UI elements. Need STATE objects as well
+let CATEGORIES = {};
+let CATEGORY_RECIPESLISTS = {}
+const RECIPES = new FoodManager();
+
+const INGREDIENTSLIST = new FoodManager();
+let STEPSLIST = [];
 
 let active_category = null;
 let serves = 1;
@@ -114,7 +118,7 @@ addingredient_btn.addEventListener("click", (e) => {
 
 
 // recipe dialog button event listeners
-addrecipe_submit_btn.addEventListener("click", (e) => {
+addrecipe_submit_btn.addEventListener("click", async (e) => {
     const recipe_data = ui.checkFormValidity(recipeform);
     if (!recipe_data) return;
 
@@ -125,10 +129,45 @@ addrecipe_submit_btn.addEventListener("click", (e) => {
         recipe_data[key] = REPORT.total[key];
     }
     
-    const data = api.addRecipe(recipe_data);
+    const data = await api.addRecipe(recipe_data);
+
+    if (data.success) {
+        RECIPES.add(data.recipe);
+        CATEGORY_RECIPESLISTS[data.recipe.category_id].
+            appendChild(ui.createRecipe(data.recipe));
+
+        recipeform.reset();
+        INGREDIENTSLIST.deleteAll();
+        STEPSLIST = [];
+        util.resetReport(REPORT);
+        ingredientlist.replaceChildren();
+        stepslist.replaceChildren();
+        ui.setReportUI(REPORT_UI, REPORT);
+        recipe_dialog.close();
+    }
 });
 
+recipe_dialog.addEventListener("click", (e) => {
+    if (ui.isClickingOutside(e, recipe_dialog)) {
+        recipeform.reset();
+        INGREDIENTSLIST.deleteAll();
+        STEPSLIST = [];
+        util.resetReport(REPORT);
+        ingredientlist.replaceChildren();
+        stepslist.replaceChildren();
+        ui.setReportUI(REPORT_UI, REPORT);
+        recipe_dialog.close();
+    }
+})
+
 close_dialog_btn.addEventListener("click", (e) => {
+    recipeform.reset();
+    INGREDIENTSLIST.deleteAll();
+    STEPSLIST = [];
+    util.resetReport(REPORT);
+    ingredientlist.replaceChildren();
+    stepslist.replaceChildren();
+    ui.setReportUI(REPORT_UI, REPORT);
     recipe_dialog.close();
 });
 
@@ -146,9 +185,12 @@ async function initCategories() {
 
     if (data.success) {
         data.categories.forEach(category => {
-            categories_list.push(category);
             ui.addCategoryName(category);
-            categories.appendChild(ui.createCategory(category));
+            let category_element = ui.createCategory(category)
+            categories.appendChild(category_element);
+            CATEGORIES[category.category_id] = category_element;
+            CATEGORY_RECIPESLISTS[category.category_id] = 
+                category_element.querySelector(".recipeslist");
         });
     }
 }
