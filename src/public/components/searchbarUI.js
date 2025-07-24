@@ -35,7 +35,7 @@ export function createSearchResult(food) {
     return li;
 }
 
-export function createSearchResultForm(food, meal = null, _date = null) {
+export function createSearchResultForm(food) {
     const form = document.createElement("form");
     form.className = "item__form";
 
@@ -61,22 +61,6 @@ export function createSearchResultForm(food, meal = null, _date = null) {
     unit.name = "unit";
     setUnitSelect(unit, food.unit);
 
-    if (meal && _date) {
-        const meal_type = document.createElement("input");
-        meal_type.type = "hidden";
-        meal_type.name = "meal_type";
-        meal_type.value = meal;
-
-        const date = document.createElement("input");
-        date.type = "hidden";
-        date.name = "date";
-        date.value = _date;
-
-        inputs.append(meal_type, date, food_id, servsize, unit);
-    } else {
-        inputs.append(food_id, servsize, unit);
-    }
-
     const check_button = document.createElement("button");
     check_button.type = "button";
     check_button.id = "searchform_submit_btn";
@@ -87,6 +71,7 @@ export function createSearchResultForm(food, meal = null, _date = null) {
     check_image.width = 20;
 
     check_button.appendChild(check_image);
+    inputs.append(food_id, servsize, unit);
 
     buttons.appendChild(check_button);
 

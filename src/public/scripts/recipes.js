@@ -20,11 +20,6 @@ const addstep_btn = document.getElementById("addstep_btn");
 // search dialog elements
 const searchbar_target = document.getElementById("searchbar_target");
 
-/* const search_dialog = document.getElementById("search_dialog");
-const search_input = document.getElementById("searchbar_input");
-const searchlist = document.getElementById("searchlist"); */
-
-
 categories.addEventListener("click", (e) => {
     const addrecipe_btn = e.target.closest(".addrecipe_btn");
     if(!addrecipe_btn) return;
@@ -69,7 +64,7 @@ await searchbar.loadSearchbar(searchbar_target);
 searchbar_target.querySelector("#search_dialog").
     addEventListener("searchbar:submit", (e) => {
     console.log(e.detail);
-    const { food, form_data } = e.detail;
+    const form_data = e.detail;
 });
 
 initCategories();

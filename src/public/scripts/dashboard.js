@@ -3,6 +3,7 @@ import * as util from "./util/dashboardUtil.js"
 import * as ui from "./ui/dashboardUI.js";
 import * as dateUtil from "./util/shared/date.js";
 import { FoodManager } from "./util/shared/foodmanager.js";
+import * as searchbar from "../components/searchbar.js";
 
 
 const SEARCHLIST = new FoodManager();
@@ -29,6 +30,8 @@ const edit_goal_btn = document.getElementById("edit_goal_btn");
 const goal_input = document.getElementById("goal_calories_input");
 
 // search dialog elements
+const searchbar_target = document.getElementById("searchbar_target");
+
 const search_dialog = document.getElementById("search_dialog");
 const search_input = document.getElementById("searchbar_input");
 const searchlist = document.getElementById("searchlist");
@@ -152,14 +155,8 @@ function updateStateUI(entry, meal_type, flag, li) {
 addfood_btns.forEach(btn => {
     btn.addEventListener("click", (e) => {
         meal_type = e.target.closest("button").dataset.meal_type;
-        search_dialog.style.display = "flex";
-        search_dialog.showModal();
+        searchbar.showSearch();
     });
-});
-
-// closing search dialog with Esc // TODO REMOVE;
-search_dialog.addEventListener("cancel", (e) => {
-    ui.closeSearchDialog(search_dialog);
 });
 
 // sets up calorie goal input
@@ -167,7 +164,7 @@ edit_goal_btn.addEventListener("click", (e) => {
     ui.activateGoalInput(CALORIESTATS_UI.goal, goal_input);    
 });
 
-// edit event
+// edit calorie goal event
 goal_input.addEventListener("keydown", async (e) => {
     if (e.key === "Escape") {
         ui.deactivateGoalInput(CALORIESTATS_UI, goal_input);
@@ -176,6 +173,7 @@ goal_input.addEventListener("keydown", async (e) => {
     }
 });
 
+// actually updates the calorie goal when the input is blurred
 goal_input.addEventListener("blur", async (e) => {
     if (goal_input.style.display == "none") {
         return;
@@ -197,51 +195,7 @@ goal_input.addEventListener("blur", async (e) => {
     ui.deactivateGoalInput(CALORIESTATS_UI, goal_input);
 });
 
-// simplified search event
-search_input.addEventListener("input", async (e) => {
-    let searchterm = e.target.value;
-    searchlist.replaceChildren();
-
-    if (searchterm.length == 0) return;
-
-    const data = await api.getFoods(0, searchterm);
-
-    if (data.success) {
-        if (data.count == 0) return;
-        for (let i = 0; i < data.foods.length; i++) {
-            SEARCHLIST.add(data.foods[i]);
-            searchlist.appendChild(ui.createSearchResult(data.foods[i]));
-        }
-    } else {
-        alert(data.errmsg);
-    }
-});
-
-search_dialog.addEventListener("click", async (e) => {
-    if (ui.isClickingOutside(e, search_dialog)) {
-        ui.closeSearchDialog(search_dialog);
-    }
-
-    if (e.target.closest("form")) return;
-    const searchlist_whole = e.target.closest(".searchlist__whole-item");
-    if (!searchlist_whole) return;
-    if (searchlist_whole && active_form) {
-        let remove = (searchlist_whole.children.length > 1) ? true : false;
-        active_form.remove();
-        active_form = null;
-        if (remove) return;
-    }
-    if (!searchlist_whole.querySelector("form")) {
-        const food = SEARCHLIST.getFoodById(searchlist_whole.dataset.id, "food_id");
-        active_form = ui.createSearchResultForm(meal_type, now.toDateString(), food);
-        setupForm(active_form);
-        searchlist_whole.appendChild(active_form);
-        active_form.querySelector("[name='servsize']").focus();
-    }  
-});
-
 date_input.addEventListener("change", (e) => {
-
     total_entries = 0;
     util.resetAll(MEALLISTS, MEALSTATS, CALORIESTATS, MACROSTATS);
     ui.resetAllUI(MEALLISTS_UI, MEALSTATS_UI, CALORIEDIAL_UI, CALORIESTATS_UI, MACROSTATS_UI);
@@ -269,36 +223,21 @@ date_input.addEventListener("change", (e) => {
     initDiary(now);
 });
 
-
-
 // add to diary event
-function setupForm(form) {
-    form.addEventListener("click", async (e) => {
-        if (!e.target.closest("#searchform_submit_btn")) return;
-        let entry_data = ui.checkFormValidity(form);
-        if (!entry_data) return;
+async function addToDiary(entry_data) {
+    const data = await api.addToDiary(entry_data);
 
-        const data = await api.addToDiary(entry_data);
+    if (data.success) {
+        daily_summaries[now.getDay()] = data.summary;
+        updateStateUI(data.entry, meal_type, "add", undefined);
 
-        if (data.success) {
-            daily_summaries[now.getDay()] = data.summary;
-            updateStateUI(data.entry, meal_type, "add", undefined);
-
-            let macro_percentages = util.generatePercentagesObj(daily_summaries[now.getDay()]);
-            let value = daily_summaries[now.getDay()].cal / CALORIESTATS.goal * 100;
-            ui.setCalorieGraphBar(BARGRAPHS_UI.cal_bars[now.getDay()], value, BARGRAPHS_UI.dashoffsets);
-            ui.setMacroGraphBar(BARGRAPHS_UI.macro_bars[now.getDay()], macro_percentages);
-
-            search_input.value = "";
-            search_input.focus();
-            searchlist.replaceChildren();
-            active_form.remove();
-            active_form = null;
-        } else {
-            alert(data.errmsg);
-        }
-        console.log(daily_summaries);
-    });
+        let macro_percentages = util.generatePercentagesObj(daily_summaries[now.getDay()]);
+        let value = daily_summaries[now.getDay()].cal / CALORIESTATS.goal * 100;
+        ui.setCalorieGraphBar(BARGRAPHS_UI.cal_bars[now.getDay()], value, BARGRAPHS_UI.dashoffsets);
+        ui.setMacroGraphBar(BARGRAPHS_UI.macro_bars[now.getDay()], macro_percentages);
+    } else {
+        alert(data.errmsg);
+    }    
 }
 
 // delete from diary event
@@ -393,7 +332,16 @@ async function initWeeklySummary(date) {
     console.log(daily_summaries);
 }
 
+await searchbar.loadSearchbar(searchbar_target);
 
+searchbar_target.querySelector("#search_dialog").
+    addEventListener("searchbar:submit", (e) => {
+    const form_data = e.detail;
+    console.log(e.detail);
+    form_data.meal_type = meal_type;
+    form_data.date = now.toDateString();
+    addToDiary(form_data)
+});
 
 ui.setSubDate(sub_date, dateUtil.formatDate(now));
 ui.setWeekDate(week_date, dateUtil.formatWeekRange(now));
