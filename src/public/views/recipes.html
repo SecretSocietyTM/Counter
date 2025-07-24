@@ -76,7 +76,7 @@
                 </button>
                 <select name="category">
                 </select>
-                <input type="number" placeholder="serves" class="input">
+                <input id="serves" type="number" placeholder="serves" class="input">
                 <input type="number" placeholder="serv sz" class="input">
                 <select name="unit">
                     <option value="g">g</option>
@@ -89,20 +89,20 @@
             <ul id="ingredientlist" class="ingredientlist">
             </ul>
             <div class="ingredients__report">
-                <div class="report__total">
+                <div class="report">
                     <p class="report__subtext">Total:</p>
-                    <span class="report__info txt-prim-green">0</span>
-                    <span class="report__info txt-acnt-yellow">0</span>
-                    <span class="report__info txt-acnt-lightblue">0</span>
-                    <span class="report__info txt-acnt-purple">0</span>
+                    <span id="total_cal" class="report__info txt-prim-green">0</span>
+                    <span id="total_fat" class="report__info txt-acnt-yellow">0</span>
+                    <span id="total_carb" class="report__info txt-acnt-lightblue">0</span>
+                    <span id="total_prot" class="report__info txt-acnt-purple">0</span>
 
                 </div>
-                <div class="report__total">
+                <div class="report">
                     <p class="report__subtext">Per Serving:</p>
-                    <span class="report__info txt-prim-green">0</span>
-                    <span class="report__info txt-acnt-yellow">0</span>
-                    <span class="report__info txt-acnt-lightblue">0</span>
-                    <span class="report__info txt-acnt-purple">0</span>
+                    <span id="perserv_cal" class="report__info txt-prim-green">0</span>
+                    <span id="perserv_fat" class="report__info txt-acnt-yellow">0</span>
+                    <span id="perserv_carb" class="report__info txt-acnt-lightblue">0</span>
+                    <span id="perserv_prot" class="report__info txt-acnt-purple">0</span>
                 </div>
             </div>
         </div>
@@ -114,7 +114,9 @@
             <ol id="stepslist" class="stepslist">
             </ol>
         </div>
-        <button type="button" class="button-1 bg-prim-green">Save</button>
+        <!-- <button type="button" id="deleterecipe_btn" class="delete_btn button-1 bg-prim-red">Delete</button>
+        <button type="button" id="editrecipe_submit_btn" class="button-1 bg-prim-green">Save</button> -->
+        <button type="button" id="addrecipe_submit_btn" class="button-1 bg-prim-green">Save</button>
     </form>
 </dialog>
 

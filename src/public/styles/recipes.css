@@ -270,7 +270,7 @@ form {
     flex-direction: column;
 }
 
-.report__total {
+.report {
     display: grid;
     grid-template-columns: 60% repeat(4, 1fr);
     gap: 0.25rem;

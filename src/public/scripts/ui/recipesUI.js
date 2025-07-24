@@ -159,3 +159,20 @@ export function createIngredient(food) {
     servsize_div.append(servsizeunit, edit_button);
     return li;
 }
+
+
+
+
+// setters
+export function setReportUI(ui, obj) {
+    for (const key of ["cal", "fat", "carb", "prot"]) {
+        ui.total[key].textContent = obj.total[key];
+        ui.perserv[key].textContent = obj.perserv[key];
+    }
+}
+
+export function setReportPerServUI(ui, obj) {
+    for (const key of ["cal", "fat", "carb", "prot"]) {
+        ui.perserv[key].textContent = obj.perserv[key];
+    } 
+}
