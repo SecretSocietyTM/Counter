@@ -1,4 +1,5 @@
 const { connectDB } = require("./connect.js");
+const mapper  = require("../routes/api/utils/mapper.js");
 
 async function addRecipe(uid, recipe) {
     const db = await connectDB();
@@ -55,9 +56,49 @@ async function getCategories(uid) {
     return result;
 }
 
+async function getRecipesInfo(uid) {
+    const db = await connectDB();
+    let recipes = [];
+
+    let results = await db.all(`
+        SELECT 
+        recipe_id, category_id, name, serve_count,
+        serving_size, unit, calories, fat, carbs, protein, source_link
+        FROM recipes
+        WHERE user_id=?`,
+        [uid]
+    );
+    for (const item of results) {
+        let _results = await db.all(`
+            SELECT 
+            ingredient_id, recipe_id, food_id, name,
+            serving_size, unit, calories, fat, carbs, protein
+            FROM recipe_ingredients
+            WHERE recipe_id=?`,
+            [item.recipe_id]
+        );
+
+        let __results = []; // TODO: add steps
+
+        let info = mapper.mapRecipe(item);
+        let ingredients = mapper.mapRecipeIngredients(_results);
+        let steps = [] // TODO: add steps
+        let recipe = {
+            info,
+            ingredients,
+            steps
+        }
+        recipes.push(recipe);
+    }
+    await db.close();
+
+    return recipes;
+}
+
 module.exports = {
     addRecipe,
     addRecipeIngredients,
     addRecipeSteps,
-    getCategories
+    getCategories,
+    getRecipesInfo
 }

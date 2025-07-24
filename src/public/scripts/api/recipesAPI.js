@@ -4,6 +4,11 @@ export async function getCategories() {
     return await res.json();
 }
 
+export async function getRecipes() {
+    const res = await fetch("api/recipes");
+    return await res.json();
+}
+
 // updaters
 export async function addRecipe(recipe) {
     const res = await fetch("api/recipes", {

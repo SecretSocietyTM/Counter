@@ -3,30 +3,40 @@ const router  = express.Router();
 const db      = require("../../database/index.js");
 const mapper  = require("./utils/mapper.js");
 
-router.post("/", async (req, res) => {
-    const recipe_info = req.body;
-    const uid = req.session.user.id;
-    let result, _result, __result;
-    try {
-        result = await db.recipesDB.addRecipe(uid, recipe_info);
-        _result = await db.recipesDB.
-            addRecipeIngredients(result.recipe_id, recipe_info.ingredients);
-        // TODO: implement in the future __result = await db.recipesDB.
-        //    addRecipeSteps(result.recipe_id, recipe_info.steps);
-    } catch (err) {
-        console.error(err);
-        return res.json({ success: false, errmsg: "Something went wrong, please try again" });
-    }
+router.route("/")
+    .get(async (req, res) => {
+        const uid = req.session.user.id;
+        let results;
+        try {
+            results = await db.recipesDB.getRecipesInfo(uid);
+        } catch (err) {
+            console.error(err);
+            return res.json({ success: false, errmsg: "Something went wrong, please try again" });           
+        }
 
-    console.log("RECIPE", result);
-    console.log("RECIPE INGREDIENTS", _result);
+        return res.json({ success: true, recipes: results });
+    })
+    .post(async (req, res) => {
+        const recipe_info = req.body;
+        const uid = req.session.user.id;
+        let result, _result, __result;
+        try {
+            result = await db.recipesDB.addRecipe(uid, recipe_info);
+            _result = await db.recipesDB.
+                addRecipeIngredients(result.recipe_id, recipe_info.ingredients);
+            // TODO: implement in the future __result = await db.recipesDB.
+            //    addRecipeSteps(result.recipe_id, recipe_info.steps);
+        } catch (err) {
+            console.error(err);
+            return res.json({ success: false, errmsg: "Something went wrong, please try again" });
+        }
 
-    let recipe = mapper.mapRecipe(result);
-    let recipe_ingredients = mapper.mapRecipeIngredients(_result);
-    let recipe_steps = [];
+        let info = mapper.mapRecipe(result);
+        let ingredients = mapper.mapRecipeIngredients(_result);
+        let steps = [];
 
-    return res.json({ success: true, recipe, recipe_ingredients, recipe_steps });
-});
+        return res.json({ success: true, recipe: {info, ingredients, steps} });
+    });
 
 router.get("/categories", async (req, res) => {
     const uid = req.session.user.id;

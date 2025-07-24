@@ -68,7 +68,7 @@ async function addDefaultCategories() {
     await db.close();
 }
 
-async function updateCategory() {
+/* async function updateCategory() {
     const db = await connectDB();
 
     for (let i = 0; i < 8; i++) {
@@ -89,10 +89,10 @@ async function updateCategory() {
         }
     }
     await db.close();
-}
+} */
 
 /* fixDailySummary(); */
 
 /* addDefaultCategories(); */
 
-updateCategory();
+/* updateCategory(); */
