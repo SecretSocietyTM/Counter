@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../styles/shared/base.css">
     <link rel="stylesheet" href="../styles/shared/components.css">
     <link rel="stylesheet" href="../styles/recipes.css">
+    <link rel="stylesheet" href="../components/searchbar.css">
     <script type="module" src="../scripts/recipes.js" defer></script>
 </head>
 <body>
@@ -48,138 +49,78 @@
             </button>
         </div>
         <div id="categories" class="categories">
-            <!-- <div class="category shadow">
-                <div class="category__header">
-                    <div class="header__title">
-                        <div class="flex gap-1_0 ai-cntr">
-                            <img src="../assets/recipes/meat.svg" alt="">
-                            <p class="fs-24 fw-b">Mains</p>
-                        </div>
-                        <div class="flex gap-1_25 ai-cntr">
-                            <button class="icon_button">
-                                <img src="../assets/shared/icons/x-kebab.svg" alt="">
-                            </button>
-                            <button class="icon_button">
-                                <svg width="24px" height="24px">
-                                    <use href="../assets/icons.svg#plus"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                    <p class="fs-14 txt-ntrl-60">The main attraction of a meal!</p>
-                </div>
-                <ul class="recipeslist">
-                    <li class="recipe shadow">
-                        <p class="fs-20 fw-b">PF Chang's Ground Turkey Mix</p>
-                        <div>
-                            <p class="txt-ntrl-50">Per Serving:</p>
-                            <div class="recipe__stats">
-                                <p class="txt-ntrl-40"><span class="cal">354</span> calories</p>
-                                <p class="txt-ntrl-40"><span class="fat">16</span>g fat</p>
-                                <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
-                                <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div> -->
         </div>
     </div>
 
 </div>
 
-<dialog>
+<dialog id="recipe_dialog">
     <div class="flex ai-cntr jc-btwn">
-        <button class="icon_button">
+        <button id="close_dialog_btn" class="icon_button">
             <img src="../assets/shared/icons/cancel.svg" alt="">
         </button>
         <button class="icon_button">
             <img src="../assets/shared/icons/edit.svg" alt="">
         </button>
     </div>
-    <form>
+    <form id="recipe_form">
         <div class="form__title">
-            <span>Placeholder Recipe Name</span>
-            <input type="text" placeholder="Recipe Name">
+            <input type="text" name="name" id="recipe_name_input" placeholder="Recipe Name" required>
+            <span id="recipe_name">Placeholder Recipe Name</span>
         </div>
         <div class="form-ingredients-section">
             <div class="form__inputs">
-                <button type="button" class="flex ai-cntr gap-0_5 icon_button">
+                <button type="button" id="addingredient_btn" class="flex ai-cntr gap-0_5 icon_button">
                     <img src="../assets/shared/icons/add.svg" alt="">
                     <p class="txt-prim-green">Add Ingredient</p>
                 </button>
-                <input type="text" placeholder="main" class="input">
-                <input type="number" placeholder="serves" class="input">
-                <input type="number" placeholder="0" class="input">
+                <select name="category">
+                </select>
+                <input type="number" name="serves" id="serves" placeholder="serves" class="input">
+                <input type="number" name="servsize" placeholder="serv sz" step="0.01" required class="input">
                 <select name="unit">
                     <option value="g">g</option>
                     <option value="x">x</option>
                     <option value="oz">oz</option>
                     <option value="ml">mL</option>
                 </select>
-                <input type="number" placeholder="serves" class="input">
-                <input type="text" placeholder="link to source">
+                <input type="text" name="link" placeholder="link to source">
             </div>
-            <ul class="ingredientlist">
-                <li class="ingredient">
-                    <div class="ingredient__name-section ">
-                        <p class="ingredient__name truncate">jenni-o ground turkey 93/7</p>
-                        <button class="ingredient-delete-button icon_button">
-                            <img src="../assets/dashboard/trash.svg" alt="">
-                        </button>
-                    </div>
-                    <div class="ingredient__servsize-section">
-                        <p class="txt-ntrl-40"><span class="txt-ntrl-10">24</span>oz</p>
-                        <button class="ingredient-edit-button icon_button">
-                            <img src="../assets/shared/icons/edit.svg" alt="">
-                        </button>
-                    </div>
-                    <span class="ingredient__info txt-prim-green">644</span>
-                    <span class="ingredient__info txt-acnt-yellow">8</span>
-                    <span class="ingredient__info txt-acnt-lightblue">0</span>
-                    <span class="ingredient__info txt-acnt-purple">2244</span>
-                </li>
+            <ul id="ingredientlist" class="ingredientlist">
             </ul>
             <div class="ingredients__report">
-                <div class="report__total">
+                <div class="report">
                     <p class="report__subtext">Total:</p>
-                    <span class="report__info txt-prim-green">1415</span>
-                    <span class="report__info txt-acnt-yellow">65</span>
-                    <span class="report__info txt-acnt-lightblue">55</span>
-                    <span class="report__info txt-acnt-purple">139</span>
+                    <span id="total_cal" class="report__info txt-prim-green">0</span>
+                    <span id="total_fat" class="report__info txt-acnt-yellow">0</span>
+                    <span id="total_carb" class="report__info txt-acnt-lightblue">0</span>
+                    <span id="total_prot" class="report__info txt-acnt-purple">0</span>
 
                 </div>
-                <div class="report__total">
+                <div class="report">
                     <p class="report__subtext">Per Serving:</p>
-                    <span class="report__info txt-prim-green">353</span>
-                    <span class="report__info txt-acnt-yellow">16</span>
-                    <span class="report__info txt-acnt-lightblue">14</span>
-                    <span class="report__info txt-acnt-purple">35</span>
+                    <span id="perserv_cal" class="report__info txt-prim-green">0</span>
+                    <span id="perserv_fat" class="report__info txt-acnt-yellow">0</span>
+                    <span id="perserv_carb" class="report__info txt-acnt-lightblue">0</span>
+                    <span id="perserv_prot" class="report__info txt-acnt-purple">0</span>
                 </div>
             </div>
         </div>
         <div>
-            <button type="button" class="flex ai-cntr gap-0_5 icon_button">
+            <button type="button" id="addstep_btn" class="flex ai-cntr gap-0_5 icon_button">
                 <img src="../assets/shared/icons/add.svg" alt="">
                 <p class="fs-14 txt-prim-green">Add Instructions</p>
             </button>
-            <ol class="stepslist">
-                <li class="steps">
-                    <p>Prepare by mincing the garlic (or grate it) and combine the ingredients for the sauce in a bowl. Tedex is the independent part of text created in 2009. So now instead of a rich person telling us how their non expressive  products</p>
-                    <div class="flex gap-1_0">
-                        <button class="icon_button">
-                            <img src="../assets/shared/icons/edit.svg" alt="">
-                        </button>
-                        <button class="icon_button">
-                            <img src="../assets/dashboard/trash.svg" alt="">
-                        </button>
-                    </div>
-                </li>
+            <ol id="stepslist" class="stepslist">
             </ol>
         </div>
-        <button type="button" class="button-1 bg-prim-green">Save</button>
+        <!-- <button type="button" id="deleterecipe_btn" class="delete_btn button-1 bg-prim-red">Delete</button>
+        <button type="button" id="editrecipe_submit_btn" class="button-1 bg-prim-green">Save</button> -->
+        <button type="button" id="addrecipe_submit_btn" class="button-1-light bg-prim-green">Save</button>
     </form>
 </dialog>
+
+<div id="searchbar_target"></div>
 </body>
 </html>
 
@@ -219,6 +160,41 @@
             <p class="txt-ntrl-40"><span class="carb">14</span>g carbs</p>
             <p class="txt-ntrl-40"><span class="prot">35</span>g protein</p>
         </div>
+    </div>
+</li>
+ -->
+<!-- Ingredients Template -->
+<!-- 
+<li class="ingredient">
+    <div class="ingredient__name-section ">
+        <p class="ingredient__name truncate">jenni-o ground turkey 93/7</p>
+        <button class="ingredient-delete-button icon_button">
+            <img src="../assets/dashboard/trash.svg" alt="">
+        </button>
+    </div>
+    <div class="ingredient__servsize-section">
+        <p class="txt-ntrl-40"><span class="txt-ntrl-10">24</span>oz</p>
+        <button class="ingredient-edit-button icon_button">
+            <img src="../assets/shared/icons/edit.svg" alt="">
+        </button>
+    </div>
+    <span class="ingredient__info txt-prim-green">644</span>
+    <span class="ingredient__info txt-acnt-yellow">8</span>
+    <span class="ingredient__info txt-acnt-lightblue">0</span>
+    <span class="ingredient__info txt-acnt-purple">2244</span>
+</li>
+ -->
+<!-- Steps Template -->
+<!-- 
+<li class="steps">
+    <p>Prepare by mincing the garlic (or grate it) and combine the ingredients for the sauce in a bowl. Tedex is the independent part of text created in 2009. So now instead of a rich person telling us how their non expressive  products</p>
+    <div class="flex gap-1_0">
+        <button class="icon_button">
+            <img src="../assets/shared/icons/edit.svg" alt="">
+        </button>
+        <button class="icon_button">
+            <img src="../assets/dashboard/trash.svg" alt="">
+        </button>
     </div>
 </li>
  -->

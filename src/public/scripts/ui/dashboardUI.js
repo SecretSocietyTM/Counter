@@ -7,108 +7,8 @@ const text_colors = {
     prot: "txt-acnt-purple"
 }
 
-// helpers
-function createEntryInfo(entry) {
-    const div = document.createElement("div");
-    div.className = "item__subinfo";
-
-    const cal = GenUI.createMacro(entry.cal, "cal", ["txt-prim-green"]);
-    const fat = GenUI.createMacro(entry.fat, undefined, ["txt-acnt-yellow"]);
-    const carb = GenUI.createMacro(entry.carb, undefined, ["txt-acnt-lightblue"]);
-    const prot = GenUI.createMacro(entry.prot, undefined, ["txt-acnt-purple2"]);
-
-    div.append(cal, fat, carb, prot);
-    return div;
-}
-
-function setUnitSelect(select, unit) {
-    select.replaceChildren();
-    const units = ["g", "x", "oz", "ml"];
-
-    units
-    .sort((a, b) => (a === unit ? -1 : b === unit ? 1 : 0))
-    .forEach(u => {
-        const option = document.createElement("option");
-        option.value = u;
-        option.textContent = u === "ml" ? "mL" : u;
-        select.appendChild(option);
-    });    
-}
-
-
 
 // element creators
-export function createSearchResult(food) {
-    const li = document.createElement("li");
-    li.className = "searchlist__whole-item";
-    li.dataset.id = food.food_id;
-
-    const div = document.createElement("div");
-    div.className = "searchlist__item";
-
-    const name = document.createElement("p");
-    name.className = "truncate";
-    name.textContent = food.name;
-
-    div.appendChild(name);
-    li.appendChild(div);
-    return li;
-}
-
-export function createSearchResultForm(meal, _date, food) {
-    const form = document.createElement("form");
-    form.className = "item__form";
-
-    const inputs = document.createElement("div");
-    inputs.className = "form__inputs";
-
-    const buttons = document.createElement("div");
-    buttons.className = "form__buttons";
-
-    const meal_type = document.createElement("input");
-    meal_type.type = "hidden";
-    meal_type.name = "meal_type";
-    meal_type.value = meal;
-
-    const date = document.createElement("input");
-    date.type = "hidden";
-    date.name = "date";
-    date.value = _date;
-
-    const food_id = document.createElement("input");
-    food_id.type = "hidden";
-    food_id.name = "food_id";
-    food_id.value = food.food_id;
-
-    const servsize = document.createElement("input");
-    servsize.type = "number";
-    servsize.name = "servsize"
-    servsize.placeholder = "0";
-    servsize.step = "0.01";
-    servsize.required = true;
-
-    const unit = document.createElement("select");
-    unit.name = "unit";
-    setUnitSelect(unit, food.unit);
-
-    const check_button = document.createElement("button");
-    check_button.type = "button";
-    check_button.id = "searchform_submit_btn";
-    check_button.className = "icon_button";
-
-    const check_image = document.createElement("img");
-    check_image.src = "../assets/dashboard/check.svg";
-    check_image.width = 20;
-
-    check_button.appendChild(check_image);
-
-    buttons.appendChild(check_button);
-    inputs.append(meal_type, date, food_id, servsize, unit);
-
-    form.append(inputs, buttons);
-    return form;
-}
-
 export function createEntry(entry) {
     const li = document.createElement("li");
     li.className = "whole-item";
@@ -133,7 +33,6 @@ export function createEntry(entry) {
 
     const trash_image = document.createElement("img");
     trash_image.src = "../assets/dashboard/trash.svg";
-
     trash_button.appendChild(trash_image);
     
     div2.append(servsizeunit, trash_button);
@@ -141,6 +40,7 @@ export function createEntry(entry) {
     li.append(div1, createEntryInfo(entry));
     return li;
 }
+
 
 
 
@@ -159,20 +59,10 @@ export function deactivateGoalInput(span, input) {
     input.value = "";   
 }
 
-export function closeSearchDialog(search_dialog) {
-    search_dialog.style.display = "none";
-    search_dialog.querySelector("#searchbar_input").style.value="";
-    search_dialog.querySelector("#searchlist").replaceChildren();
-    search_dialog.close();
-}
-
 export function subDateVisible(ui, flag) {
     flag ? ui.style.display = "" : ui.style.display = "none";
 }
 
-export const isClickingOutside = GenUI.isClickingOutside;
-
-export const checkFormValidity = GenUI.checkFormValidity;
 
 
 
@@ -371,4 +261,21 @@ export function getDayBars(parent) {
     return ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].map(
         day => parent.querySelector(`.${day}-bar`)
     );
+}
+
+
+
+
+// helpers
+function createEntryInfo(entry) {
+    const div = document.createElement("div");
+    div.className = "item__subinfo";
+
+    const cal = GenUI.createMacro(entry.cal, "cal", ["txt-prim-green"]);
+    const fat = GenUI.createMacro(entry.fat, undefined, ["txt-acnt-yellow"]);
+    const carb = GenUI.createMacro(entry.carb, undefined, ["txt-acnt-lightblue"]);
+    const prot = GenUI.createMacro(entry.prot, undefined, ["txt-acnt-purple2"]);
+
+    div.append(cal, fat, carb, prot);
+    return div;
 }

@@ -36,7 +36,7 @@ export function checkFormValidity(form) {
 
     if (!form.checkValidity()) {
         form.reportValidity();
-        return 0;
+        return undefined;
     } else {
         return obj;
     }

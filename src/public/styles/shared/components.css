@@ -183,6 +183,29 @@
     background-color: transparent;
 }
 
+.button-1-light {
+    padding-block: 0.8rem;
+
+    width: 40%;
+
+    border-radius: 1.25rem 0 1.25rem 0;
+    border: none;
+
+    font-weight: var(--fw-bold);
+    color: var(--clr-neutral-10);
+
+    cursor: pointer;
+    transition: 200ms;
+}
+
+.button-1-light:hover, 
+.button-1-light:focus-visible {
+    transition: 500ms;
+    color: var(--clr-neutral-10);
+    background-color: transparent;
+}
+
+
 
 /* box shadow */
 .shadow {

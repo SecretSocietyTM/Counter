@@ -56,6 +56,7 @@ function mapSummary(summary) {
         prot: summary.protein
     }
 }
+
 function mapSummaries(summaries) {
     let mapped_summaries = [];
     summaries.forEach(summary => {
@@ -64,8 +65,60 @@ function mapSummaries(summaries) {
     return mapped_summaries;
 }
 
+function mapRecipe(recipe) {
+    if (!recipe) return undefined;
+    return {
+        recipe_id: recipe.recipe_id,
+        category_id: recipe.category_id,
+        name: recipe.name,
+        serves: recipe.serve_count,
+        servsize: recipe.serving_size,
+        unit: recipe.unit,
+        cal: recipe.calories,
+        fat: recipe.fat,
+        carb: recipe.carbs,
+        prot: recipe.protein,  
+        link: recipe.source_link       
+    }
+}
+
+function mapRecipes(recipes) {
+    let mapped_recipes = [];
+    recipes.forEach(recipe => {
+        mapped_recipes.push(mapRecipe(recipe));
+    });
+    return mapped_recipes;
+}
+
+
+function mapRecipeIngredient(ingredient) {
+    if (!ingredient) return undefined;
+    return {
+        ingredient_id: ingredient.ingredient_id,
+        recipe_id: ingredient.recipe_id,
+        food_id: ingredient.food_id,
+        name: ingredient.name,
+        servsize: ingredient.serving_size,
+        unit: ingredient.unit,
+        cal: ingredient.calories,
+        fat: ingredient.fat,
+        carb: ingredient.carbs,
+        prot: ingredient.protein,       
+    }
+}
+
+function mapRecipeIngredients(ingredients) {
+    let mapped_ingredients = [];
+    ingredients.forEach(ingredient => {
+        mapped_ingredients.push(mapRecipeIngredient(ingredient));
+    });
+    return mapped_ingredients;
+}
+
 module.exports = { 
     mapFood, mapFoods,
     mapEntry, mapEntries,
-    mapSummary, mapSummaries
+    mapSummary, mapSummaries,
+    mapRecipe, mapRecipes,
+    mapRecipeIngredient, mapRecipeIngredients
 };
