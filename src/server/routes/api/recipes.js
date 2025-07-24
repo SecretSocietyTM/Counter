@@ -1,6 +1,7 @@
 const express = require("express");
 const router  = express.Router();
 const db      = require("../../database/index.js");
+const mapper  = require("./utils/mapper.js");
 
 router.post("/", async (req, res) => {
     const recipe_info = req.body;
@@ -17,9 +18,14 @@ router.post("/", async (req, res) => {
         return res.json({ success: false, errmsg: "Something went wrong, please try again" });
     }
 
-    console.log(result);
-    console.log(_result);
-    /* return res.json({ success: true, }) */
+    console.log("RECIPE", result);
+    console.log("RECIPE INGREDIENTS", _result);
+
+    let recipe = mapper.mapRecipe(result);
+    let recipe_ingredients = mapper.mapRecipeIngredients(_result);
+    let recipe_steps = [];
+
+    return res.json({ success: true, recipe, recipe_ingredients, recipe_steps });
 });
 
 router.get("/categories", async (req, res) => {

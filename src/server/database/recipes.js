@@ -10,8 +10,8 @@ async function addRecipe(uid, recipe) {
         RETURNING 
         recipe_id, category_id, name, serve_count,
         serving_size, unit, calories, fat, carbs, protein, source_link`,
-        [uid, recipe.category, recipe.name, recipe.servsize, recipe.unit, 
-        recipe.cal, recipe.fat, recipe.carb, recipe.prot, recipe.link]
+        [uid, recipe.category, recipe.name, recipe.serves, recipe.servsize, 
+        recipe.unit, recipe.cal, recipe.fat, recipe.carb, recipe.prot, recipe.link]
     );
     await db.close();
     return result;
