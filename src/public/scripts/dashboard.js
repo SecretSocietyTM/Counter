@@ -32,10 +32,6 @@ const goal_input = document.getElementById("goal_calories_input");
 // search dialog elements
 const searchbar_target = document.getElementById("searchbar_target");
 
-const search_dialog = document.getElementById("search_dialog");
-const search_input = document.getElementById("searchbar_input");
-const searchlist = document.getElementById("searchlist");
-
 // dates
 const main_date = document.getElementById("main_date");
 const sub_date = document.getElementById("sub_date");

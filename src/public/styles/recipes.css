@@ -195,6 +195,10 @@ form {
         background-color: transparent;          
     }
 
+    span {
+        color: var(--clr-neutral-10);
+    }
+
     .input {
         width: 4em;
     }

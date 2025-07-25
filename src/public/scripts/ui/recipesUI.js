@@ -110,6 +110,8 @@ export function createCategory(category) {
 export function createRecipe(recipe) {
     const li = document.createElement("li");
     li.className = "recipe shadow";
+    li.dataset.id = recipe.recipe_id;
+    li.dataset.category_id = recipe.category_id;
 
     const name = document.createElement("p");
     name.className = "fs-20 fw-b";
@@ -124,7 +126,7 @@ export function createRecipe(recipe) {
     const stats_div = document.createElement("div");
     stats_div.className = "recipe__stats txt-ntrl-40";
 
-    const cal = GenUI.createMacro(recipe.cal, "calories", ["cal"]);
+    const cal = GenUI.createMacro(recipe.cal, " calories", ["cal"]);
     const fat = GenUI.createMacro(recipe.fat, "g fat", ["fat"]);
     const carb = GenUI.createMacro(recipe.carb, "g carbs", ["carb"]);
     const prot = GenUI.createMacro(recipe.prot, "g protein", ["prot"]);
