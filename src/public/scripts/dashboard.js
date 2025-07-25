@@ -32,10 +32,6 @@ const goal_input = document.getElementById("goal_calories_input");
 // search dialog elements
 const searchbar_target = document.getElementById("searchbar_target");
 
-const search_dialog = document.getElementById("search_dialog");
-const search_input = document.getElementById("searchbar_input");
-const searchlist = document.getElementById("searchlist");
-
 // dates
 const main_date = document.getElementById("main_date");
 const sub_date = document.getElementById("sub_date");
@@ -336,8 +332,7 @@ await searchbar.loadSearchbar(searchbar_target);
 
 searchbar_target.querySelector("#search_dialog").
     addEventListener("searchbar:submit", (e) => {
-    const form_data = e.detail;
-    console.log(e.detail);
+    const form_data = e.detail.form_data;
     form_data.meal_type = meal_type;
     form_data.date = now.toDateString();
     addToDiary(form_data)

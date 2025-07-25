@@ -78,7 +78,7 @@ function mapRecipe(recipe) {
         fat: recipe.fat,
         carb: recipe.carbs,
         prot: recipe.protein,  
-        link: recipe.source_link       
+        link: recipe.source_link
     }
 }
 
