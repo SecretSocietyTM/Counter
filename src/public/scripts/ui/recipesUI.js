@@ -142,6 +142,7 @@ export function createIngredient(food) {
     const li = document.createElement("li");
     li.className = "ingredient";
     li.dataset.id = food.food_id;
+    // TODO: use null coalescing to add dataset.ingredient_id
 
     const name_div = document.createElement("div");
     name_div.className = "ingredient__name-section";
@@ -192,6 +193,38 @@ export function createIngredient(food) {
     name_div.append(name, trash_button);
     servsize_div.append(servsizeunit, edit_button);
     return li;
+}
+
+export function createStep(step) {
+    const li = document.createElement("li");
+    li.className = "step";
+    // TODO: use null coalescing to add dataset.ingredient_id
+
+    const description = document.createElement("p");
+    description.textContent = step.description;
+
+    const buttons_div = document.createElement("div");
+    buttons_div.className = "flex gap-1_0";
+
+    const edit_button = document.createElement("button");
+    edit_button.type = "button";
+    edit_button.className = "editstep_btn icon_button";
+
+    const edit_image = document.createElement("img");
+    edit_image.src = "../assets/shared/icons/edit.svg";
+    edit_button.appendChild(edit_image);
+
+    const trash_button = document.createElement("button");
+    trash_button.type = "button";
+    trash_button.classList.add("delete_btn", "icon_button");
+
+    const trash_image = document.createElement("img");
+    trash_image.src = "../assets/dashboard/trash.svg";
+    trash_button.appendChild(trash_image);
+
+    li.append(description, buttons_div);
+    buttons_div.append(edit_button, trash_button);
+    return li;   
 }
 
 

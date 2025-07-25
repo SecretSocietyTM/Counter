@@ -332,8 +332,7 @@ await searchbar.loadSearchbar(searchbar_target);
 
 searchbar_target.querySelector("#search_dialog").
     addEventListener("searchbar:submit", (e) => {
-    const form_data = e.detail;
-    console.log(e.detail);
+    const form_data = e.detail.form_data;
     form_data.meal_type = meal_type;
     form_data.date = now.toDateString();
     addToDiary(form_data)

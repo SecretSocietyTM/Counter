@@ -54,12 +54,12 @@
 
 </div>
 
-<dialog id="recipe_dialog">
+<dialog id="recipe_dialog" class="recipe_dialog">
     <div class="flex ai-cntr jc-btwn">
         <button id="close_dialog_btn" class="icon_button">
             <img src="../assets/shared/icons/cancel.svg" alt="">
         </button>
-        <button class="icon_button">
+        <button id="editrecipe_btn" class="icon_button">
             <img src="../assets/shared/icons/edit.svg" alt="">
         </button>
     </div>
@@ -119,28 +119,21 @@
             <ol id="stepslist" class="stepslist">
             </ol>
         </div>
-        <!-- <button type="button" id="deleterecipe_btn" class="delete_btn button-1 bg-prim-red">Delete</button>
-        <button type="button" id="editrecipe_submit_btn" class="button-1 bg-prim-green">Save</button> -->
-        <button type="button" id="addrecipe_submit_btn" class="button-1-light bg-prim-green">Save</button>
+        <div class="submit_buttons">
+            <button type="button" id="deleterecipe_btn" class="delete_btn button-1-light bg-prim-red">Delete</button>
+            <button type="button" id="editrecipe_submit_btn" class="button-1-light bg-prim-green">Save</button>
+            <button type="button" id="addrecipe_submit_btn" class="button-1-light bg-prim-green">Add Recipe</button>
+        </div>
     </form>
+</dialog>
+
+<dialog id="steps_dialog" class="steps_dialog">
+    <textarea name="steps" id="steps_input" class="steps_input"></textarea>
+    <button type="button" id="submit_step_btn" class="icon_button">
+        <img src="../assets/dashboard/check.svg" alt="">
+    </button>
 </dialog>
 
 <div id="searchbar_target"></div>
 </body>
 </html>
-
-
-<!-- Steps Template -->
-<!-- 
-<li class="steps">
-    <p>Prepare by mincing the garlic (or grate it) and combine the ingredients for the sauce in a bowl. Tedex is the independent part of text created in 2009. So now instead of a rich person telling us how their non expressive  products</p>
-    <div class="flex gap-1_0">
-        <button class="icon_button">
-            <img src="../assets/shared/icons/edit.svg" alt="">
-        </button>
-        <button class="icon_button">
-            <img src="../assets/dashboard/trash.svg" alt="">
-        </button>
-    </div>
-</li>
- -->

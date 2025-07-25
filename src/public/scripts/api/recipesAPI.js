@@ -18,3 +18,12 @@ export async function addRecipe(recipe) {
     });
     return await res.json();
 }
+
+export async function editRecipe(recipe) {
+    const res = await fetch("api/recipes", {
+        method: "PATCH",
+        headers: { "Content-Type" : "application/json" },
+        body: JSON.stringify(recipe)
+    });
+    return await res.json();
+}
