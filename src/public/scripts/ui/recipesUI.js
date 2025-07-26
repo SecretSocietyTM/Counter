@@ -138,6 +138,7 @@ export function createRecipe(recipe) {
     return li;    
 }
 
+// ingredient_id, recipe_id, food_id
 export function createIngredient(food) {
     const li = document.createElement("li");
     li.className = "ingredient";

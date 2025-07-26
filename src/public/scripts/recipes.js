@@ -66,7 +66,6 @@ const RECIPEFORM_UI = Object.freeze({
         category: document.getElementById("recipe_category_span"),
         serves: document.getElementById("recipe_serves_span"),
         servsize: document.getElementById("recipe_servsize_span"),
-        unit: document.getElementById("recipe_unit_span"),
         link: document.getElementById("recipe_link_span")
     },
     inputs: {
@@ -154,7 +153,6 @@ categorieslist.addEventListener("click", (e) => {
         RECIPEFORM_UI.spans.category.textContent = CATEGORIES[cur_recipe.info.category_id].name;
         RECIPEFORM_UI.spans.serves.textContent = `${cur_recipe.info.serves} servings`;
         RECIPEFORM_UI.spans.servsize.textContent = `Serving Size: ${cur_recipe.info.servsize}${cur_recipe.info.unit}`;
-        // TODO: can probably remove the unit span as servsize and unit share the same area.
         RECIPEFORM_UI.spans.link.href = cur_recipe.info.link;
 
         editrecipe_btn.style.display = "";

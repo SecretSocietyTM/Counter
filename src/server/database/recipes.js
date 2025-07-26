@@ -41,7 +41,21 @@ async function addRecipeIngredients(recipe_id, ingredients) {
 }
 
 async function addRecipeSteps(recipe_id, steps) {
-    // TODO: complete;
+    let results = [];
+    const db = await connectDB();
+
+    for (let i = 0; i < steps.length; i++) {
+        const result = await db.get(`
+            INSERT INTO recipe_steps
+            (recipe_id, step_number, description)
+            VALUES (?, ?, ?) 
+            RETURNING *`,
+            [recipe_id, i+1, steps[i].description]
+        );
+        results.push(result);        
+    }
+    await db.close();
+    return results;
 }
 
 async function getCategories(uid) {
@@ -78,20 +92,21 @@ async function getRecipesInfo(uid) {
             [item.recipe_id]
         );
 
-        let __results = []; // TODO: add steps
+        let __results = await db.all(`
+            SELECT *
+            FROM recipe_steps
+            WHERE recipe_id=?`,
+            [item.recipe_id]
+        );
 
         let info = mapper.mapRecipe(item);
         let ingredients = mapper.mapRecipeIngredients(_results);
-        let steps = [] // TODO: add steps
-        let recipe = {
-            info,
-            ingredients,
-            steps
-        }
+        console.log(__results);
+        let steps = mapper.mapRecipeSteps(__results);
+        let recipe = {info, ingredients, steps}
         recipes.push(recipe);
     }
     await db.close();
-
     return recipes;
 }
 

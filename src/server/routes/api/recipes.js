@@ -17,15 +17,15 @@ router.route("/")
         return res.json({ success: true, recipes: results });
     })
     .post(async (req, res) => {
-        const recipe_info = req.body;
+        const recipe = req.body;
         const uid = req.session.user.id;
         let result, _result, __result;
         try {
-            result = await db.recipesDB.addRecipe(uid, recipe_info);
+            result = await db.recipesDB.addRecipe(uid, recipe);
             _result = await db.recipesDB.
-                addRecipeIngredients(result.recipe_id, recipe_info.ingredients);
-            // TODO: implement in the future __result = await db.recipesDB.
-            //    addRecipeSteps(result.recipe_id, recipe_info.steps);
+                addRecipeIngredients(result.recipe_id, recipe.ingredients);
+            __result = await db.recipesDB.
+                addRecipeSteps(result.recipe_id, recipe.steps);
         } catch (err) {
             console.error(err);
             return res.json({ success: false, errmsg: "Something went wrong, please try again" });
@@ -33,9 +33,14 @@ router.route("/")
 
         let info = mapper.mapRecipe(result);
         let ingredients = mapper.mapRecipeIngredients(_result);
-        let steps = [];
+        let steps = mapper.mapRecipeSteps(__result);
 
         return res.json({ success: true, recipe: {info, ingredients, steps} });
+    })
+    .patch(async (req, res) => {
+        const recipe = req.body;
+        const uid = req.session.user.id;
+        let result, _result, __result;
     });
 
 router.get("/categories", async (req, res) => {
