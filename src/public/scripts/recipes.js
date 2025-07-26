@@ -319,6 +319,31 @@ editrecipe_submit_btn.addEventListener("click", async (e) => {
 });
 
 
+// delete recipe
+deleterecipe_btn.addEventListener("click", async (e) => {
+    let recipe_id = cur_recipe.info.recipe_id;
+
+    const data = await api.deleteRecipe(recipe_id);
+
+    if (data.success) {
+        delete RECIPES[cur_recipe.info.category_id][cur_recipe.info.recipe_id];
+        cur_recipe_ui.remove();
+        cur_recipe = null;
+        cur_recipe_ui = null;
+
+        recipeform.reset();
+        cur_ingredients_list.deleteAll();
+        cur_steps_lists.deleteAll();
+        util.resetReport(REPORT);
+        ingredientlist.replaceChildren();
+        stepslist.replaceChildren();
+        ui.setReportUI(REPORT_UI, REPORT);
+        recipe_dialog.close();
+    }
+});
+
+
+
 
 // closing recipe dialog events
 recipe_dialog.addEventListener("cancel", (e) => {

@@ -44,15 +44,15 @@ async function addRecipeSteps(recipe_id, steps) {
     let results = [];
     const db = await connectDB();
 
-    for (let i = 0; i < steps.length; i++) {
+    for (const step of steps) {
         const result = await db.get(`
             INSERT INTO recipe_steps
-            (recipe_id, step_number, description)
+            (recipe_id, description)
             VALUES (?, ?, ?) 
             RETURNING *`,
-            [recipe_id, i+1, steps[i].description]
+            [recipe_id, step.description]
         );
-        results.push(result);        
+        results.push(result);            
     }
     await db.close();
     return results;
@@ -155,7 +155,6 @@ async function editRecipeSteps(recipe_id, steps) {
         );
     }
 
-    // TODO: really have no use for step_number in the database
     // update existing steps
     for (const step of steps.filter(i => i.step_id)) {
         const result = await db.get(`
@@ -172,15 +171,61 @@ async function editRecipeSteps(recipe_id, steps) {
     for (const step of steps.filter(i => !i.step_id)) {
         const result = await db.get(`
             INSERT INTO recipe_steps
-            (recipe_id, step_number, description)
+            (recipe_id, description)
             VALUES (?, ?, ?) 
             RETURNING *`,
-            [recipe_id, 0, step.description]
+            [recipe_id, step.description]
         );
         results.push(result);
     }
     await db.close();
     return results;
+}
+
+async function deleteRecipe(recipe_id) {
+    const db = await connectDB();
+    await db.run(`
+        DELETE FROM recipes 
+        WHERE recipe_id=?`,
+        [recipe_id]
+    );
+
+    let existing_ingredients = await db.all(`
+        SELECT ingredient_id
+        FROM recipe_ingredients
+        WHERE recipe_id=?`,
+        [recipe_id]
+    );
+    console.log(existing_ingredients);
+    existing_ingredients = existing_ingredients.map(i => i.ingredient_id);
+    console.log(existing_ingredients);
+
+    let existing_steps = await db.all(`
+        SELECT step_id
+        FROM recipe_steps
+        WHERE recipe_id=?`,
+        [recipe_id]
+    );
+    console.log(existing_steps);
+    existing_steps = existing_steps.map(i => i.step_id);
+    console.log(existing_steps);
+
+    for (const id of existing_ingredients) {
+        await db.run(`
+            DELETE FROM recipe_ingredients
+            WHERE ingredient_id=?`,
+            [id]
+        );
+    }
+    for (const id of existing_steps) {
+        await db.run(`
+            DELETE FROM recipe_steps 
+            WHERE step_id=?`,
+            [id]
+        );
+    }
+
+    await db.close();
 }
 
 
@@ -242,6 +287,7 @@ module.exports = {
     editRecipeInfo,
     editRecipeIngredients,
     editRecipeSteps,
+    deleteRecipe,
     getCategories,
     getRecipesInfo,
 }

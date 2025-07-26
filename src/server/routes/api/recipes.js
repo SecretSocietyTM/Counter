@@ -59,6 +59,18 @@ router.route("/")
         return res.json({ success: true, recipe: {info, ingredients, steps} });
     });
 
+router.delete("/:id", async (req, res) => {
+    const recipe_id = req.params.id;
+
+    try {
+        await db.recipesDB.deleteRecipe(recipe_id);
+    } catch (err) {
+        console.error(err);
+        return res.json({ success: false, errmsg: "Something went wrong, please try again "});
+    }
+    return res.json({ success: true })
+});
+
 router.get("/categories", async (req, res) => {
     const uid = req.session.user.id;
     let result;
