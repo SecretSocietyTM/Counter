@@ -41,6 +41,22 @@ router.route("/")
         const recipe = req.body;
         const uid = req.session.user.id;
         let result, _result, __result;
+        try {
+            result = await db.recipesDB.editRecipeInfo(uid, recipe);
+            _result = await db.recipesDB.
+                editRecipeIngredients(result.recipe_id, recipe.ingredients);
+            __result = await db.recipesDB.
+                editRecipeSteps(result.recipe_id, recipe.steps);
+        } catch (err) {
+            console.error(err);
+            return res.json({ success: false, errmsg: "Something went wrong, please try again" });
+        }
+
+        let info = mapper.mapRecipe(result);
+        let ingredients = mapper.mapRecipeIngredients(_result);
+        let steps = mapper.mapRecipeSteps(__result);
+
+        return res.json({ success: true, recipe: {info, ingredients, steps} });
     });
 
 router.get("/categories", async (req, res) => {

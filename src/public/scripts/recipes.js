@@ -9,6 +9,7 @@ let cur_category = null;
 const cur_ingredients_list = new FoodManager();
 const cur_steps_lists = new FoodManager();
 let cur_serves_val = 1;
+let cur_recipe_ui = null;
 let cur_recipe = null;
 
 let recipe_mode = null;
@@ -132,7 +133,7 @@ categorieslist.addEventListener("click", (e) => {
         recipe_dialog.showModal();
         RECIPEFORM_UI.inputs.name.focus();
     } else if (target = e.target.closest(".recipe")) { // open recipe dialog in view mode
-        let cur_recipe_ui = target;
+        cur_recipe_ui = target;
         let category_id = cur_recipe_ui.dataset.category_id;
         let recipe_id = cur_recipe_ui.dataset.id;
         cur_recipe = RECIPES[category_id][recipe_id]
@@ -286,6 +287,7 @@ addrecipe_submit_btn.addEventListener("click", async (e) => {
     }
 });
 
+// edit recipe
 editrecipe_submit_btn.addEventListener("click", async (e) => {
     const recipe_data = ui.checkFormValidity(recipeform);
     if (!recipe_data) return;
@@ -300,24 +302,24 @@ editrecipe_submit_btn.addEventListener("click", async (e) => {
     console.log(recipe_data);
 
     const data = await api.editRecipe(recipe_data);
-/*
+
     if (data.success) {
         RECIPES[data.recipe.info.category_id][data.recipe.info.recipe_id] = data.recipe;
         console.log(data);
+        cur_recipe_ui.remove();
         RECIPES_UI[data.recipe.info.category_id].
             appendChild(ui.createRecipe(data.recipe.info));
 
         recipeform.reset();
         cur_ingredients_list.deleteAll();
-        cur_steps_lists = [];
+        cur_steps_lists.deleteAll();
         util.resetReport(REPORT);
         ingredientlist.replaceChildren();
         stepslist.replaceChildren();
         ui.setReportUI(REPORT_UI, REPORT);
         recipe_dialog.close();
-    }*/
+    }
 });
-
 
 
 
