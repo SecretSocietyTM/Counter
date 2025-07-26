@@ -103,7 +103,7 @@ function mapRecipeIngredient(ingredient) {
         cal: ingredient.calories,
         fat: ingredient.fat,
         carb: ingredient.carbs,
-        prot: ingredient.protein,       
+        prot: ingredient.protein
     }
 }
 
@@ -115,10 +115,29 @@ function mapRecipeIngredients(ingredients) {
     return mapped_ingredients;
 }
 
+function mapRecipeStep(step) {
+    if (!step) return undefined;
+    return {
+        step_id: step.step_id,
+        recipe_id: step.recipe_id,
+        number: step.step_number,
+        description: step.description
+    }    
+}
+
+function mapRecipeSteps(steps) {
+    let mapped_steps = [];
+    steps.forEach(step => {
+        mapped_steps.push(mapRecipeStep(step));
+    });
+    return mapped_steps;
+}
+
 module.exports = { 
     mapFood, mapFoods,
     mapEntry, mapEntries,
     mapSummary, mapSummaries,
     mapRecipe, mapRecipes,
-    mapRecipeIngredient, mapRecipeIngredients
+    mapRecipeIngredient, mapRecipeIngredients,
+    mapRecipeStep, mapRecipeSteps
 };

@@ -192,7 +192,7 @@ form {
 
         border: none;
         border-bottom: 2px solid white;
-        background-color: transparent;          
+        background-color: transparent;
     }
 
     span {
@@ -206,7 +206,7 @@ form {
 
 .ingredientlist {
     margin-block: 1.5rem 0.5rem;
-    max-height: 22vh; /* TODO: could probably change this */
+    max-height: 22vh;
     overflow-y: hidden;
 
     scrollbar-color: var(--clr-neutral-70) var(--clr-neutral-80);
@@ -257,6 +257,18 @@ form {
         justify-content: space-between;
     }
 
+    input {
+        outline: none;
+        width: 4em;
+
+        text-align: center;
+        color: var(--clr-neutral-10);
+
+        border: none;
+        border-bottom: 2px solid white;
+        background-color: transparent;
+    }
+
     .ingredient__info {
         text-align: end;
     }
@@ -304,7 +316,7 @@ form {
 .stepslist {
     padding-inline: 2rem 0;
     margin-block: 1rem 0.5rem;
-    max-height: 22vh; /* TODO: could probably change this */
+    max-height: 22vh;
     overflow-y: hidden;
 
     scrollbar-color: var(--clr-neutral-70) var(--clr-neutral-80);

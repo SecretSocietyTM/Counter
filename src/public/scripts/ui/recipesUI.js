@@ -138,11 +138,12 @@ export function createRecipe(recipe) {
     return li;    
 }
 
-export function createIngredient(food) {
+
+// might only need the ingredient_id. 
+export function createIngredient(ingr, mode="edit") {
     const li = document.createElement("li");
     li.className = "ingredient";
-    li.dataset.id = food.food_id;
-    // TODO: use null coalescing to add dataset.ingredient_id
+    li.dataset.id = ingr.ingredient_id ?? 0;
 
     const name_div = document.createElement("div");
     name_div.className = "ingredient__name-section";
@@ -152,22 +153,31 @@ export function createIngredient(food) {
 
     const name = document.createElement("p");
     name.className = "ingredient__name truncate"
-    name.textContent = food.name;
+    name.textContent = ingr.name;
 
     const trash_button = document.createElement("button");
     trash_button.type = "button";
-    trash_button.classList.add("delete_btn", "icon_button");
+    trash_button.className = "delete_ingr_btn icon_button";
 
     const trash_image = document.createElement("img");
     trash_image.src = "../assets/dashboard/trash.svg";
     trash_button.appendChild(trash_image);
 
     const servsizeunit = GenUI.createServingUnit(
-        food.servsize, food.unit, ["txt-ntrl-10"], ["txt-ntrl-40"]);
+        ingr.servsize, ingr.unit, ["txt-ntrl-10"], ["txt-ntrl-40"]);
+
+    const servesize_input = document.createElement("input");
+    servesize_input.type = "number";
+    servesize_input.name = "servsize";
+    servesize_input.value = ingr.servsize;
+    servesize_input.step = "0.01";
+    servesize_input.rqeuired = true;
+    servesize_input.className = "input";
+    servesize_input.style.display = "none";
 
     const edit_button = document.createElement("button");
     edit_button.type = "button";
-    edit_button.className = "editfood_btn icon_button";
+    edit_button.className = "edit_ingr_btn icon_button";
 
     const edit_image = document.createElement("img");
     edit_image.src = "../assets/shared/icons/edit.svg";
@@ -175,30 +185,38 @@ export function createIngredient(food) {
 
     const cal = document.createElement("span");
     cal.className = "ingredient__info txt-prim-green";
-    cal.textContent = food.cal;
+    cal.textContent = ingr.cal;
 
     const fat = document.createElement("span");
     fat.className = "ingredient__info txt-acnt-yellow";
-    fat.textContent = food.fat;
+    fat.textContent = ingr.fat;
 
     const carb = document.createElement("span");
     carb.className = "ingredient__info txt-acnt-lightblue";
-    carb.textContent = food.carb;
+    carb.textContent = ingr.carb;
 
     const prot = document.createElement("span");
     prot.className = "ingredient__info txt-acnt-purple";
-    prot.textContent = food.prot;
+    prot.textContent = ingr.prot;
+
+    if (mode === "edit") {
+        edit_button.style.display = "";
+        trash_button.style.display = "";
+    } else {
+        edit_button.style.display = "none";
+        trash_button.style.display = "none";        
+    }
 
     li.append(name_div, servsize_div, cal, fat, carb, prot);
     name_div.append(name, trash_button);
-    servsize_div.append(servsizeunit, edit_button);
+    servsize_div.append(servsizeunit, servesize_input, edit_button);
     return li;
 }
 
-export function createStep(step) {
+export function createStep(step, mode="edit") {
     const li = document.createElement("li");
     li.className = "step";
-    // TODO: use null coalescing to add dataset.ingredient_id
+    li.dataset.id = step.step_id ?? 0;
 
     const description = document.createElement("p");
     description.textContent = step.description;
@@ -208,7 +226,7 @@ export function createStep(step) {
 
     const edit_button = document.createElement("button");
     edit_button.type = "button";
-    edit_button.className = "editstep_btn icon_button";
+    edit_button.className = "edit_step_btn icon_button";
 
     const edit_image = document.createElement("img");
     edit_image.src = "../assets/shared/icons/edit.svg";
@@ -216,11 +234,19 @@ export function createStep(step) {
 
     const trash_button = document.createElement("button");
     trash_button.type = "button";
-    trash_button.classList.add("delete_btn", "icon_button");
+    trash_button.className = "delete_step_btn icon_button";
 
     const trash_image = document.createElement("img");
     trash_image.src = "../assets/dashboard/trash.svg";
     trash_button.appendChild(trash_image);
+
+    if (mode==="edit") {
+        edit_button.style.display = "";
+        trash_button.style.display = "";
+    } else {
+        edit_button.style.display = "none";
+        trash_button.style.display = "none";        
+    }
 
     li.append(description, buttons_div);
     buttons_div.append(edit_button, trash_button);

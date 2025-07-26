@@ -181,14 +181,18 @@ goal_input.addEventListener("blur", async (e) => {
 
     const data = await api.updateCalorieGoal(goal_input.value);
 
-    CALORIESTATS.goal = data.goal;
-    util.updateCalorieStats(CALORIESTATS);
-    ui.setCalorieStatsUI(CALORIESTATS_UI, CALORIESTATS);
-    ui.setCalDialUI(CALORIEDIAL_UI, CALORIESTATS);
-    
-    const totals = util.generateTotalsList(daily_summaries, CALORIESTATS.goal, now, NOW, WEEKRANGE)
-    ui.setAllCalorieGraphBars(BARGRAPHS_UI, totals);
-    ui.deactivateGoalInput(CALORIESTATS_UI, goal_input);
+    if (data.success) {
+        CALORIESTATS.goal = data.goal;
+        util.updateCalorieStats(CALORIESTATS);
+        ui.setCalorieStatsUI(CALORIESTATS_UI, CALORIESTATS);
+        ui.setCalDialUI(CALORIEDIAL_UI, CALORIESTATS);
+        
+        const totals = util.generateTotalsList(daily_summaries, CALORIESTATS.goal, now, NOW, WEEKRANGE)
+        ui.setAllCalorieGraphBars(BARGRAPHS_UI, totals);
+        ui.deactivateGoalInput(CALORIESTATS_UI, goal_input);
+    } else {
+        alert(data.errmsg);
+    }
 });
 
 date_input.addEventListener("change", (e) => {
