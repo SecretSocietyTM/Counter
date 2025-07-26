@@ -11,6 +11,10 @@ const cur_steps_lists = new FoodManager();
 let cur_serves_val = 1;
 let cur_recipe = null;
 
+let recipe_mode = null;
+let is_editing_step = false;
+let cur_step_ui = null;
+
 
 const categorieslist = document.getElementById("categorieslist");
 
@@ -100,21 +104,12 @@ function calculateFood(base, info) {
     return calculated_food;
 }
 
-function addToIngredientsList(food) {
-    cur_ingredients_list.add(food);
-    ingredientlist.appendChild(ui.createIngredient(food));
-}
-
-function addToStepsList(step) {
-    cur_steps_lists.add(step);
-    stepslist.appendChild(ui.createStep(step));
-}
-
 
 
 categorieslist.addEventListener("click", (e) => {
     let target;
     if (target = e.target.closest(".addrecipe_btn")) { // open recipe dialog in edit mode (adding new recipe)
+        recipe_mode = "add"
         let addrecipe_btn = target;
 
         for (const span in RECIPEFORM_UI.spans) {
@@ -154,6 +149,7 @@ categorieslist.addEventListener("click", (e) => {
         RECIPEFORM_UI.spans.serves.textContent = `${cur_recipe.info.serves} servings`;
         RECIPEFORM_UI.spans.servsize.textContent = `Serving Size: ${cur_recipe.info.servsize}${cur_recipe.info.unit}`;
         RECIPEFORM_UI.spans.link.href = cur_recipe.info.link;
+        cur_serves_val = cur_recipe.info.serves;
 
         editrecipe_btn.style.display = "";
         deleterecipe_btn.style.display = "none";
@@ -163,10 +159,12 @@ categorieslist.addEventListener("click", (e) => {
         addstep_btn.style.display = "none";
 
         cur_recipe.ingredients.forEach(ingredient => {
-            addToIngredientsList(ingredient);
+            cur_ingredients_list.add(ingredient);
+            ingredientlist.appendChild(ui.createIngredient(ingredient, "view"));
         });
         cur_recipe.steps.forEach(step => {
-            addToStepsList(step);
+            cur_steps_lists.add(step);
+            stepslist.appendChild(ui.createStep(step, "view"));
         });
 
         util.setReport(REPORT, cur_recipe.info);
@@ -182,6 +180,7 @@ categorieslist.addEventListener("click", (e) => {
 
 // recipe dialog input event listeners
 editrecipe_btn.addEventListener("click", (e) => {
+    recipe_mode = "edit"
     editrecipe_btn.style.display = "none";
     deleterecipe_btn.style.display = "";
     editrecipe_submit_btn.style.display = "";
@@ -194,6 +193,19 @@ editrecipe_btn.addEventListener("click", (e) => {
     for (const input in RECIPEFORM_UI.inputs) {
         RECIPEFORM_UI.inputs[input].style.display = "inline-block";
     }
+
+    document.querySelectorAll(".edit_ingr_btn").forEach(btn => {
+        btn.style.display = "";
+    })
+    document.querySelectorAll(".delete_ingr_btn").forEach(btn => {
+        btn.style.display = "";
+    })
+    document.querySelectorAll(".edit_step_btn").forEach(btn => {
+        btn.style.display = "";
+    })
+    document.querySelectorAll(".delete_step_btn").forEach(btn => {
+        btn.style.display = "";
+    })
 
     RECIPEFORM_UI.inputs.name.value = cur_recipe.info.name;
     ui.setCategorySelect(recipe_dialog, cur_recipe.info.category_id);
@@ -211,14 +223,20 @@ addingredient_btn.addEventListener("click", (e) => {
 });
 
 addstep_btn.addEventListener("click", (e) => {
+    is_editing_step = false;
     steps_dialog.showModal();
 })
 
 submit_step_btn.addEventListener("click", (e) => {
-    console.log(steps_input.value);
     let step = {};
     step.description = steps_input.value;
-    addToStepsList(step);
+    cur_steps_lists.add(step);
+    if (is_editing_step) {
+        cur_step_ui.querySelector("p").textContent = step.description;
+        steps_dialog.close();
+    } else {
+        stepslist.appendChild(ui.createStep(step));
+    }
     steps_input.value = "";
 });
 
@@ -316,6 +334,7 @@ recipe_dialog.addEventListener("cancel", (e) => {
 });
 
 recipe_dialog.addEventListener("click", (e) => {
+    let target;
     if (ui.isClickingOutside(e, recipe_dialog)) {
         recipeform.reset();
         cur_ingredients_list.deleteAll();
@@ -325,7 +344,88 @@ recipe_dialog.addEventListener("click", (e) => {
         stepslist.replaceChildren();
         ui.setReportUI(REPORT_UI, REPORT);
         recipe_dialog.close();
+    } else if (target = e.target.closest(".ingredient")) {
+        let ingr_ui = target;
+        let ingr = cur_ingredients_list.getFoodById(ingr_ui.dataset.id, "ingredient_id");
+        if (e.target.closest(".edit_ingr_btn")) {
+            const servsection = ingr_ui.querySelector(".ingredient__servsize-section");
+            console.log(servsection);
+            const input = servsection.querySelector("input");
+            const spans = servsection.querySelectorAll("span");
+            const info = ingr_ui.querySelectorAll(".ingredient__info");
+            const servsizespan = spans[0];
+            spans.forEach(span => {
+                span.style.display = "none";
+            })
+            input.style.display = "";
+            input.value = ingr.servsize;
+            input.focus();
+
+            input.addEventListener("keydown", async (e) => {
+                if (e.key === "Enter") {
+                    input.blur();
+                }
+            });
+
+            input.addEventListener("blur", async (e) => {
+                if (input.style.display == "none") {
+                    return;
+                }
+                if (input.value < 1 || input.value % 1 > 1) {
+                    input.style.display = "none";
+                    input.value = "";
+                    spans.forEach(span => {
+                        span.style.display = "";
+                    })
+                    return;
+                }
+                util.updateReport(REPORT, ingr, cur_serves_val, "sub");
+
+                // calulate:
+                let ratio = +input.value / ingr.servsize;
+                ingr.cal = ratio * ingr.cal;
+                ingr.fat = ratio * ingr.fat;
+                ingr.carb = ratio * ingr.carb;
+                ingr.prot = ratio * ingr.prot;
+
+                util.roundMacros(ingr);
+
+                ingr.servsize = +input.value;
+                util.updateReport(REPORT, ingr, cur_serves_val);
+                ui.setReportUI(REPORT_UI, REPORT);
+
+                input.style.display = "none";
+                input.value = "";
+                spans.forEach(span => {
+                    span.style.display = "";
+                });
+                servsizespan.textContent = ingr.servsize;
+                info[0].textContent = ingr.cal;
+                info[1].textContent = ingr.fat;
+                info[2].textContent = ingr.carb;
+                info[3].textContent = ingr.prot;
+            });
+
+        } else if (e.target.closest(".delete_ingr_btn")) {
+            cur_ingredients_list.delete(ingr_ui.dataset.id, "ingredient_id");
+            ingr_ui.remove();
+            util.updateReport(REPORT, ingr, cur_serves_val, "sub");
+            ui.setReportUI(REPORT_UI, REPORT);
+        }
+    } else if (target = e.target.closest(".step")){
+        let step_ui = target;
+        let step = cur_steps_lists.getFoodById(step_ui.dataset.id, "step_id");
+        if (e.target.closest(".edit_step_btn")) {
+            cur_step_ui = step_ui;
+            is_editing_step = true;
+            steps_dialog.showModal();
+            steps_input.value = step.description;
+        } else if (e.target.closest(".delete_step_btn")) {
+            cur_steps_lists.delete(step_ui.dataset.id, "step_id");
+            step_ui.remove();
+        }        
     }
+
 });
 
 close_dialog_btn.addEventListener("click", (e) => {
@@ -380,7 +480,8 @@ searchbar_target.querySelector("#search_dialog").
     addEventListener("searchbar:submit", (e) => {
     const {food, form_data} = e.detail;
     let calculated_food = calculateFood(food, form_data);
-    addToIngredientsList(calculated_food);
+    cur_ingredients_list.add(calculated_food);
+    ingredientlist.appendChild(ui.createIngredient(calculated_food));
     util.updateReport(REPORT, calculated_food, cur_serves_val);
     ui.setReportUI(REPORT_UI, REPORT);
 });

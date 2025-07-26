@@ -4,6 +4,7 @@ export function setReport(obj, info) {
         obj.total[key] = info[key];
         obj.perserv[key] = obj.total[key] / info.serves;
     }
+    roundMacros(obj.total);
     roundMacros(obj.perserv);    
 }
 
@@ -41,7 +42,7 @@ export function resetReport(obj) {
 
 // misc
 export function roundMacros(obj) {
-    for (let key of ["fat", "carb", "prot"]) {
+    for (let key of ["cal", "fat", "carb", "prot"]) {
         obj[key] = Math.round(obj[key] * 10) / 10;
     }    
 }
