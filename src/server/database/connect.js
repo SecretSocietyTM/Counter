@@ -1,5 +1,5 @@
 const sqlite  = require("sqlite");
-const sqlite3 = require("sqlite3");
+const sqlite3 = require("sqlite3").verbose();
 const path    = require("path");
 
 

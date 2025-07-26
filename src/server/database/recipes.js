@@ -14,6 +14,13 @@ async function addRecipe(uid, recipe) {
         [uid, recipe.category, recipe.name, recipe.serves, recipe.servsize, 
         recipe.unit, recipe.cal, recipe.fat, recipe.carb, recipe.prot, recipe.link]
     );
+    await db.get(`
+        INSERT INTO foods 
+        (user_id, name, serving_size, unit, calories, fat, carbs, protein) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [uid, recipe.name, recipe.servsize, "this is recipe",
+        recipe.cal, recipe.fat, recipe.carb, recipe.prot]
+    );
     await db.close();
     return result;
 }
@@ -48,7 +55,7 @@ async function addRecipeSteps(recipe_id, steps) {
         const result = await db.get(`
             INSERT INTO recipe_steps
             (recipe_id, description)
-            VALUES (?, ?, ?) 
+            VALUES (?, ?) 
             RETURNING *`,
             [recipe_id, step.description]
         );
@@ -71,6 +78,19 @@ async function editRecipeInfo(uid, recipe) {
         [recipe.category, recipe.name, recipe.serves, 
         recipe.servsize, recipe.unit, recipe.cal, recipe.fat,
         recipe.carb, recipe.prot, recipe.link, uid, recipe.recipe_id]
+    );
+    const food_id = await db.get(`
+        SELECT food_id
+        FROM foods 
+        WHERE user_id=? AND name=? AND unit=?`, // TODO: this wont work if the name is changed!
+        [uid, recipe.name, "this is recipe"]
+    );
+    await db.run(`
+        UPDATE foods 
+        SET name=?, serving_size=?, unit=?, calories=?, fat=?, carbs=?, protein=?
+        WHERE user_id=? AND food_id=?`,
+        [recipe.name, recipe.servsize, "this is recipe", recipe.cal,
+        recipe.fat, recipe.carb, recipe.prot, uid, food_id.food_id]
     );
     await db.close();
     return result;
@@ -184,10 +204,16 @@ async function editRecipeSteps(recipe_id, steps) {
 
 async function deleteRecipe(recipe_id) {
     const db = await connectDB();
-    await db.run(`
+    const result = await db.get(`
         DELETE FROM recipes 
-        WHERE recipe_id=?`,
+        WHERE recipe_id=?
+        RETURNING user_id, name`,
         [recipe_id]
+    );
+    await db.get(`
+        DELETE FROM foods 
+        WHERE user_id=? AND name=?`,
+        [result.user_id, result.name]
     );
 
     let existing_ingredients = await db.all(`

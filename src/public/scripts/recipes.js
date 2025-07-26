@@ -292,6 +292,7 @@ editrecipe_submit_btn.addEventListener("click", async (e) => {
     if (!recipe_data) return;
 
     recipe_data.recipe_id = cur_recipe.info.recipe_id;
+    recipe_data.servsize = RECIPEFORM_UI.inputs.servsize.value;
     recipe_data.cur_serves_val = cur_serves_val;
     recipe_data.ingredients = cur_ingredients_list.foods;
     recipe_data.steps = cur_steps_lists.foods;
