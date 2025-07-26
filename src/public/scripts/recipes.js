@@ -272,7 +272,6 @@ addrecipe_submit_btn.addEventListener("click", async (e) => {
 
     if (data.success) {
         RECIPES[data.recipe.info.category_id][data.recipe.info.recipe_id] = data.recipe;
-        console.log(data);
         RECIPES_UI[data.recipe.info.category_id].
             appendChild(ui.createRecipe(data.recipe.info));
 
@@ -299,13 +298,11 @@ editrecipe_submit_btn.addEventListener("click", async (e) => {
     for (const key in REPORT.total) {
         recipe_data[key] = REPORT.total[key];
     }
-    console.log(recipe_data);
 
     const data = await api.editRecipe(recipe_data);
 
     if (data.success) {
         RECIPES[data.recipe.info.category_id][data.recipe.info.recipe_id] = data.recipe;
-        console.log(data);
         cur_recipe_ui.remove();
         RECIPES_UI[data.recipe.info.category_id].
             appendChild(ui.createRecipe(data.recipe.info));
@@ -351,7 +348,6 @@ recipe_dialog.addEventListener("click", (e) => {
         let ingr = cur_ingredients_list.getFoodById(ingr_ui.dataset.id, "ingredient_id");
         if (e.target.closest(".edit_ingr_btn")) {
             const servsection = ingr_ui.querySelector(".ingredient__servsize-section");
-            console.log(servsection);
             const input = servsection.querySelector("input");
             const spans = servsection.querySelectorAll("span");
             const info = ingr_ui.querySelectorAll(".ingredient__info");
