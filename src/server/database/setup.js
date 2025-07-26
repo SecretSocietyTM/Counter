@@ -138,7 +138,6 @@ async function alter() {
         CREATE TABLE IF NOT EXISTS recipe_steps (
             step_id INTEGER PRIMARY KEY AUTOINCREMENT,
             recipe_id INTEGER NOT NULL,
-            step_number INTEGER NOT NULL,
             description TEXT
         );`
     )

@@ -292,6 +292,7 @@ editrecipe_submit_btn.addEventListener("click", async (e) => {
     if (!recipe_data) return;
 
     recipe_data.recipe_id = cur_recipe.info.recipe_id;
+    recipe_data.servsize = RECIPEFORM_UI.inputs.servsize.value;
     recipe_data.cur_serves_val = cur_serves_val;
     recipe_data.ingredients = cur_ingredients_list.foods;
     recipe_data.steps = cur_steps_lists.foods;
@@ -317,6 +318,31 @@ editrecipe_submit_btn.addEventListener("click", async (e) => {
         recipe_dialog.close();
     }
 });
+
+
+// delete recipe
+deleterecipe_btn.addEventListener("click", async (e) => {
+    let recipe_id = cur_recipe.info.recipe_id;
+
+    const data = await api.deleteRecipe(recipe_id);
+
+    if (data.success) {
+        delete RECIPES[cur_recipe.info.category_id][cur_recipe.info.recipe_id];
+        cur_recipe_ui.remove();
+        cur_recipe = null;
+        cur_recipe_ui = null;
+
+        recipeform.reset();
+        cur_ingredients_list.deleteAll();
+        cur_steps_lists.deleteAll();
+        util.resetReport(REPORT);
+        ingredientlist.replaceChildren();
+        stepslist.replaceChildren();
+        ui.setReportUI(REPORT_UI, REPORT);
+        recipe_dialog.close();
+    }
+});
+
 
 
 
