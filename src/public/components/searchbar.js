@@ -94,19 +94,19 @@ async function handleSearchInput(e) {
 
 // mini-form is submitted
 function submitFormData(form) {
-    return new Promise((resolve => {
+    return new Promise(resolve => {
         form.addEventListener("click", async (e) => {
-        if (!e.target.closest("#searchform_submit_btn")) return;
-        let form_data = ui.checkFormValidity(form);
-        if (!form_data) return;
+            if (!e.target.closest("#searchform_submit_btn")) return;
+            let form_data = ui.checkFormValidity(form);
+            if (!form_data) return;
 
-        input.value = "";
-        input.focus();
-        searchlist.replaceChildren();
-        active_form.remove();
-        active_form = null;
-
-        resolve(form_data);
+            setTimeout(() => {
+                input.value = "";
+                searchlist.replaceChildren();
+                active_form.remove();
+                active_form = null;
+                resolve(form_data);
+            }, 0);
+        });
     });
-    }))
 }
