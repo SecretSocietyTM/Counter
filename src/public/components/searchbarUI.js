@@ -83,7 +83,7 @@ export function createSearchResultForm(food) {
 // element actions
 export function closeSearchDialog(search_dialog) {
     search_dialog.style.display = "none";
-    search_dialog.querySelector("#searchbar_input").style.value="";
+    search_dialog.querySelector("#searchbar_input").value="";
     search_dialog.querySelector("#searchlist").replaceChildren();
     search_dialog.close();
 }
