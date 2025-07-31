@@ -48,6 +48,7 @@ router.delete("/:id", async (req, res) => {
     const uid = req.session.user.id;
     let result;
     let _result;
+
     try {
         result = await db.diaryDB.deleteFood(uid, entry_id);
         _result = await db.diaryDB.updateDailySummary(uid, util.negateEntry(result));
@@ -66,6 +67,7 @@ router.get("/summary",async (req, res) => {
     const uid = req.session.user.id;
     const _date = new Date(date);
     let result;
+    
     try {
         result = await db.diaryDB.getWeeklySummary(uid, util.getWeek(_date));
     } catch (err) {

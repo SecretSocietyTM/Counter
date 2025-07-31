@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../styles/shared/base.css">
     <link rel="stylesheet" href="../styles/shared/components.css">
     <link rel="stylesheet" href="../styles/dashboard.css">
+    <link rel="stylesheet" href="../components/searchbar.css">
     <link rel="stylesheet" href="../styles/svg_elements/progressbar.css">
     <link rel="stylesheet" href="../styles/svg_elements/bargraph.css">
     <script type="module" src="../scripts/dashboard.js" defer></script>
@@ -613,16 +614,6 @@
     </div>
 </div>
 
-<dialog id="search_dialog" class="shadow">
-    <div id="searchbar" class="searchbar">
-        <img class="searchbar__icon" src="../assets/dashboard/search.svg" alt="" width="20">
-        <input type="text" placeholder="Search your foods" id="searchbar_input">
-        <button type="button" id="clear_search_btn" class="icon_button">
-            <img src="../assets/shared/icons/cancel.svg" alt="" width="25">
-        </button>
-    </div>
-    <ul id="searchlist" class="searchlist">
-    </ul>
-</dialog>
+<div id="searchbar_target"></div>
 </body>
 </html>

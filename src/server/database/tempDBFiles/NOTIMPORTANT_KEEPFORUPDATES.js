@@ -50,4 +50,49 @@ async function fixDailySummary() {
     await db.close();
 }
 
-fixDailySummary();
+async function addDefaultCategories() {
+    const db = await connectDB();
+
+    let users = await db.all(`SELECT user_id FROM users`);
+
+    for (const user of users) {
+        await db.run(`
+            INSERT INTO categories
+            (user_id, name)
+            VALUES
+            (?, ?),
+            (?, ?)`,
+            [user.user_id, "Mains", user.user_id, "Sides"]
+        );
+    }
+    await db.close();
+}
+
+/* async function updateCategory() {
+    const db = await connectDB();
+
+    for (let i = 0; i < 8; i++) {
+        if (i % 2 == 0) {
+            await db.run(`
+                    UPDATE categories
+                    SET blurb=?, color=?, emoji=?
+                    WHERE category_id=?`,
+                    ["The main attraction of a meal!", 4, 1, i+1]
+            );
+        } else {
+            await db.run(`
+                    UPDATE categories
+                    SET blurb=?, color=?, emoji=?
+                    WHERE category_id=?`,
+                    ["Add a single side or multiple sides to your main course!", 2, 2, i+1]
+            );
+        }
+    }
+    await db.close();
+} */
+
+/* fixDailySummary(); */
+
+/* addDefaultCategories(); */
+
+/* updateCategory(); */

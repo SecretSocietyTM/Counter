@@ -6,4 +6,9 @@
     <symbol id="chevron-down" viewBox="0 0 10 10" preserveAspectRatio="xMidYMid meet">
         <path d="M2,2 L5,8 L8,2" fill="currentColor"/>
     </symbol>
+
+    <symbol id="plus" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+        <line x1="12" y1="2" x2="12" y2="22" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+        <line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+    </symbol>
 </svg>

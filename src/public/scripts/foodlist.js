@@ -105,6 +105,7 @@ dialog.addEventListener("click", (e) => {
 /* form button events */
 addfood_submit_btn.addEventListener("click", async (e) => {
     const food_data = ui.checkFormValidity(foodform)
+    if (!food_data) return;
 
     const data = await api.addFood(food_data);
 
@@ -115,8 +116,8 @@ addfood_submit_btn.addEventListener("click", async (e) => {
                 foodlist.appendChild(ui.createFood(data.food));
             }
         } else {
-            if (data.food.name.includes(glob_searchterm) &&  
-                    s_foodlist_array.size() == s_total_count) {
+            if (data.food.name.includes(glob_searchterm) 
+                && s_foodlist_array.size() == s_total_count) {
                 s_foodlist_array.add(data.food);
                 foodlist.appendChild(ui.createFood(data.food));
                 s_total_count++;
@@ -132,6 +133,7 @@ addfood_submit_btn.addEventListener("click", async (e) => {
 editfood_submit_btn.addEventListener("click", async (e) => {
     const food_id = cur_listitem.dataset.id;
     const food_data = ui.checkFormValidity(foodform);
+    if (!food_data) return;
 
     const data = await api.editFood(food_id, food_data);
 
