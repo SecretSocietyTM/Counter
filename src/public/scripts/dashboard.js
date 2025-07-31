@@ -25,6 +25,8 @@ const diary = document.getElementById("diary");
 // buttons
 const addfood_btns = document.querySelectorAll(".addfood_btn");
 const edit_goal_btn = document.getElementById("edit_goal_btn");
+const date_left_btn = document.getElementById("date_arrow_l");
+const date_right_btn = document.getElementById("date_arrow_r");
 
 // edit calorie goal elements
 const goal_input = document.getElementById("goal_calories_input");
@@ -145,6 +147,41 @@ function updateStateUI(entry, meal_type, flag, li) {
     }
 }
 
+function dateChangeEvent(flag) {
+    if (!flag) {
+        now = dateUtil.getNewNowDate(date_input.value);
+    } else if (flag === "add") {
+        now.setDate(now.getDate() + 1);
+    } else if (flag === "sub") {
+        now.setDate(now.getDate() - 1);
+    }
+
+    total_entries = 0;
+    util.resetAll(MEALLISTS, MEALSTATS, CALORIESTATS, MACROSTATS);
+    ui.resetAllUI(MEALLISTS_UI, MEALSTATS_UI, CALORIEDIAL_UI, CALORIESTATS_UI, MACROSTATS_UI);
+    ui.resetCalDialUI(CALORIEDIAL_UI);
+
+    let label = dateUtil.getLabel(now, NOW);
+    if (label) {
+        ui.setMainDate(main_date, label);
+        ui.setSubDate(sub_date, dateUtil.formatDate(now));
+    } else {
+        ui.setMainDate(main_date, undefined, dateUtil.dowToString(now));
+        ui.setSubDate(sub_date, dateUtil.formatDateNoDow(now));
+    }
+
+    if (!(week_range.start <= now && now <= week_range.end)) {
+        days_logged = 0;
+        util.resetWeekTotals(WEEKTOTALS);
+        week_range = dateUtil.getWeekRange(now);
+        ui.setWeekDate(week_date, dateUtil.formatWeekRange(now));
+        ui.resetGraphs(BARGRAPHS_UI);
+        daily_summaries.length = 0;
+        initWeeklySummary(now);
+    }
+    initDiary(now);
+}
+
 
 
 // open search dialog
@@ -196,31 +233,17 @@ goal_input.addEventListener("blur", async (e) => {
 });
 
 date_input.addEventListener("change", (e) => {
-    total_entries = 0;
-    util.resetAll(MEALLISTS, MEALSTATS, CALORIESTATS, MACROSTATS);
-    ui.resetAllUI(MEALLISTS_UI, MEALSTATS_UI, CALORIEDIAL_UI, CALORIESTATS_UI, MACROSTATS_UI);
-    ui.resetCalDialUI(CALORIEDIAL_UI);
+    dateChangeEvent();
+});
 
-    now = dateUtil.getNewNowDate(date_input.value);
-    let label = dateUtil.getLabel(now, NOW);
-    if (label) {
-        ui.setMainDate(main_date, label);
-        ui.setSubDate(sub_date, dateUtil.formatDate(now));
-    } else {
-        ui.setMainDate(main_date, undefined, dateUtil.dowToString(now));
-        ui.setSubDate(sub_date, dateUtil.formatDateNoDow(now));
-    }
+date_left_btn.addEventListener("click", (e) => {
+    if (!e.target.closest("#date_arrow_l")) return;
+    dateChangeEvent("sub");
+});
 
-    if (!(week_range.start <= now && now <= week_range.end)) {
-        days_logged = 0;
-        util.resetWeekTotals(WEEKTOTALS);
-        week_range = dateUtil.getWeekRange(now);
-        ui.setWeekDate(week_date, dateUtil.formatWeekRange(now));
-        ui.resetGraphs(BARGRAPHS_UI);
-        daily_summaries.length = 0;
-        initWeeklySummary(now);
-    }
-    initDiary(now);
+date_right_btn.addEventListener("click", (e) => {
+    if (!e.target.closest("#date_arrow_r")) return;
+    dateChangeEvent("add");
 });
 
 // add to diary event
