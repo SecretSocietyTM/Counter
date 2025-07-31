@@ -142,7 +142,7 @@ select {
     scrollbar-gutter: stable both-edges; */
 }
 
-form {
+.recipe_form {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
