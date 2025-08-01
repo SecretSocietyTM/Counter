@@ -22,10 +22,10 @@ export function createSearchResult(food) {
     const li = document.createElement("li");
     li.className = "searchlist__whole-item";
     li.dataset.id = food.food_id;
-    li.setAttribute("tabindex", 0);
 
     const div = document.createElement("div");
     div.className = "searchlist__item";
+    div.setAttribute("tabindex", 0);
 
     const name = document.createElement("p");
     name.className = "truncate";
@@ -63,7 +63,7 @@ export function createSearchResultForm(food) {
     setUnitSelect(unit, food.unit);
 
     const check_button = document.createElement("button");
-    check_button.type = "button";
+    check_button.type = "submit"; /* "button"; */
     check_button.id = "searchform_submit_btn";
     check_button.className = "icon_button";
 

@@ -30,93 +30,22 @@ async function attachSearchbarLogic(root) {
     searchlist = root.querySelector("#searchlist");
     clear_search_btn = root.querySelector("#clear_search_btn");
 
-    // closing search dialog with Esc 
-    dialog.addEventListener("cancel", (e) => {
-        ui.closeSearchDialog(dialog);
-    });
-    dialog.addEventListener("click", handleDialogClick);
-    dialog.addEventListener("keydown", handleDialogEnter);
     input.addEventListener("input", handleSearchInput);
-};
 
-
-// selecting items event
-async function handleDialogClick(e) {
-    if (ui.isClickingOutside(e, dialog)) {
-        ui.closeSearchDialog(dialog);
-    }
-
-    if (e.target.closest("form")) return;
-    const searchlist_whole = e.target.closest(".searchlist__whole-item");
-    if (!searchlist_whole) return;
-
-    if (searchlist_whole && active_form) {
-        let remove = (searchlist_whole.children.length > 1) ? true : false;
-        active_form.remove();
-        active_form = null;
-        if (remove) return;
-    }
-
-    if (!searchlist_whole.querySelector("form")) {
-        const food = SEARCHLIST.getFoodById(searchlist_whole.dataset.id, "food_id");
-        active_form = ui.createSearchResultForm(food);
-        searchlist_whole.appendChild(active_form);
-        active_form.querySelector("[name='servsize']").focus();
-
-        const form_data = await submitFormData(active_form);
-
-        dialog.dispatchEvent(new CustomEvent("searchbar:submit", {
-            detail: { food, form_data }
-        }));
-
-        input.focus();
-    }
-}
-
-// selecting items event
-async function handleDialogEnter(e) {
-    if (e.key != "Enter") return;
-    else {
-        const active = document.activeElement;
-        if (
-            active.tagName === 'BUTTON' &&
-            active.type === 'button' &&
-            !active.hasAttribute('data-close-dialog')
-        ) {
-            e.preventDefault();
+    // closing search dialog with Esc 
+    dialog.addEventListener("cancel", () => ui.closeSearchDialog(dialog));
+    dialog.addEventListener("click", (e) => {
+        if (ui.isClickingOutside(e, dialog)) {
+            ui.closeSearchDialog(dialog);
         }
-    }
-    let target = e.target;
-    if (target.className != "searchlist__whole-item") return;
- 
-    if (active_form) {
-        let remove = (target.children.length > 1) ? true : false;
-        active_form.remove();
-        active_form = null;
-        if (remove) return;
-    }
-
-    if (!target.querySelector("form")) {
-        const food = SEARCHLIST.getFoodById(target.dataset.id, "food_id");
-        active_form = ui.createSearchResultForm(food);
-        target.appendChild(active_form);
-        active_form.querySelector("[name='servsize']").focus();
-
-        const form_data = await submitFormData(active_form);
-
-        dialog.dispatchEvent(new CustomEvent("searchbar:submit", {
-            detail: { food, form_data }
-        }));
-
-        input.focus();
-    }
-}
+    });
+};
 
 // simplified search event
 async function handleSearchInput(e) {
     let searchterm = e.target.value;
-    searchlist.replaceChildren();
     SEARCHLIST.deleteAll();
+    removeSearchResults();
 
     if (searchterm.length == 0) return;
 
@@ -127,42 +56,66 @@ async function handleSearchInput(e) {
         if (data.count == 0) return;
         for (let i = 0; i < data.foods.length; i++) {
             SEARCHLIST.add(data.foods[i]);
-            searchlist.appendChild(ui.createSearchResult(data.foods[i]));
+            let result_ui = ui.createSearchResult(data.foods[i]);
+            result_ui.addEventListener("click", selectSearchResult);
+            result_ui.addEventListener("keydown", selectSearchResult);
+            searchlist.appendChild(result_ui);
         }
     } else {
         alert(data.errmsg);
     }
 }
 
-// mini-form is submitted
-function submitFormData(form) {
-    return new Promise(resolve => {
-        form.addEventListener("click", async (e) => {
-            if (!e.target.closest("#searchform_submit_btn")) return;
-            let form_data = ui.checkFormValidity(form);
-            if (!form_data) return;
+function selectSearchResult(e) {
+    if (e.type === "keydown") {
+        if (e.key !== "Enter" && e.key !== " ") return;
+    }
 
-            setTimeout(() => {
-                input.value = "";
-                searchlist.replaceChildren();
-                active_form.remove();
-                active_form = null;
-                resolve(form_data);
-            }, 0);  
-        });
-        form.addEventListener("keydown", async (e) => {
-            if (e.key != "Enter") return;
-            if (!e.target.closest("#searchform_submit_btn")) return;
-            let form_data = ui.checkFormValidity(form);
-            if (!form_data) return;
+    let search_result_element = e.target.closest("li");
+    if (e.target.closest("form")) return;
 
-            setTimeout(() => {
-                input.value = "";
-                searchlist.replaceChildren();
-                active_form.remove();
-                active_form = null;
-                resolve(form_data);
-            }, 0);  
-        });
-    });
+    if (active_form) {
+        let do_remove = (search_result_element.children.length > 1) ? true : false;
+        active_form.remove();
+        active_form = null;
+        if (do_remove) return;
+    }
+
+    const food = SEARCHLIST.getFoodById(search_result_element.dataset.id, "food_id");
+    active_form = ui.createSearchResultForm(food);
+    active_form.addEventListener("submit", submitEntryForm);
+    search_result_element.appendChild(active_form);
+    setTimeout(() => {
+        active_form.querySelector("[name='servsize']").focus();
+    }, 0); 
+}
+
+
+function submitEntryForm(e) {
+    e.preventDefault();
+
+    let form = e.target;
+
+    const data = new FormData(form);
+    const form_data = Object.fromEntries(data.entries());
+    const food = SEARCHLIST.getFoodById(form_data.food_id, "food_id");    
+
+    SEARCHLIST.deleteAll();
+    removeSearchResults();
+    input.value = "";
+    active_form.removeEventListener("submit", submitEntryForm);
+    active_form.remove();
+    active_form = null;
+
+    dialog.dispatchEvent(new CustomEvent("searchbar:submit", {
+        detail: { food, form_data }
+    }));
+}
+
+function removeSearchResults() {
+    Array.from(searchlist.children).forEach(child => {
+        child.removeEventListener("click", selectSearchResult);
+        child.removeEventListener("keydown", selectSearchResult);
+        child.remove();
+    });    
 }

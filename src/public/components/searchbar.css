@@ -160,7 +160,9 @@
     }
 }
 
-.searchlist__item:hover {
+.searchlist__item:hover, 
+.searchlist__item:focus{
+    outline: none;
     transition: 500ms;
     background-color: var(--clr-neutral-50);
 }
