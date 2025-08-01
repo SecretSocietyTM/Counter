@@ -23,6 +23,8 @@ export function createMacro(value, unit = "g", span_classes = []) {
 }
 
 export function isClickingOutside(event, container) {
+    // have to do this for synthetic clicks (keyboard submission event);
+    if (event.clientX === 0 && event.clientY === 0) return;
     const dimensions = container.getBoundingClientRect();
     return event.clientX < dimensions.left  || 
            event.clientX > dimensions.right ||

@@ -63,7 +63,7 @@ export function createSearchResultForm(food) {
     setUnitSelect(unit, food.unit);
 
     const check_button = document.createElement("button");
-    check_button.type = "submit"; /* "button"; */
+    check_button.type = "submit";
     check_button.id = "searchform_submit_btn";
     check_button.className = "icon_button";
 

@@ -33,7 +33,10 @@ async function attachSearchbarLogic(root) {
     input.addEventListener("input", handleSearchInput);
 
     // closing search dialog with Esc or by clicking outside of it.
-    dialog.addEventListener("cancel", () => ui.closeSearchDialog(dialog));
+    dialog.addEventListener("cancel", (e) => {
+        console.log("closing the dialog with Esc???");
+        ui.closeSearchDialog(dialog)
+    });
     dialog.addEventListener("click", (e) => {
         if (ui.isClickingOutside(e, dialog)) {
             ui.closeSearchDialog(dialog);
@@ -74,8 +77,9 @@ function selectSearchResult(e) {
     if (e.target.closest("form")) return;
 
     if (active_form) {
+        let do_remove = (search_result_element.children.length > 1) ? true : false;
         removeForm();
-        if (search_result_element.children.length > 1) return;
+        if (do_remove) return;
     }
 
     const food = SEARCHLIST.getFoodById(search_result_element.dataset.id, "food_id");
@@ -92,28 +96,23 @@ function submitEntryForm(e) {
 
     const data = new FormData(e.target);
     const form_data = Object.fromEntries(data.entries());
-    const food = SEARCHLIST.getFoodById(form_data.food_id, "food_id");    
-
-    removeSearchResults();
-    removeForm()
-    input.value = "";
+    const food = SEARCHLIST.getFoodById(form_data.food_id, "food_id");
 
     dialog.dispatchEvent(new CustomEvent("searchbar:submit", {
         detail: { food, form_data }
     }));
+
+    removeForm();
+    removeSearchResults();
+    input.value = "";
 }
 
 function removeSearchResults() {
     SEARCHLIST.deleteAll();
-    Array.from(searchlist.children).forEach(child => {
-        child.removeEventListener("click", selectSearchResult);
-        child.removeEventListener("keydown", selectSearchResult);
-        child.remove();
-    });    
+    searchlist.replaceChildren();  
 }
 
 function removeForm() {
-    active_form.removeEventListener("submit", submitEntryForm);
     active_form.remove();
     active_form = null;    
 }
