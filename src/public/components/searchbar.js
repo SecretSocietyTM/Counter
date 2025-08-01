@@ -32,7 +32,7 @@ async function attachSearchbarLogic(root) {
 
     input.addEventListener("input", handleSearchInput);
 
-    // closing search dialog with Esc 
+    // closing search dialog with Esc or by clicking outside of it.
     dialog.addEventListener("cancel", () => ui.closeSearchDialog(dialog));
     dialog.addEventListener("click", (e) => {
         if (ui.isClickingOutside(e, dialog)) {
@@ -44,10 +44,9 @@ async function attachSearchbarLogic(root) {
 // simplified search event
 async function handleSearchInput(e) {
     let searchterm = e.target.value;
-    SEARCHLIST.deleteAll();
     removeSearchResults();
 
-    if (searchterm.length == 0) return;
+    if (searchterm.length === 0) return;
 
     const res = await fetch(`api/food?last_item=0&query=${searchterm}`);
     const data = await res.json();
@@ -75,10 +74,8 @@ function selectSearchResult(e) {
     if (e.target.closest("form")) return;
 
     if (active_form) {
-        let do_remove = (search_result_element.children.length > 1) ? true : false;
-        active_form.remove();
-        active_form = null;
-        if (do_remove) return;
+        removeForm();
+        if (search_result_element.children.length > 1) return;
     }
 
     const food = SEARCHLIST.getFoodById(search_result_element.dataset.id, "food_id");
@@ -90,22 +87,16 @@ function selectSearchResult(e) {
     }, 0); 
 }
 
-
 function submitEntryForm(e) {
     e.preventDefault();
 
-    let form = e.target;
-
-    const data = new FormData(form);
+    const data = new FormData(e.target);
     const form_data = Object.fromEntries(data.entries());
     const food = SEARCHLIST.getFoodById(form_data.food_id, "food_id");    
 
-    SEARCHLIST.deleteAll();
     removeSearchResults();
+    removeForm()
     input.value = "";
-    active_form.removeEventListener("submit", submitEntryForm);
-    active_form.remove();
-    active_form = null;
 
     dialog.dispatchEvent(new CustomEvent("searchbar:submit", {
         detail: { food, form_data }
@@ -113,9 +104,16 @@ function submitEntryForm(e) {
 }
 
 function removeSearchResults() {
+    SEARCHLIST.deleteAll();
     Array.from(searchlist.children).forEach(child => {
         child.removeEventListener("click", selectSearchResult);
         child.removeEventListener("keydown", selectSearchResult);
         child.remove();
     });    
+}
+
+function removeForm() {
+    active_form.removeEventListener("submit", submitEntryForm);
+    active_form.remove();
+    active_form = null;    
 }
