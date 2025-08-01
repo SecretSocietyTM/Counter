@@ -105,6 +105,7 @@ function submitEntryForm(e) {
     removeForm();
     removeSearchResults();
     input.value = "";
+    input.focus();
 }
 
 function removeSearchResults() {
