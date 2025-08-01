@@ -22,6 +22,7 @@ export function createSearchResult(food) {
     const li = document.createElement("li");
     li.className = "searchlist__whole-item";
     li.dataset.id = food.food_id;
+    li.setAttribute("tabindex", 0);
 
     const div = document.createElement("div");
     div.className = "searchlist__item";

@@ -34,7 +34,8 @@ async function attachSearchbarLogic(root) {
     dialog.addEventListener("cancel", (e) => {
         ui.closeSearchDialog(dialog);
     });
-    dialog.addEventListener("click", handleDialogClick)
+    dialog.addEventListener("click", handleDialogClick);
+    dialog.addEventListener("keydown", handleDialogEnter);
     input.addEventListener("input", handleSearchInput);
 };
 
@@ -67,6 +68,47 @@ async function handleDialogClick(e) {
         dialog.dispatchEvent(new CustomEvent("searchbar:submit", {
             detail: { food, form_data }
         }));
+
+        input.focus();
+    }
+}
+
+// selecting items event
+async function handleDialogEnter(e) {
+    if (e.key != "Enter") return;
+    else {
+        const active = document.activeElement;
+        if (
+            active.tagName === 'BUTTON' &&
+            active.type === 'button' &&
+            !active.hasAttribute('data-close-dialog')
+        ) {
+            e.preventDefault();
+        }
+    }
+    let target = e.target;
+    if (target.className != "searchlist__whole-item") return;
+ 
+    if (active_form) {
+        let remove = (target.children.length > 1) ? true : false;
+        active_form.remove();
+        active_form = null;
+        if (remove) return;
+    }
+
+    if (!target.querySelector("form")) {
+        const food = SEARCHLIST.getFoodById(target.dataset.id, "food_id");
+        active_form = ui.createSearchResultForm(food);
+        target.appendChild(active_form);
+        active_form.querySelector("[name='servsize']").focus();
+
+        const form_data = await submitFormData(active_form);
+
+        dialog.dispatchEvent(new CustomEvent("searchbar:submit", {
+            detail: { food, form_data }
+        }));
+
+        input.focus();
     }
 }
 
@@ -106,7 +148,21 @@ function submitFormData(form) {
                 active_form.remove();
                 active_form = null;
                 resolve(form_data);
-            }, 0);
+            }, 0);  
+        });
+        form.addEventListener("keydown", async (e) => {
+            if (e.key != "Enter") return;
+            if (!e.target.closest("#searchform_submit_btn")) return;
+            let form_data = ui.checkFormValidity(form);
+            if (!form_data) return;
+
+            setTimeout(() => {
+                input.value = "";
+                searchlist.replaceChildren();
+                active_form.remove();
+                active_form = null;
+                resolve(form_data);
+            }, 0);  
         });
     });
 }
