@@ -5,13 +5,9 @@ import * as dateUtil from "./util/shared/date.js";
 import { FoodManager } from "./util/shared/foodmanager.js";
 import * as searchbar from "../components/searchbar.js";
 
-
-const SEARCHLIST = new FoodManager();
-
 let daily_summaries = [];
 
 let meal_type = null;
-let active_form = null;
 let days_logged = 0;
 let total_entries = 0;
 
@@ -270,8 +266,6 @@ diary.addEventListener("click", async (e) => {
     const li = e.target.closest("li");
     const list = li.closest("ul");
     const meal_type = list.dataset.meal_type;
-
-    const entry = MEALLISTS[meal_type].getFoodById(li.dataset.id, "entry_id");
 
     const data = await api.deleteFromDiary(li.dataset.id);
 
