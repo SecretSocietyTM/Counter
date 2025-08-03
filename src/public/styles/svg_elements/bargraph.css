@@ -1,0 +1,29 @@
+.goal-progress-bar {
+    stroke: var(--clr-primary-green);
+    transition: stroke-dashoffset 800ms ease-in;
+}
+
+.over-progress-bar {
+    stroke: var(--clr-primary-red);
+    transition: stroke-dashoffset 800ms ease-in;    
+}
+
+.null-progress-bar {
+    stroke: var(--clr-neutral-40);
+    transition: stroke-dashoffset 800ms ease-in;       
+}
+
+.fat-progress-bar {
+    stroke: var(--clr-accent-yellow);
+    opacity: 0;
+}
+
+.carb-progress-bar {
+    stroke: var(--clr-accent-lightblue);
+    opacity: 0;
+}
+
+.prot-progress-bar {
+    stroke: var(--clr-accent-purple);
+    opacity: 0;
+}

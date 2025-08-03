@@ -45,7 +45,7 @@
         <div class="content">
             <div id="searchbar" class="searchbar">
                 <img class="searchbar__icon" src="../assets/shared/icons/search.png" alt="">
-                <input type="text" placeholder="Search your foods" id="searchbar_input">
+                <input type="text" id="searchbar_input" placeholder="Search your foods" autocomplete="off">
                 <button type="button" id="addfood_btn" class="icon_button">
                     <img src="../assets/shared/icons/add.svg" alt="">
                 </button>
@@ -116,7 +116,8 @@
         <p id="error_message" class="fs-14 txt-prim-red"></p>
         <div class="flex jc-btwn">
             <button type="button" id="delete_btn" class="delete_btn button-1 bg-prim-red">Delete</button>
-            <button type="button" id="submit_btn" data-method="" class="button-1 bg-prim-green">Add Food</button>
+            <button type="button" id="editfood_submit_btn" class="button-1 bg-prim-green">Save</button>
+            <button type="button" id="addfood_submit_btn" class="button-1 bg-prim-green">Add Food</button>
         </div>
     </form>
 </dialog>

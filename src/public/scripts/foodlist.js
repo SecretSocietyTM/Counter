@@ -1,6 +1,6 @@
-import { FoodManager } from "./util/foodmanager.js";
-import * as FoodlistUI from "./ui/foodlistUI.js";
-
+import * as ui from "./ui/foodlistUI.js";
+import * as api from "./api/foodlistAPI.js";
+import { FoodManager } from "./util/shared/foodmanager.js";
 
 const foodlist_array = new FoodManager()
 const s_foodlist_array = new FoodManager()
@@ -26,12 +26,23 @@ const foodlist = document.getElementById("foodlist");
 const dialog = document.querySelector("dialog");
 const dlg_title = document.getElementById("dialog_title");
 const delete_btn = document.getElementById("delete_btn");
-const submit_btn = document.getElementById("submit_btn");
+const editfood_submit_btn = document.getElementById("editfood_submit_btn");
+const addfood_submit_btn = document.getElementById("addfood_submit_btn");
 const foodform = document.getElementById("foodform");
+const error_message = document.getElementById("error_message");
+
+const DIALOG_UI = Object.freeze({
+    dialog: dialog,
+    title: dlg_title,
+    open_btn: addfood_btn,
+    delete_btn: delete_btn,
+    edit_btn: editfood_submit_btn,
+    add_btn: addfood_submit_btn,
+    form: foodform,
+    err_msg: error_message
+});
 
 const search_input = document.getElementById("searchbar_input");
-
-const error_message = document.getElementById("error_message");
 
 
 function getActiveFoodList() {
@@ -47,7 +58,8 @@ const observer = new IntersectionObserver(async entries => {
     const last_entry = entries[0];
     const active_foodlist_array = getActiveFoodList();
 
-    if (!last_entry.isIntersecting || (active_foodlist_array.size() == getActiveTotalCount())) return;
+    if (!last_entry.isIntersecting || 
+        (active_foodlist_array.size() == getActiveTotalCount())) return;
 
     observer.unobserve(last_entry.target);
     cur_observed_listitem = null;
@@ -59,125 +71,101 @@ const observer = new IntersectionObserver(async entries => {
     }
 });
 
-/* icon button events */
+
+
 // add food button event
 addfood_btn.addEventListener("click", () => {
-    dlg_title.textContent = "Add New Food";
-    delete_btn.style.visibility = "hidden";
-    submit_btn.textContent = "Add Food";
-    submit_btn.dataset.method = "POST";
-    dialog.showModal();
+    ui.showDialogAddMode(DIALOG_UI);
 });
 
 // edit button event
 foodlist.addEventListener("click", (e) => {
     const editfood_btn = e.target.closest(".editfood_btn");
     if (editfood_btn) {
-        dlg_title.textContent = "Edit Your Food";
-        delete_btn.style.visibility = "visible";
-        submit_btn.textContent = "Save";
-        submit_btn.dataset.method = "PATCH";
-
         const li = e.target.closest("li");
-        const item = getActiveFoodList().getFoodById(li.dataset.id);
+        const item = getActiveFoodList().getFoodById(li.dataset.id, "food_id");
         cur_listitem = li;
-        FoodlistUI.updateForm(foodform, item);
-        dialog.showModal();
+        ui.setFormUI(foodform, item);
+        ui.showDialogEditMode(DIALOG_UI);
     }
 });
 
 // cancel dialog event (cancel button)
 cancel_btn.addEventListener("click", () => {
-    dialog.close();
-    foodform.reset();
-    error_message.textContent = "";
-    addfood_btn.blur();
+    ui.closeDialog(DIALOG_UI);
 });
 
 // cancel dialog event (click outside of dialog)
 dialog.addEventListener("click", (e) => {
-    const dialog_dimensions = dialog.getBoundingClientRect();
-    if (
-        e.clientX < dialog_dimensions.left  ||
-        e.clientX > dialog_dimensions.right ||
-        e.clientY < dialog_dimensions.top   ||
-        e.clientY > dialog_dimensions.bottom
-    ) {
-        dialog.close();
-        foodform.reset();
-        error_message.textContent = "";
-        addfood_btn.blur();
+    if (ui.isClickingOutside(e, dialog)) {
+        ui.closeDialog(DIALOG_UI);
     }
 });
 
 /* form button events */
-submit_btn.addEventListener("click", async (e) => {
-    const method = submit_btn.dataset.method;
-    let endpoint = "api/food";
+addfood_submit_btn.addEventListener("click", async (e) => {
+    const food_data = ui.checkFormValidity(foodform)
+    if (!food_data) return;
 
-    if (method == "PATCH") endpoint += `/${cur_listitem.dataset.id}`
-
-    const form_data = new FormData(foodform);
-    const form_obj = Object.fromEntries(form_data.entries());
-
-    if (!foodform.checkValidity()) {
-        foodform.reportValidity();
-        return;
-    }
-
-    const res = await fetch(endpoint, {
-        method: method,
-        headers: { "Content-Type" : "application/json" },
-        body: JSON.stringify(form_obj)
-    });
-    const data = await res.json();
+    const data = await api.addFood(food_data);
 
     if (data.success) {
-        if (method == "POST") {
-            if (!flag_searching) {
-                if (foodlist_array.size() == total_count) {
-                    foodlist_array.add(data.item);
-                    foodlist.appendChild(FoodlistUI.createListItem(data.item));
-                    total_count++;
-                }
+        if (!flag_searching) {
+            if (foodlist_array.size() == total_count) {
+                foodlist_array.add(data.food);
+                foodlist.appendChild(ui.createFood(data.food));
             }
-        } 
-        else if (method == "PATCH") {
-            getActiveFoodList().updateFood(data.item.food_id, data.item);
-            if (foodlist_array.getFoodById(data.item.food_id)) foodlist_array.updateFood(data.item.food_id, data.item);
-            FoodlistUI.updateListItem(data.item, cur_listitem);
+        } else {
+            if (data.food.name.includes(glob_searchterm) 
+                && s_foodlist_array.size() == s_total_count) {
+                s_foodlist_array.add(data.food);
+                foodlist.appendChild(ui.createFood(data.food));
+                s_total_count++;
+            }
         }
-        dialog.close();
-        addfood_btn.blur();
-        foodform.reset();
+        total_count++;
+        ui.closeDialog(DIALOG_UI);
     } else {
         error_message.textContent = data.errmsg;
     }
-})
+});
+
+editfood_submit_btn.addEventListener("click", async (e) => {
+    const food_id = cur_listitem.dataset.id;
+    const food_data = ui.checkFormValidity(foodform);
+    if (!food_data) return;
+
+    const data = await api.editFood(food_id, food_data);
+
+    if (data.success) {
+        getActiveFoodList().updateFood(data.food.food_id, data.food);
+        if (foodlist_array.getFoodById(data.food.food_id, "food_id")) { 
+            foodlist_array.updateFood(data.food.food_id, data.food);
+        }
+        ui.setFoodUI(cur_listitem, data.food);
+        ui.closeDialog(DIALOG_UI); 
+    } else {
+        error_message.textContent = data.errmsg;
+    }
+});
 
 delete_btn.addEventListener("click", async () => {
-    const id = cur_listitem.dataset.id;
+    const food_id = cur_listitem.dataset.id;
 
-    const res = await fetch(`api/food/${id}`, {
-        method: "DELETE"   
-    });
-
-    let data = await res.json();
+    const data = await api.deleteFood(food_id);
 
     if (data.success) {
         let total = getActiveTotalCount(); 
-
-        getActiveFoodList().delete(data.id);
+        total--;
+        getActiveFoodList().delete(data.food.food_id, "food_id");
+        cur_listitem.remove();
         if (flag_searching) {
-            if (foodlist_array.getFoodById(data.id)) {
-                foodlist_array.delete(data.id);
+            if (foodlist_array.getFoodById(data.food.food_id, "food_id")) {
+                foodlist_array.delete(data.food.food_id, "food_id");
                 total_count--;
             }
         }
-        total--;
-        cur_listitem.remove();
-        dialog.close();
-        foodform.reset();
+        ui.closeDialog(DIALOG_UI);
     } else {
         error_message.textContent = data.errmsg;
     }
@@ -186,17 +174,16 @@ delete_btn.addEventListener("click", async () => {
 
 // fetch food 
 async function fetchInitFood() {
-    const res = await fetch("api/food?last_item=0");
-    const data = await res.json();
+    const data = await api.getFoods(0, undefined);
 
     if (data.success) {
-        if (data.items.length == 0) {
+        if (data.foods.length == 0) {
             total_count = 0;
             return;
         }
-        for (let i = 0; i < data.items.length; i++) {
-            foodlist_array.add(data.items[i]);
-            foodlist.appendChild(FoodlistUI.createListItem(data.items[i]));
+        for (let i = 0; i < data.foods.length; i++) {
+            foodlist_array.add(data.foods[i]);
+            foodlist.appendChild(ui.createFood(data.foods[i]));
         }
         observer.observe(foodlist.lastElementChild);
         cur_observed_listitem = foodlist.lastElementChild;
@@ -206,16 +193,16 @@ async function fetchInitFood() {
     }
 }
 
-async function fetchMoreFood(str = undefined) {
+async function fetchMoreFood(searchterm = undefined) {
     let activelist = getActiveFoodList();
     let last_listitem = activelist.foods[activelist.size() - 1];
-    const res = await fetch(`api/food?last_item=${last_listitem.food_id}&query=${str}`);
-    const data = await res.json();
+    
+    const data = await api.getFoods(last_listitem.food_id, searchterm);
 
     if (data.success) {
-        for (let i = 0; i < data.items.length; i++) {
-            activelist.add(data.items[i]);
-            foodlist.appendChild(FoodlistUI.createListItem(data.items[i]));
+        for (let i = 0; i < data.foods.length; i++) {
+            activelist.add(data.foods[i]);
+            foodlist.appendChild(ui.createFood(data.foods[i]));
         }
     } else {
         alert(data.errmsg);
@@ -223,8 +210,7 @@ async function fetchMoreFood(str = undefined) {
 }
 
 search_input.addEventListener("input", async (e) => {
-    let searchterm = e.target.value;
-    glob_searchterm = searchterm;
+    let searchterm = glob_searchterm = e.target.value;
     foodlist.replaceChildren();
     if (cur_observed_listitem) {
         observer.unobserve(cur_observed_listitem);
@@ -236,21 +222,20 @@ search_input.addEventListener("input", async (e) => {
         flag_searching = false;
         glob_searchterm = undefined;
         for (let i = 0; i < foodlist_array.foods.length; i++) {
-            foodlist.appendChild(FoodlistUI.createListItem(foodlist_array.foods[i]));
+            foodlist.appendChild(ui.createFood(foodlist_array.foods[i]));
         }
         observer.observe(foodlist.lastElementChild);
         cur_observed_listitem = foodlist.lastElementChild;
         foodlist.scrollTop = 0;
     } else {
-        const res = await fetch(`api/food?last_item=0&query=${searchterm}`); 
-        const data = await res.json();
+        const data = await api.getFoods(0, searchterm);
 
         if (data.success) {
             if (data.count == 0) return;
             flag_searching = true;
-            for (let i = 0; i < data.items.length; i++) {
-                s_foodlist_array.add(data.items[i]);
-                foodlist.appendChild(FoodlistUI.createListItem(data.items[i]));
+            for (let i = 0; i < data.foods.length; i++) {
+                s_foodlist_array.add(data.foods[i]);
+                foodlist.appendChild(ui.createFood(data.foods[i]));
             }
             observer.observe(foodlist.lastElementChild);
             cur_observed_listitem = foodlist.lastElementChild;

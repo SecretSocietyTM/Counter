@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Recipes - Counter</title>
+    <link rel="stylesheet" href="../styles/shared/base.css">
+    <link rel="stylesheet" href="../styles/shared/components.css">
+    <link rel="stylesheet" href="../styles/recipes.css">
+    <link rel="stylesheet" href="../components/searchbar.css">
+    <script type="module" src="../scripts/recipes.js" defer></script>
+</head>
+<body>
+<div class="body">
+    <div class="sidebar">
+        <div class="sidebar__logo">
+            <img src="../assets/shared/logos/logo.svg" alt="">
+            <a href="/dashboard">
+                <h1 class="fs-24 txt-ntrl-10">Counter</h1>
+            </a>
+        </div>
+        <ul class="sidebar__list">
+            <li class="bg-acnt-yellow">
+                <a href="/dashboard">
+                    <img src="../assets/shared/sidebar/dashboard.svg" alt="">
+                    <p>Dashboard</p>
+                </a>
+            </li>
+            <li class="bg-acnt-lblue">
+                <a href="/foodlist">
+                    <img src="../assets/shared/sidebar/foodlist.svg" alt="">
+                    <p>Food List</p>
+                </a>
+            </li>
+            <li class="bg-acnt-purple">
+                <a href="/recipes">
+                    <img src="../assets/shared/sidebar/recipes.svg" alt="">
+                    <p>Recipes</p>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main">
+        <p class="section-title margin">My Recipes</p>
+        <div class="margin">
+            <button type="button" id="addfood_btn" class="icon_button">
+                <img class="searchbar__icon" src="../assets/shared/icons/search.png" alt="">
+            </button>
+        </div>
+        <div id="categorieslist" class="categories">
+        </div>
+    </div>
+
+</div>
+
+<dialog id="recipe_dialog" class="recipe_dialog">
+    <div class="flex ai-cntr jc-btwn">
+        <button id="close_dialog_btn" class="icon_button">
+            <img src="../assets/shared/icons/cancel.svg" alt="">
+        </button>
+        <button id="editrecipe_btn" class="icon_button">
+            <img src="../assets/shared/icons/edit.svg" alt="">
+        </button>
+    </div>
+    <form id="recipe_form" class="recipe_form">
+        <div class="form__title">
+            <span id="recipe_name_span"></span>
+            <input type="text" name="name" id="recipe_name_input" placeholder="Recipe Name" required>
+        </div>
+        <div class="form-ingredients-section">
+            <div class="form__inputs">
+                <button type="button" id="addingredient_btn" class="flex ai-cntr gap-0_5 icon_button">
+                    <img src="../assets/shared/icons/add.svg" alt="">
+                    <p class="txt-prim-green">Add Ingredient</p>
+                </button>
+                <span id="recipe_category_span"></span>
+                <select name="category" id="recipe_category_input">
+                </select>
+                <span id="recipe_serves_span"></span>
+                <input type="number" name="serves" id="recipe_serves_input" placeholder="serves" class="input">
+                <span id="recipe_servsize_span"></span>
+                <input type="number" name="servsize" id="recipe_servsize_input" placeholder="serv sz" step="0.01" required class="input">
+                <select name="unit" id="recipe_unit_input">
+                    <option value="g">g</option>
+                    <option value="x">x</option>
+                    <option value="oz">oz</option>
+                    <option value="ml">mL</option>
+                </select>
+                <a id="recipe_link_span" href="">Link</a>
+                <input type="text" name="link" id="recipe_link_input" placeholder="link to source">
+            </div>
+            <ul id="ingredientlist" class="ingredientlist">
+            </ul>
+            <div class="ingredients__report">
+                <div class="report">
+                    <p class="report__subtext">Total:</p>
+                    <span id="total_cal" class="report__info txt-prim-green">0</span>
+                    <span id="total_fat" class="report__info txt-acnt-yellow">0</span>
+                    <span id="total_carb" class="report__info txt-acnt-lightblue">0</span>
+                    <span id="total_prot" class="report__info txt-acnt-purple">0</span>
+
+                </div>
+                <div class="report">
+                    <p class="report__subtext">Per Serving:</p>
+                    <span id="perserv_cal" class="report__info txt-prim-green">0</span>
+                    <span id="perserv_fat" class="report__info txt-acnt-yellow">0</span>
+                    <span id="perserv_carb" class="report__info txt-acnt-lightblue">0</span>
+                    <span id="perserv_prot" class="report__info txt-acnt-purple">0</span>
+                </div>
+            </div>
+        </div>
+        <div>
+            <button type="button" id="addstep_btn" class="flex ai-cntr gap-0_5 icon_button">
+                <img src="../assets/shared/icons/add.svg" alt="">
+                <p class="fs-14 txt-prim-green">Add Instructions</p>
+            </button>
+            <ol id="stepslist" class="stepslist">
+            </ol>
+        </div>
+        <div class="submit_buttons">
+            <button type="button" id="deleterecipe_btn" class="delete_btn button-1-light bg-prim-red">Delete</button>
+            <button type="button" id="editrecipe_submit_btn" class="button-1-light bg-prim-green">Save</button>
+            <button type="button" id="addrecipe_submit_btn" class="button-1-light bg-prim-green">Add Recipe</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog id="steps_dialog" class="steps_dialog">
+    <textarea name="steps" id="steps_input" class="steps_input"></textarea>
+    <button type="button" id="submit_step_btn" class="icon_button">
+        <img src="../assets/dashboard/check.svg" alt="">
+    </button>
+</dialog>
+
+<div id="searchbar_target"></div>
+</body>
+</html>
