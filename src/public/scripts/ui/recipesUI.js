@@ -1,0 +1,279 @@
+import * as GenUI from "./generalUI.js";
+
+const COLORS = {
+    1: "--clr-primary-blue",
+    2: "--clr-primary-green",
+    3: "--clr-primary-red",
+    4: "--clr-accent-yellow",
+    5: "--clr-accent-lightblue",
+    6: "--clr-accent-purple",
+    7: "--clr-accent-orange"
+}
+
+const EMOJIS = {
+    1: "../assets/recipes/meat.svg",
+    2: "../assets/recipes/bowl.svg"
+}
+
+let category_names = {};
+
+// helpers
+export function addCategoryName(category) {
+    category_names[category.category_id] = category.name;
+}
+
+export function setCategorySelect(dialog, category_id) {
+    const category_select = dialog.querySelector("[name='category']");
+    category_select.replaceChildren();
+
+    let option = document.createElement("option");
+    option.value = category_id;
+    option.textContent = category_names[category_id];
+    category_select.appendChild(option);
+
+    for (const category in category_names) {
+        if (category == category_id) continue;
+        let option = document.createElement("option");
+        option.value = category;
+        option.textContent = category_names[category];
+        category_select.appendChild(option);
+    }   
+}
+
+// element creators
+export function createCategory(category) {
+    const main_container = document.createElement("div");
+    main_container.className = "category shadow";
+    main_container.dataset.id = category.category_id;
+    main_container.style.outline = `2px solid var(${COLORS[category.color]})` 
+
+    const header = document.createElement("div");
+    header.className = "category__header";
+
+    const header_title = document.createElement("div");
+    header_title.className = "header__title";
+
+    const icon_div = document.createElement("div");
+    icon_div.className = "flex gap-1_0 ai-cntr";
+
+    const buttons_div = document.createElement("div");
+    buttons_div.className = "flex gap-1_25 ai-cntr";
+
+    const emoji = document.createElement("img");
+    emoji.src = EMOJIS[category.emoji];
+
+    const name = document.createElement("p");
+    name.className = "fs-24 fw-b";
+    name.textContent = category.name;
+
+    const kebab_button = document.createElement("button");
+    kebab_button.className = "kebab_btn icon_button";
+    kebab_button.type = "button";
+
+    const add_button = document.createElement("button");
+    add_button.className = "addrecipe_btn icon_button";
+    add_button.dataset.category_id = category.category_id;
+    add_button.type = "button";
+
+    const kebab_image = document.createElement("img");
+    kebab_image.src = "../assets/shared/icons/x-kebab.svg";
+    kebab_button.appendChild(kebab_image);
+
+    const add_svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    add_svg.setAttribute("width", "24");
+    add_svg.setAttribute("height", "24");
+    add_svg.setAttribute("viewBox", "0 0 24 24");
+    add_svg.style.color = `var(${COLORS[category.color]})`
+    add_button.appendChild(add_svg);
+
+    const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    use.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", "../assets/icons.svg#plus");
+    add_svg.appendChild(use);
+
+    const blurb = document.createElement("p");
+    blurb.className = "fs-14 txt-ntrl-60";
+    blurb.textContent = category.blurb;
+
+    const list = document.createElement("ul");
+    list.className = "recipeslist";
+
+    main_container.appendChild(header);
+    header.appendChild(header_title);
+    header_title.append(icon_div, buttons_div);
+    icon_div.append(emoji, name);
+    buttons_div.append(kebab_button, add_button);
+    header.appendChild(blurb);
+    main_container.appendChild(list)
+    return main_container;
+}
+
+export function createRecipe(recipe) {
+    const li = document.createElement("li");
+    li.className = "recipe shadow";
+    li.dataset.id = recipe.recipe_id;
+    li.dataset.category_id = recipe.category_id;
+
+    const name = document.createElement("p");
+    name.className = "fs-20 fw-b";
+    name.textContent = recipe.name;
+
+    const info_div = document.createElement("div");
+
+    const text = document.createElement("p");
+    text.className = "txt-ntrl-50";
+    text.textContent = "Per Serving:"
+
+    const stats_div = document.createElement("div");
+    stats_div.className = "recipe__stats txt-ntrl-40";
+
+    const cal = GenUI.createMacro(recipe.cal, " calories", ["cal"]);
+    const fat = GenUI.createMacro(recipe.fat, "g fat", ["fat"]);
+    const carb = GenUI.createMacro(recipe.carb, "g carbs", ["carb"]);
+    const prot = GenUI.createMacro(recipe.prot, "g protein", ["prot"]);
+
+    li.append(name, info_div);
+    info_div.append(text, stats_div);
+    stats_div.append(cal, fat, carb, prot);
+
+    return li;    
+}
+
+
+// might only need the ingredient_id. 
+export function createIngredient(ingr, mode="edit") {
+    const li = document.createElement("li");
+    li.className = "ingredient";
+    li.dataset.id = ingr.ingredient_id ?? 0;
+
+    const name_div = document.createElement("div");
+    name_div.className = "ingredient__name-section";
+
+    const servsize_div = document.createElement("div");
+    servsize_div.className = "ingredient__servsize-section";
+
+    const name = document.createElement("p");
+    name.className = "ingredient__name truncate"
+    name.textContent = ingr.name;
+
+    const trash_button = document.createElement("button");
+    trash_button.type = "button";
+    trash_button.className = "delete_ingr_btn icon_button";
+
+    const trash_image = document.createElement("img");
+    trash_image.src = "../assets/dashboard/trash.svg";
+    trash_button.appendChild(trash_image);
+
+    const servsizeunit = GenUI.createServingUnit(
+        ingr.servsize, ingr.unit, ["txt-ntrl-10"], ["txt-ntrl-40"]);
+
+    const servesize_input = document.createElement("input");
+    servesize_input.type = "number";
+    servesize_input.name = "servsize";
+    servesize_input.value = ingr.servsize;
+    servesize_input.step = "0.01";
+    servesize_input.rqeuired = true;
+    servesize_input.className = "input";
+    servesize_input.style.display = "none";
+
+    const edit_button = document.createElement("button");
+    edit_button.type = "button";
+    edit_button.className = "edit_ingr_btn icon_button";
+
+    const edit_image = document.createElement("img");
+    edit_image.src = "../assets/shared/icons/edit.svg";
+    edit_button.appendChild(edit_image);
+
+    const cal = document.createElement("span");
+    cal.className = "ingredient__info txt-prim-green";
+    cal.textContent = ingr.cal;
+
+    const fat = document.createElement("span");
+    fat.className = "ingredient__info txt-acnt-yellow";
+    fat.textContent = ingr.fat;
+
+    const carb = document.createElement("span");
+    carb.className = "ingredient__info txt-acnt-lightblue";
+    carb.textContent = ingr.carb;
+
+    const prot = document.createElement("span");
+    prot.className = "ingredient__info txt-acnt-purple";
+    prot.textContent = ingr.prot;
+
+    if (mode === "edit") {
+        edit_button.style.display = "";
+        trash_button.style.display = "";
+    } else {
+        edit_button.style.display = "none";
+        trash_button.style.display = "none";        
+    }
+
+    li.append(name_div, servsize_div, cal, fat, carb, prot);
+    name_div.append(name, trash_button);
+    servsize_div.append(servsizeunit, servesize_input, edit_button);
+    return li;
+}
+
+export function createStep(step, mode="edit") {
+    const li = document.createElement("li");
+    li.className = "step";
+    li.dataset.id = step.step_id ?? 0;
+
+    const description = document.createElement("p");
+    description.textContent = step.description;
+
+    const buttons_div = document.createElement("div");
+    buttons_div.className = "flex gap-1_0";
+
+    const edit_button = document.createElement("button");
+    edit_button.type = "button";
+    edit_button.className = "edit_step_btn icon_button";
+
+    const edit_image = document.createElement("img");
+    edit_image.src = "../assets/shared/icons/edit.svg";
+    edit_button.appendChild(edit_image);
+
+    const trash_button = document.createElement("button");
+    trash_button.type = "button";
+    trash_button.className = "delete_step_btn icon_button";
+
+    const trash_image = document.createElement("img");
+    trash_image.src = "../assets/dashboard/trash.svg";
+    trash_button.appendChild(trash_image);
+
+    if (mode==="edit") {
+        edit_button.style.display = "";
+        trash_button.style.display = "";
+    } else {
+        edit_button.style.display = "none";
+        trash_button.style.display = "none";        
+    }
+
+    li.append(description, buttons_div);
+    buttons_div.append(edit_button, trash_button);
+    return li;   
+}
+
+
+
+
+// element actions
+export const isClickingOutside = GenUI.isClickingOutside;
+
+export const checkFormValidity = GenUI.checkFormValidity;
+
+
+
+
+// setters
+export function setReportUI(ui, obj) {
+    for (const key of ["cal", "fat", "carb", "prot"]) {
+        ui.total[key].textContent = obj.total[key];
+        ui.perserv[key].textContent = obj.perserv[key];
+    }
+}
+
+export function setReportPerServUI(ui, obj) {
+    for (const key of ["cal", "fat", "carb", "prot"]) {
+        ui.perserv[key].textContent = obj.perserv[key];
+    } 
+}

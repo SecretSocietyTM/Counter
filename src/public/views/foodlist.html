@@ -3,178 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Counter - Foodlist Page</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <title>Your Food List - Counter</title>
+    <link rel="stylesheet" href="../styles/shared/base.css">
+    <link rel="stylesheet" href="../styles/shared/components.css">
     <link rel="stylesheet" href="../styles/foodlist.css">
     <script type="module" src="../scripts/foodlist.js" defer></script>
 </head>
 <body>
-    <div class="sidebar fw-b bg-ntrl-80 shad"> 
-        <div class="logo flex ai-cntr gap-1">
-            <img src="../assets/foodlist/logo.svg" alt="">
-            <p class="fs-24 fw-b text-ntrl-10">Counter</p>
+<div class="body">
+    <div class="sidebar">
+        <div class="sidebar__logo">
+            <img src="../assets/shared/logos/logo.svg" alt="">
+            <a href="/dashboard">
+                <h1 class="fs-24 txt-ntrl-10">Counter</h1>
+            </a>
         </div>
-        <nav>
-            <ul>
-                <li class="flex ai-cntr gap-1 bg-acnt-yellow">
-                    <img src="../assets/foodlist/dashboard.svg" width="20" alt="">
-                    <a href="/dashboard">Dashboard</a>
-                </li>
-                <li class="flex ai-cntr gap-1 bg-acnt-lightblue">
-                    <img src="../assets/foodlist/food_list.svg" width="20" alt="">
-                    <a href="#">Food List</a>
-                </li>
-                <li class="flex ai-cntr gap-1 bg-acnt-purple">
-                    <img src="../assets/foodlist/recipes.svg" width="20" alt="">
-                    <a href="#">Recipes</a>
-                </li>
-            </ul>
-        </nav>
+        <ul class="sidebar__list">
+            <li class="bg-acnt-yellow">
+                <a href="/dashboard">
+                    <img src="../assets/shared/sidebar/dashboard.svg" alt="">
+                    <p>Dashboard</p>
+                </a>
+            </li>
+            <li class="bg-acnt-lblue">
+                <a href="/foodlist">
+                    <img src="../assets/shared/sidebar/foodlist.svg" alt="">
+                    <p>Food List</p>
+                </a>
+            </li>
+            <li class="bg-acnt-purple">
+                <a href="/recipes">
+                    <img src="../assets/shared/sidebar/recipes.svg" alt="">
+                    <p>Recipes</p>
+                </a>
+            </li>
+        </ul>
     </div>
 
-    <div class="main bg-ntrl-20 shad">
-        <div class="section-title">
-            <h2 class="fs-28 fw-b line-ht-1 ">My Food List</h2>
-        </div>
-        <div class="flex-col ai-cntr">
-            <div class="top-section flex gap-3">
-                <div class="searchbar">
-                    <img src="../assets/foodlist/search_icon.png" width="20" alt="">
-                    <input type="text" name="searchbar" placeholder="Search your foods" id="searchbar">
-                </div>
-                <button type="button" aria-label="Add new food" id="add-new-food" class="icon-button">
-                    <img src="../assets/foodlist/plus_icon.svg" width="25" alt="">
+    <div class="main shadow">
+        <p class="section-title">My Food List</p>
+        <div class="content">
+            <div id="searchbar" class="searchbar">
+                <img class="searchbar__icon" src="../assets/shared/icons/search.png" alt="">
+                <input type="text" id="searchbar_input" placeholder="Search your foods" autocomplete="off">
+                <button type="button" id="addfood_btn" class="icon_button">
+                    <img src="../assets/shared/icons/add.svg" alt="">
                 </button>
             </div>
-            <ul class="food-list">
-<!--                 <li class="food-list__item" data-id="-1" >
-                    <p class="name">Dot’s Homestyle Snacks Baked Cheese Curls</p>
-                    <div class="flex jc-btwn gap-5">
-                        <div class="text-section">
-                            <p>
-                                <span class="fw-b text-ntrl-80 serving-size">28</span><span class="unit">g</span>
-                            </p>
-                            <p class="text-ntrl-80">&#9679;</p>
-                            <p><span class="fw-b text-prim-green calories">140</span>cal</p>
-                            <p><span class="fw-b text-acnt-yellow fat">8</span>g</p>
-                            <p><span class="fw-b text-acnt-lightblue carb">15</span>g</p>
-                            <p><span class="fw-b text-acnt-purple prot">2</span>g</p>
-                        </div>
-                        <button type="button" class="edit-food icon-button">
-                            <img src="../assets/foodlist/edit_icon.svg" alt="">
-                        </button>
-                    </div>
-                </li> -->
+            <ul id="foodlist" class="foodlist">
             </ul>
         </div>
     </div>
+</div>
 
-    <dialog class="dialog_add_fooditem" id="dialog-add-food">
-        <div class="grid gap-3">
-            <div class="flex jc-btwn">
-                <h3 class="fs-24 fw-b">Add New Food</h3>
-                <button type="button" aria-label="Cancel" class="icon-button | cancel">
-                    <img src="../assets/foodlist/cancel_button.svg" alt="">
-                </button>
-            </div>
-            <form id="form-add-food">
-                <div class="flex-col">
-                    <label for="food-name" class="txt-ntrl-gray">Food Name</label>
-                    <input type="text" name="food-name" placeholder="apple" required id="food-name">
-                </div>
-                <div class="flex middle-section">
-                    <div class="flex-col">
-                        <label for="serving-size" class="txt-ntrl-gray">Serving Size</label>
-                        <input type="number" name="serving-size" step="0.01" placeholder="150" required id="serving-size">
-                    </div>
-                    <div class="flex-col">
-                        <label for="serving-unit" class="txt-ntrl-gray">Unit</label>
-                        <select name="serving-unit" id="serving-unit">
-                            <option value="g">grams(g)</option>
-                            <option value="x">quantity(x)</option>
-                            <option value="oz">ounces(oz)</option>
-                            <option value="ml">milliliters(mL)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="bottom-section">
-                    <div class="flex-col">
-                        <label for="calories" class="text-prim-green">Calories</label>
-                        <input type="number" name="calories" step="0.01" placeholder="0" required id="calories">
-                    </div>
-                    <div class="flex-col">
-                        <label for="fat" class="text-acnt-yellow">Fat</label>
-                        <input type="number" name="fat" step="0.01" placeholder="0g" required id="fat">
-                    </div>
-                    <div class="flex-col">
-                        <label for="carbs" class="text-acnt-lightblue">Carbs</label>
-                        <input type="number" name="carbs" step="0.01" placeholder="0g" required id="carbs">
-                    </div>
-                    <div class="flex-col">
-                        <label for="protein" class="text-acnt-purple">Protein</label>
-                        <input type="number" name="protein" step="0.01" placeholder="0g" required id="protein">
-                    </div>
-                </div>
-                <button type="button" data-action="/api/users/add-new-food" class="bg-prim-green px-5 py-2">Add Food</button>
-            </form>
+<dialog class="shadow">
+    <div class="flex ai-cntr jc-btwn">
+        <p id="dialog_title" class="dialog-title">Add New Food</p>
+        <button type="button" id="cancel_btn" class="icon_button">
+            <img src="../assets/shared/icons/cancel.svg" alt="">
+        </button>
+    </div>
+    <form id="foodform" class="foodform">
+        <div class="input-label">
+            <label for="name">Food Name</label>
+            <input type="text" name="name" id="name" placeholder="apple" required class="input-1">
         </div>
-    </dialog>
-
-    <dialog class="dialog_edit_fooditem" id="dialog-edit-food">
-        <div class="grid gap-3">
-            <div class="flex jc-btwn">
-                <h3 class="fs-24 fw-b">Edit Food</h3>
-                <button type="button" aria-label="Cancel" class="icon-button | cancel">
-                    <img src="../assets/foodlist/cancel_button.svg" alt="">
-                </button>
+        <div class="flex jc-cntr gap-4_0">
+            <div class="input-label">
+                <label for="servsize">Serving Size</label>
+                <input type="number" name="servsize" id="servsize" placeholder="150" step="0.01" required class="input-1">
             </div>
-            <form id="form-edit-food">
-                <input type="hidden" name="id">
-                <div class="flex-col">
-                    <label for="food-name" class="txt-ntrl-gray">Food Name</label>
-                    <input type="text" name="food-name" placeholder="apple" required id="food-name">
-                </div>
-                <div class="flex middle-section">
-                    <div class="flex-col">
-                        <label for="serving-size" class="txt-ntrl-gray">Serving Size</label>
-                        <input type="number" name="serving-size" step="0.01" placeholder="150" required id="serving-size">
-                    </div>
-                    <div class="flex-col">
-                        <label for="serving-unit" class="txt-ntrl-gray">Unit</label>
-                        <select name="serving-unit" id="serving-unit">
-                            <option value="g">grams(g)</option>
-                            <option value="x">quantity(x)</option>
-                            <option value="oz">ounces(oz)</option>
-                            <option value="ml">milliliters(mL)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="bottom-section">
-                    <div class="flex-col">
-                        <label for="calories" class="text-prim-green">Calories</label>
-                        <input type="number" name="calories" step="0.01" placeholder="0" required id="calories">
-                    </div>
-                    <div class="flex-col">
-                        <label for="fat" class="text-acnt-yellow">Fat</label>
-                        <input type="number" name="fat" step="0.01" placeholder="0g" required id="fat">
-                    </div>
-                    <div class="flex-col">
-                        <label for="carbs" class="text-acnt-lightblue">Carbs</label>
-                        <input type="number" name="carbs" step="0.01" placeholder="0g" required id="carbs">
-                    </div>
-                    <div class="flex-col">
-                        <label for="protein" class="text-acnt-purple">Protein</label>
-                        <input type="number" name="protein" step="0.01" placeholder="0g" required id="protein">
-                    </div>
-                </div>
-                <div class="flex jc-btwn">
-                    <button type="button" data-action="/api/users/delete-food" id="delete" class="bg-prim-red px-5 py-2">Delete</button>
-                    <button type="button" data-action="/api/users/edit-food" id="save" class="bg-prim-green px-5 py-2">Save</button>
-                </div>
-            </form>
+            <div class="input-label">
+                <label for="unit">Unit</label>
+                <select name="unit" id="unit" class="input-1">
+                    <option value="g">grams(g)</option>
+                    <option value="x">quantity(x)</option>
+                    <option value="oz">ounces(oz)</option>
+                    <option value="ml">milliliters(mL)</option>
+                </select>
+            </div>
         </div>
-    </dialog>
+        <div class="cardsection">
+            <div class="card-cal txt-prim-green">
+                <label for="cal" class="card__title">Calories</label>
+                <svg width="100%" height="2">
+                    <use href="../assets/icons.svg#line-divider"/>
+                </svg>
+                <input type="number" name="cal" id="cal" placeholder="0" step="0.01" required class="card__input">
+            </div>
+            <div class="card txt-acnt-yellow">
+                <label for="fat" class="card__title">Fat</label>
+                <svg width="100%" height="2">
+                    <use href="../assets/icons.svg#line-divider"/>
+                </svg>
+                <input type="number" name="fat" id="fat" placeholder="0" step="0.01" required class="card__input">
+            </div>
+            <div class="card txt-acnt-lightblue">
+                <label for="carb" class="card__title">Carbs</label>
+                <svg width="100%" height="2">
+                    <use href="../assets/icons.svg#line-divider"/>
+                </svg>
+                <input type="number" name="carb" id="carb" placeholder="0" step="0.01" required class="card__input">
+            </div>
+            <div class="card txt-acnt-purple">
+                <label for="prot" class="card__title">Protein</label>
+                <svg width="100%" height="2">
+                    <use href="../assets/icons.svg#line-divider"/>
+                </svg>
+                <input type="number" name="prot" id="prot" placeholder="0" step="0.01" required class="card__input">
+            </div>
+        </div>
+        <p id="error_message" class="fs-14 txt-prim-red"></p>
+        <div class="flex jc-btwn">
+            <button type="button" id="delete_btn" class="delete_btn button-1 bg-prim-red">Delete</button>
+            <button type="button" id="editfood_submit_btn" class="button-1 bg-prim-green">Save</button>
+            <button type="button" id="addfood_submit_btn" class="button-1 bg-prim-green">Add Food</button>
+        </div>
+    </form>
+</dialog>
 </body>
 </html>

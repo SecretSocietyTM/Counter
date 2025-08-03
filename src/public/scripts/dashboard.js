@@ -1,458 +1,366 @@
-import { FoodManager } from "./foodmanager.js";
+import * as api from "./api/dashboardAPI.js";
+import * as util from "./util/dashboardUtil.js"
+import * as ui from "./ui/dashboardUI.js";
+import * as dateUtil from "./util/shared/date.js";
+import { FoodManager } from "./util/shared/foodmanager.js";
+import * as searchbar from "../components/searchbar.js";
 
-// manage food list
-const food_list_arr = new FoodManager();
+let daily_summaries = [];
 
-const breakfast_arr = new FoodManager();
-const lunch_arr = new FoodManager();
-const dinner_arr = new FoodManager();
-const snacks_arr = new FoodManager();
+let meal_type = null;
+let days_logged = 0;
+let total_entries = 0;
 
-// variables
-let calories_today_value = 0;
-let fats_today_value = 0;
-let carbs_today_value = 0;
-let protein_today_value = 0;
+const NOW = new Date(new Date().setHours(0, 0, 0, 0));
+const WEEKRANGE = dateUtil.getWeekRange(NOW);
 
-let calories_breakfast_value = 0;
-let fats_breakfast_value = 0;
-let carbs_breakfast_value = 0;
-let protein_breakfast_value = 0;
+let now = new Date(new Date().setHours(0, 0, 0, 0));
+let week_range = dateUtil.getWeekRange(now);
 
-let calories_lunch_value = 0;
-let fats_lunch_value = 0;
-let carbs_lunch_value = 0;
-let protein_lunch_value = 0;
+const diary = document.getElementById("diary");
+// buttons
+const addfood_btns = document.querySelectorAll(".addfood_btn");
+const edit_goal_btn = document.getElementById("edit_goal_btn");
+const date_left_btn = document.getElementById("date_arrow_l");
+const date_right_btn = document.getElementById("date_arrow_r");
 
-let calories_dinner_value = 0;
-let fats_dinner_value = 0;
-let carbs_dinner_value = 0;
-let protein_dinner_value = 0;
+// edit calorie goal elements
+const goal_input = document.getElementById("goal_calories_input");
 
-let calories_snacks_value = 0;
-let fats_snacks_value = 0;
-let carbs_snacks_value = 0;
-let protein_snacks_value = 0;
+// search dialog elements
+const searchbar_target = document.getElementById("searchbar_target");
 
-// dialogs
-const dialog_set_goal = document.getElementById("set-goal-dialog");
-const dialog_search_food = document.getElementById("search-food");
-const dialog_set_serving = document.getElementById("set-serving");
+// dates
+const main_date = document.getElementById("main_date");
+const sub_date = document.getElementById("sub_date");
+const week_date = document.getElementById("week_date");
+const date_dropdown = document.getElementById("date_dropdown");
+const date_input = document.getElementById("date_input");
 
-// forms
-const form_add_food = document.getElementById("form-add-food");
+const WEEKTOTALS = { 
+    cal: 0,
+    fat: 0,
+    carb: 0,
+    prot: 0 
+}
+const MEALLISTS = {
+    1: new FoodManager(),
+    2: new FoodManager(),
+    3: new FoodManager(),
+    4: new FoodManager()
+}
+const MEALSTATS = {
+    1: { cal: 0, fat: 0, carb: 0, prot: 0 },
+    2: { cal: 0, fat: 0, carb: 0, prot: 0 },
+    3: { cal: 0, fat: 0, carb: 0, prot: 0 },
+    4: { cal: 0, fat: 0, carb: 0, prot: 0 }
+}
+const CALORIESTATS = { 
+    total: 0,
+    goal: null,
+    remaining: 0,
+    over: 0 
+}
+const MACROSTATS = { 
+    fat:  0, 
+    carb: 0, 
+    prot: 0 
+}
+const MEALLISTS_UI = Object.freeze({
+    1: document.getElementById("breakfast_list"),
+    2: document.getElementById("lunch_list"),
+    3: document.getElementById("dinner_list"),
+    4: document.getElementById("snacks_list")
+});
+const MEALSTATS_UI = Object.freeze({
+    1: document.getElementById("breakfast_numbers"),
+    2: document.getElementById("lunch_numbers"),
+    3: document.getElementById("dinner_numbers"),
+    4: document.getElementById("snacks_numbers")
+});
+const CALORIESTATS_UI = Object.freeze({
+    goal:      document.getElementById("goal_calories"),
+    remaining: document.getElementById("remaining_calories"),
+    over:      document.getElementById("over_calories"),
+});
+const MACROSTATS_UI = Object.freeze({
+    fat:  document.getElementById("main_fat"),
+    carb: document.getElementById("main_carb"),
+    prot: document.getElementById("main_prot")
+});
+const AVERAGES_UI = Object.freeze({
+    cal:  document.getElementById("average_calories"),
+    fat:  document.getElementById("average_fat"),
+    carb: document.getElementById("average_carb"),
+    prot: document.getElementById("average_prot"),
+});
+const CALORIEDIAL_UI = Object.freeze({
+    bar: document.getElementById("progress_bar"),
+    pointer: document.getElementById("indicator_pointer"),
+    text: document.getElementById("indicator_text"),
+    dashoffset: 189.5,
+    rotation: -128,
+});
+const BARGRAPHS_UI = {
+    cal_bargraph: document.getElementById("calorie-bar-graph"),
+    macro_bargraph: document.getElementById("macro-bar-graph"),
+    dashoffsets: { null: 84, goal: 56, over: 9},
+    cal_bars: [],
+    macro_bars: []
+}
+BARGRAPHS_UI.cal_bars = ui.getDayBars(BARGRAPHS_UI.cal_bargraph);
+BARGRAPHS_UI.macro_bars = ui.getDayBars(BARGRAPHS_UI.macro_bargraph);
 
-// search bar
-const searchbar = document.getElementById("searchbar");
+// helpers
+function updateStateUI(entry, meal_type, flag, li) {
+    if (!flag) { // init
+        MEALLISTS[meal_type].add(entry);
+        MEALLISTS_UI[meal_type].appendChild(ui.createEntry(entry));
+    } else if (flag == "add") { // add
+        total_entries++
+        if (total_entries === 1) days_logged++;
+        MEALLISTS[meal_type].add(entry);
+        MEALLISTS_UI[meal_type].appendChild(ui.createEntry(entry));
+    } else if (flag == "sub") { // delete
+        total_entries--
+        if (total_entries === 0) days_logged--;
+        MEALLISTS[meal_type].delete(entry.entry_id, "entry_id");
+        li.remove();
+    }
 
-// icon buttons
-const add_food_buttons = document.querySelectorAll(".add-food");
-const cancel_buttons = document.querySelectorAll(".cancel");
+    util.updateMealStats(MEALSTATS[meal_type], entry, flag);
+    util.updateCalorieStatsOnEntry(CALORIESTATS, entry, flag);
+    util.updateMacrosStats(MACROSTATS, entry, flag);
 
-// elements to append to
-const search_food_list = document.getElementById("search-food-list");
+    ui.setMealStatsUI(MEALSTATS_UI[meal_type], MEALSTATS[meal_type]);
+    ui.setCalorieStatsUI(CALORIESTATS_UI, CALORIESTATS);
+    ui.setCalDialUI(CALORIEDIAL_UI, CALORIESTATS);
+    ui.setMacroStatsUI(MACROSTATS_UI, MACROSTATS);
 
-const breakfast = document.querySelector(".breakfast");
-const lunch = document.querySelector(".lunch");
-const dinner = document.querySelector(".dinner");
-const snacks = document.querySelector(".snacks")
-
-const breakfast_food_list = breakfast.querySelector(".food-list__list");
-const lunch_food_list = lunch.querySelector(".food-list__list");
-const dinner_food_list = dinner.querySelector(".food-list__list");
-const snacks_food_list = snacks.querySelector(".food-list__list")
-
-
-// other
-const search_food_items = document.querySelectorAll(".clickable");
-
-// elements to modify
-const calories_today = document.getElementById("calories_today");
-const fats_today = document.getElementById("fat_today");
-const carbs_today = document.getElementById("carbs_today");
-const protein_today = document.getElementById("protein_today");
-
-// breakfast elements
-const calories_breakfast = document.getElementById("calories_breakfast");
-const fat_breakfast = document.getElementById("fat_breakfast");
-const carbs_breakfast = document.getElementById("carbs_breakfast");
-const protein_breakfast = document.getElementById("protein_breakfast");
-
-// lunch elements
-const calories_lunch = document.getElementById("calories_lunch");
-const fat_lunch = document.getElementById("fat_lunch");
-const carbs_lunch = document.getElementById("carbs_lunch");
-const protein_lunch = document.getElementById("protein_lunch");
-
-// dinner elements
-const calories_dinner = document.getElementById("calories_dinner");
-const fat_dinner = document.getElementById("fat_dinner");
-const carbs_dinner = document.getElementById("carbs_dinner");
-const protein_dinner = document.getElementById("protein_dinner");
-
-// snacks elements
-const calories_snack = document.getElementById("calories_snack");
-const fat_snack = document.getElementById("fat_snack");
-const carbs_snack = document.getElementById("carbs_snack");
-const protein_snack = document.getElementById("protein_snack");
-
-// time
-const now = new Date();
-
-// DOM functions
-function createSpan(text, class_list = []) {
-    const span = document.createElement("span");
-    span.innerText = text;
-    span.classList.add(...class_list);
-    return span;
+    if(flag) {
+        const averages = util.updateWeeklyAverages(WEEKTOTALS, entry, days_logged, flag);
+        ui.setWeeklyAveragesUI(AVERAGES_UI, averages);
+    }
 }
 
-function createServingUnit(value, unit, value_class = [], unit_class = []) {
-    const p = document.createElement("p");
-    const span1 = createSpan(value, value_class);
-    const span2 = createSpan(unit, unit_class);
-    p.appendChild(span1);
-    p.appendChild(span2);
-    return p;
-}
+function dateChangeEvent(flag) {
+    if (!flag) {
+        now = dateUtil.getNewNowDate(date_input.value);
+    } else if (flag === "add") {
+        now.setDate(now.getDate() + 1);
+    } else if (flag === "sub") {
+        now.setDate(now.getDate() - 1);
+    }
 
-function createSearchFoodListItem(form_obj) {
-    const li = document.createElement("li");
-    li.className = "food-list__item clickable";
-    li.dataset.id = form_obj.food_id;
+    total_entries = 0;
+    util.resetAll(MEALLISTS, MEALSTATS, CALORIESTATS, MACROSTATS);
+    ui.resetAllUI(MEALLISTS_UI, MEALSTATS_UI, CALORIEDIAL_UI, CALORIESTATS_UI, MACROSTATS_UI);
+    ui.resetCalDialUI(CALORIEDIAL_UI);
 
-    const name = document.createElement("p");
-    name.innerText = form_obj.name;
-    li.appendChild(name);
+    let label = dateUtil.getLabel(now, NOW);
+    if (label) {
+        ui.setMainDate(main_date, label);
+        ui.setSubDate(sub_date, dateUtil.formatDate(now));
+    } else {
+        ui.setMainDate(main_date, undefined, dateUtil.dowToString(now));
+        ui.setSubDate(sub_date, dateUtil.formatDateNoDow(now));
+    }
 
-    return li;
-}
-
-function createEatenFoodListItem(form_obj) {
-    const li = document.createElement("li");
-    li.className = "food-list__item";
-    li.dataset.id = form_obj.food_id;
-
-    const name = document.createElement("p");
-    name.innerText = form_obj.name;
-    
-    const servingsize_p = createServingUnit(
-        form_obj.serving_size,
-        form_obj.unit
-    );
-    li.append(name, servingsize_p);
-
-    return li;
+    if (!(week_range.start <= now && now <= week_range.end)) {
+        days_logged = 0;
+        util.resetWeekTotals(WEEKTOTALS);
+        week_range = dateUtil.getWeekRange(now);
+        ui.setWeekDate(week_date, dateUtil.formatWeekRange(now));
+        ui.resetGraphs(BARGRAPHS_UI);
+        daily_summaries.length = 0;
+        initWeeklySummary(now);
+    }
+    initDiary(now);
 }
 
 
-// icon button events
-add_food_buttons.forEach(button => {
-    button.addEventListener("click", (e) => {
-        form_add_food.querySelector("[name='date-eaten']").value = now.toDateString();
-        form_add_food.querySelector("[name='meal']").value = button.dataset.meal;
-        dialog_search_food.show();
+
+// open search dialog
+addfood_btns.forEach(btn => {
+    btn.addEventListener("click", (e) => {
+        meal_type = e.target.closest("button").dataset.meal_type;
+        searchbar.showSearch();
     });
 });
 
-cancel_buttons.forEach(button => {
-    button.addEventListener("click", (e) => {
-        const dialog = button.closest("dialog");
-        if (dialog) {
-            dialog.close();
-        }
-    });
+// sets up calorie goal input
+edit_goal_btn.addEventListener("click", (e) => {
+    ui.activateGoalInput(CALORIESTATS_UI.goal, goal_input);    
 });
 
-
-// searchbar function
-searchbar.addEventListener("keyup", async (e) => {
-    let searchterm = e.target.value
-    if (searchterm.length < 2) {
-        search_food_list.replaceChildren();
-        return
-    } 
-    search_food_list.replaceChildren();
-    const res = await fetch(`/api/users/search-get-foods?query=${searchterm}`);
-    const data = await res.json();
-    for (let i = 0; i < data.result.length; i++) {
-        search_food_list.appendChild(createSearchFoodListItem(data.result[i]));
+// edit calorie goal event
+goal_input.addEventListener("keydown", async (e) => {
+    if (e.key === "Escape") {
+        ui.deactivateGoalInput(CALORIESTATS_UI, goal_input);
+    } else if (e.key === "Enter") {
+        goal_input.blur();
     }
-})
+});
 
-
-// dialog events
-dialog_set_goal.addEventListener("click", async (e) => {
-    let action = e.target.dataset.action;
-    if (!action) {
+// actually updates the calorie goal when the input is blurred
+goal_input.addEventListener("blur", async (e) => {
+    if (goal_input.style.display == "none") {
+        return;
+    }
+    if (goal_input.value < 1 || goal_input.value % 1 > 1) {
+        ui.deactivateGoalInput(CALORIESTATS_UI, goal_input);
         return;
     }
 
-    const form = document.getElementById("set-goal-form");
-    const calorie_goal = document.getElementById("calorie-goal").value;
-    if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-    }
+    const data = await api.updateCalorieGoal(goal_input.value);
 
-    const res = await fetch(action, {
-        method: "POST",
-        headers: { "Content-Type" : "application/json" },
-        body: JSON.stringify( { calorie_goal } )
-    })
-
-    const data = await res.json();
     if (data.success) {
-        document.getElementById("user-cal-goal").innerText = data.calorie_goal;
-        dialog_set_goal.close();
+        CALORIESTATS.goal = data.goal;
+        util.updateCalorieStats(CALORIESTATS);
+        ui.setCalorieStatsUI(CALORIESTATS_UI, CALORIESTATS);
+        ui.setCalDialUI(CALORIEDIAL_UI, CALORIESTATS);
+        
+        const totals = util.generateTotalsList(daily_summaries, CALORIESTATS.goal, now, NOW, WEEKRANGE)
+        ui.setAllCalorieGraphBars(BARGRAPHS_UI, totals);
+        ui.deactivateGoalInput(CALORIESTATS_UI, goal_input);
+    } else {
+        alert(data.errmsg);
     }
 });
 
-dialog_search_food.addEventListener("click", (e) => {
-    let target = e.target
-    if (!(target.classList.contains("clickable") || target.parentElement.classList.contains("clickable"))) return;
-    if (target.tagName === "P") target = target.parentElement;
-    form_add_food.querySelector("[name='id']").value = target.dataset.id;
-    dialog_set_serving.show();
+date_input.addEventListener("change", (e) => {
+    dateChangeEvent();
 });
 
+date_left_btn.addEventListener("click", (e) => {
+    if (!e.target.closest("#date_arrow_l")) return;
+    dateChangeEvent("sub");
+});
 
-// form events
-form_add_food.addEventListener("click", async (e) => {
-    let action = e.target.dataset.action;
+date_right_btn.addEventListener("click", (e) => {
+    if (!e.target.closest("#date_arrow_r")) return;
+    dateChangeEvent("add");
+});
 
-    if (!action) {
-        return;
-    }
+// add to diary event
+async function addToDiary(entry_data) {
+    const data = await api.addToDiary(entry_data);
 
-    const form = form_add_food;
-    const form_data = new FormData(form);
-    const form_obj = Object.fromEntries(form_data.entries());
-
-    if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-    }
-
-    const res = await fetch(action, {
-        method: "POST",
-        headers: { "Content-Type" : "application/json" },
-        body: JSON.stringify(form_obj)
-    });
-
-    const data = await res.json();
-    console.log(data);
-    console.log(data.query_res);
     if (data.success) {
-        dialog_set_serving.close();
+        daily_summaries[now.getDay()] = data.summary;
+        updateStateUI(data.entry, meal_type, "add", undefined);
 
-        if (data.query_res.meal_type === "breakfast") {
-            breakfast_arr.addFood(data.query_res);
-            breakfast_food_list.appendChild(createEatenFoodListItem(data.query_res));
+        let macro_percentages = util.generatePercentagesObj(daily_summaries[now.getDay()]);
+        let value = daily_summaries[now.getDay()].cal / CALORIESTATS.goal * 100;
+        ui.setCalorieGraphBar(BARGRAPHS_UI.cal_bars[now.getDay()], value, BARGRAPHS_UI.dashoffsets);
+        ui.setMacroGraphBar(BARGRAPHS_UI.macro_bars[now.getDay()], macro_percentages);
+    } else {
+        alert(data.errmsg);
+    }    
+}
 
-            calories_breakfast_value += data.query_res.calories;
-            fats_breakfast_value += data.query_res.fats;
-            carbs_breakfast_value += data.query_res.carbs
-            protein_breakfast_value += data.query_res.protein;
+// delete from diary event
+diary.addEventListener("click", async (e) => {
+    const delete_btn = e.target.closest(".delete_btn");
+    if (!delete_btn) return;
+    const li = e.target.closest("li");
+    const list = li.closest("ul");
+    const meal_type = list.dataset.meal_type;
 
-            calories_breakfast.innerText = Math.trunc(calories_breakfast_value * 100) / 100;
-            fat_breakfast.innerText = Math.trunc(fats_breakfast_value * 100) / 100;
-            carbs_breakfast.innerText = Math.trunc(carbs_breakfast_value * 100) / 100;
-            protein_breakfast.innerText = Math.trunc(protein_breakfast_value * 100) / 100;
-        } 
-        else if (data.query_res.meal_type === "lunch") {
-            lunch_arr.addFood(data.query_res);
-            lunch_food_list.appendChild(createEatenFoodListItem(data.query_res));
+    const data = await api.deleteFromDiary(li.dataset.id);
 
-            calories_lunch_value += data.query_res.calories;
-            fats_lunch_value += data.query_res.fats;
-            carbs_lunch_value += data.query_res.carbs
-            protein_lunch_value += data.query_res.protein;
+    if (data.success) {
+        daily_summaries[now.getDay()] = data.summary;
+        updateStateUI(data.entry, meal_type, "sub", li);
 
-            calories_lunch.innerText = Math.trunc(calories_lunch_value * 100) / 100;
-            fat_lunch.innerText = Math.trunc(fats_lunch_value * 100) / 100;
-            carbs_lunch.innerText = Math.trunc(carbs_lunch_value * 100) / 100;
-            protein_lunch.innerText = Math.trunc(protein_lunch_value * 100) / 100;
+        if (!daily_summaries[now.getDay()]) {
+            if (now < WEEKRANGE.start || 
+                (!(now > WEEKRANGE.end) && now < NOW.getDay())) {
+                ui.setCalorieBarNull(BARGRAPHS_UI.cal_bars[now.getDay()]);
+                ui.setMacroBarNull(BARGRAPHS_UI.macro_bars[now.getDay()]);
+            }
+        } else {
+            let macro_percentages = util.generatePercentagesObj(daily_summaries[now.getDay()]);
+            let value = daily_summaries[now.getDay()].cal / CALORIESTATS.goal * 100;
+            ui.setCalorieGraphBar(BARGRAPHS_UI.cal_bars[now.getDay()], value, BARGRAPHS_UI.dashoffsets);
+            ui.setMacroGraphBar(BARGRAPHS_UI.macro_bars[now.getDay()], macro_percentages); 
         }
-        else if (data.query_res.meal_type === "dinner") {
-            dinner_arr.addFood(data.query_res);
-            dinner_food_list.appendChild(createEatenFoodListItem(data.query_res));
-
-            calories_dinner_value += data.query_res.calories;
-            fats_dinner_value += data.query_res.fats;
-            carbs_dinner_value += data.query_res.carbs
-            protein_dinner_value += data.query_res.protein;
-
-            calories_dinner.innerText = Math.trunc(calories_dinner_value * 100) / 100;
-            fat_dinner.innerText = Math.trunc(fats_dinner_value * 100) / 100;
-            carbs_dinner.innerText = Math.trunc(carbs_dinner_value * 100) / 100;
-            protein_dinner.innerText = Math.trunc(protein_dinner_value * 100) / 100;
-        }
-        else {
-            snacks_arr.addFood(data.query_res);
-            snacks_food_list.appendChild(createEatenFoodListItem(data.query_res));
-
-            calories_snacks_value += data.query_res.calories;
-            fats_snacks_value += data.query_res.fats;
-            carbs_snacks_value += data.query_res.carbs
-            protein_snacks_value += data.query_res.protein;
-
-            calories_snack.innerText = Math.trunc(calories_snacks_value * 100) / 100;
-            fat_snack.innerText = Math.trunc(fats_snacks_value * 100) / 100;
-            carbs_snack.innerText = Math.trunc(carbs_snacks_value * 100) / 100;
-            protein_snack.innerText = Math.trunc(protein_snacks_value * 100) / 100;
-        }
-
-        calories_today_value += data.query_res.calories;
-        fats_today_value += data.query_res.fats;
-        carbs_today_value += data.query_res.carbs
-        protein_today_value += data.query_res.protein;
-
-        calories_today.innerText = Math.trunc(calories_today_value * 100) / 100;
-        fats_today.innerText = Math.trunc(fats_today_value * 100) / 100;
-        carbs_today.innerText = Math.trunc(carbs_today_value * 100) / 100;
-        protein_today.innerText = Math.trunc(protein_today_value * 100) / 100;
+    } else {
+        alert(data.errmsg);
     }
+    console.log(daily_summaries);
 });
+
 
 
 // page init functions
-async function fetchUserGoal() {
-    const res = await fetch("/api/users/get-goal");
-    const data = await res.json();
+async function initCalorieGoal() {
+    const data = await api.getCalorieGoal();
+
     if (data.success) {
-        if (data.calorie_goal) document.getElementById("user-cal-goal").innerText = data.calorie_goal;
-        else dialog_set_goal.show();
+        CALORIESTATS.goal = data.goal;
+        CALORIESTATS.remaining = CALORIESTATS.goal;
+        CALORIESTATS_UI.goal.textContent = CALORIESTATS.goal;
+        CALORIESTATS_UI.remaining.textContent = CALORIESTATS.goal;
+    } else {
+        alert(data.errmsg);
     }
 }
 
-async function fetchFoodsEaten() {
-    const res = await fetch(`/api/users/get-foods-eaten?date=${now.toDateString()}`);
-    const data = await res.json();
-    if (!data.success) {
-        alert("fail");
-    }
-    for (let i = 0; i < data.result.length; i++) {
-        if (data.result[i].meal_type === "breakfast") {
-            breakfast_arr.addFood(data.result[i]);
-            breakfast_food_list.appendChild(createEatenFoodListItem(data.result[i]));
+async function initDiary(date) {
+    const data = await api.getDiary(date);
 
-            calories_breakfast_value += data.result[i].calories;
-            fats_breakfast_value += data.result[i].fats;
-            carbs_breakfast_value += data.result[i].carbs
-            protein_breakfast_value += data.result[i].protein;
-
-            calories_breakfast.innerText = Math.trunc(calories_breakfast_value * 100) / 100;
-            fat_breakfast.innerText = Math.trunc(fats_breakfast_value * 100) / 100;
-            carbs_breakfast.innerText = Math.trunc(carbs_breakfast_value * 100) / 100;
-            protein_breakfast.innerText = Math.trunc(protein_breakfast_value * 100) / 100;
-
-            calories_breakfast.classList.add("text-prim-green");
-            fat_breakfast.classList.add("text-acnt-yellow");
-            carbs_breakfast.classList.add("text-acnt-lightblue");
-            protein_breakfast.classList.add("text-acnt-purple");
-        } 
-        else if (data.result[i].meal_type === "lunch") {
-            lunch_arr.addFood(data.result[i]);
-            lunch_food_list.appendChild(createEatenFoodListItem(data.result[i]));
-
-            calories_lunch_value += data.result[i].calories;
-            fats_lunch_value += data.result[i].fats;
-            carbs_lunch_value += data.result[i].carbs;
-            protein_lunch_value += data.result[i].protein;
-
-            calories_lunch.innerText = Math.trunc(calories_lunch_value * 100) / 100;
-            fat_lunch.innerText = Math.trunc(fats_lunch_value * 100) / 100;
-            carbs_lunch.innerText = Math.trunc(carbs_lunch_value * 100) / 100;
-            protein_lunch.innerText = Math.trunc(protein_lunch_value * 100) / 100;
-
-            calories_lunch.classList.add("text-prim-green");
-            fat_lunch.classList.add("text-acnt-yellow");
-            carbs_lunch.classList.add("text-acnt-lightblue");
-            protein_lunch.classList.add("text-acnt-purple");
+    if (data.success) {
+        total_entries = data.entries.length;
+        for (let i = 0; i < data.entries.length; i++) {
+            let meal_type = data.entries[i].meal_type;
+            updateStateUI(data.entries[i], meal_type, undefined, undefined);
         }
-        else if (data.result[i].meal_type === "dinner") {
-            dinner_arr.addFood(data.result[i]);
-            dinner_food_list.appendChild(createEatenFoodListItem(data.result[i]));
-
-            calories_dinner_value += data.result[i].calories;
-            fats_dinner_value += data.result[i].fats;
-            carbs_dinner_value += data.result[i].carbs
-            protein_dinner_value += data.result[i].protein;
-
-            calories_dinner.innerText = Math.trunc(calories_dinner_value * 100) / 100;
-            fat_dinner.innerText = Math.trunc(fats_dinner_value * 100) / 100;
-            carbs_dinner.innerText = Math.trunc(carbs_dinner_value * 100) / 100;
-            protein_dinner.innerText = Math.trunc(protein_dinner_value * 100) / 100;
-
-            calories_dinner.classList.add("text-prim-green");
-            fat_dinner.classList.add("text-acnt-yellow");
-            carbs_dinner.classList.add("text-acnt-lightblue");
-            protein_dinner.classList.add("text-acnt-purple");
-        }
-        else {
-            snacks_arr.addFood(data.result[i]);
-            snacks_food_list.appendChild(createEatenFoodListItem(data.result[i]));
-
-            calories_snacks_value += data.result[i].calories;
-            fats_snacks_value += data.result[i].fats;
-            carbs_snacks_value += data.result[i].carbs
-            protein_snacks_value += data.result[i].protein;
-
-            calories_snack.innerText = Math.trunc(calories_snacks_value * 100) / 100;
-            fat_snack.innerText = Math.trunc(fats_snacks_value * 100) / 100;
-            carbs_snack.innerText = Math.trunc(carbs_snacks_value * 100) / 100;
-            protein_snack.innerText = Math.trunc(protein_snacks_value * 100) / 100;
-
-            calories_snack.classList.add("text-prim-green");
-            fat_snack.classList.add("text-acnt-yellow");
-            carbs_snack.classList.add("text-acnt-lightblue");
-            protein_snack.classList.add("text-acnt-purple");
-        }
+    } else {
+        alert(data.errmsg);
     }
-
-    for (let i = 0; i < breakfast_arr.foodItems.length; i++) {
-        calories_today_value += breakfast_arr.foodItems[i].calories;
-        fats_today_value += breakfast_arr.foodItems[i].fats;
-        carbs_today_value += breakfast_arr.foodItems[i].carbs
-        protein_today_value += breakfast_arr.foodItems[i].protein;
-
-    }
-    for (let i = 0; i < lunch_arr.foodItems.length; i++) {
-        calories_today_value += lunch_arr.foodItems[i].calories;
-        fats_today_value += lunch_arr.foodItems[i].fats;
-        carbs_today_value += lunch_arr.foodItems[i].carbs
-        protein_today_value += lunch_arr.foodItems[i].protein;
-
-    }
-    for (let i = 0; i < dinner_arr.foodItems.length; i++) {
-        calories_today_value += dinner_arr.foodItems[i].calories;
-        fats_today_value += dinner_arr.foodItems[i].fats;
-        carbs_today_value += dinner_arr.foodItems[i].carbs
-        protein_today_value += dinner_arr.foodItems[i].protein;
-
-    }
-    for (let i = 0; i < snacks_arr.foodItems.length; i++) {
-        calories_today_value += snacks_arr.foodItems[i].calories;
-        fats_today_value += snacks_arr.foodItems[i].fats;
-        carbs_today_value += snacks_arr.foodItems[i].carbs
-        protein_today_value += snacks_arr.foodItems[i].protein;
-
-    }
-    calories_today.innerText = Math.trunc(calories_today_value * 100) / 100;
-    fats_today.innerText = Math.trunc(fats_today_value * 100) / 100;
-    carbs_today.innerText = Math.trunc(carbs_today_value * 100) / 100;
-    protein_today.innerText = Math.trunc(protein_today_value * 100) / 100;
-
-    fats_today.classList.remove("text-ntrl-70");
-    carbs_today.classList.remove("text-ntrl-70");
-    protein_today.classList.remove("text-ntrl-70");
-
-    calories_today.classList.add("fw-b", "fs-28", "text-prim-green");
-    fats_today.classList.add("text-acnt-yellow");
-    carbs_today.classList.add("text-acnt-lightblue");
-    protein_today.classList.add("text-acnt-purple");
 }
 
-fetchUserGoal();
-fetchFoodsEaten();
+async function initWeeklySummary(date) {
+    const data = await api.getWeeklySummary(date);
+
+    if (data.success) {
+        data.summaries.forEach(summary => { daily_summaries.push(summary); });
+
+        for (let i = 0; i < daily_summaries.length; i++) {
+            if (!daily_summaries[i]) {
+                if (now < WEEKRANGE.start || 
+                    (!(now > WEEKRANGE.end) && i < NOW.getDay())) {
+                    ui.setCalorieBarNull(BARGRAPHS_UI.cal_bars[i]);
+                    ui.setMacroBarNull(BARGRAPHS_UI.macro_bars[i]);
+                }
+            } else {
+                if (!util.dayIsEmpty(daily_summaries[i])) days_logged++;
+                util.updateWeekTotal(WEEKTOTALS, daily_summaries[i]);
+                let macro_percentages = util.generatePercentagesObj(daily_summaries[i]);
+                let value = daily_summaries[i].cal / CALORIESTATS.goal * 100;
+                ui.setCalorieGraphBar(BARGRAPHS_UI.cal_bars[i], value, BARGRAPHS_UI.dashoffsets)
+                ui.setMacroGraphBar(BARGRAPHS_UI.macro_bars[i], macro_percentages);
+            }
+        }
+        const avg_obj = util.initWeeklyAverage(WEEKTOTALS, days_logged);
+        ui.setWeeklyAveragesUI(AVERAGES_UI, avg_obj);
+    }
+    console.log(daily_summaries);
+}
+
+await searchbar.loadSearchbar(searchbar_target);
+
+searchbar_target.querySelector("#search_dialog").
+    addEventListener("searchbar:submit", (e) => {
+    const form_data = e.detail.form_data;
+    form_data.meal_type = meal_type;
+    form_data.date = now.toDateString();
+    addToDiary(form_data)
+});
+
+ui.setSubDate(sub_date, dateUtil.formatDate(now));
+ui.setWeekDate(week_date, dateUtil.formatWeekRange(now));
+initCalorieGoal();
+initDiary(now);
+initWeeklySummary(now);

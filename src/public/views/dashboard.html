@@ -3,274 +3,627 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Counter - Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <title>Your Dashboard - Counter</title>
+    <link rel="stylesheet" href="../styles/shared/base.css">
+    <link rel="stylesheet" href="../styles/shared/components.css">
     <link rel="stylesheet" href="../styles/dashboard.css">
+    <link rel="stylesheet" href="../components/searchbar.css">
+    <link rel="stylesheet" href="../styles/svg_elements/progressbar.css">
+    <link rel="stylesheet" href="../styles/svg_elements/bargraph.css">
     <script type="module" src="../scripts/dashboard.js" defer></script>
 </head>
 <body>
-    <div class="sidebar fw-b bg-ntrl-80 shad"> 
-        <div class="logo flex ai-cntr gap-1">
-            <img src="../assets/dashboard/logo.svg" alt="">
-            <p class="fs-24 fw-b text-ntrl-10">Counter</p>
+<div class="body">
+    <div class="sidebar">
+        <div class="sidebar__logo">
+            <img src="../assets/shared/logos/logo.svg" alt="">
+            <a href="/dashboard">
+                <h1 class="fs-24 txt-ntrl-10">Counter</h1>
+            </a>
         </div>
-        <nav>
-            <ul>
+        <ul class="sidebar__list">
+            <li class="bg-acnt-yellow">
                 <a href="/dashboard">
-                    <li class="flex ai-cntr gap-1 bg-acnt-yellow">
-                        <img src="../assets/dashboard/dashboard.svg" width="20" alt="">
-                        <p>Dashboard</p>
-                    </li>
+                    <img src="../assets/shared/sidebar/dashboard.svg" alt="">
+                    <p>Dashboard</p>
                 </a>
-                <li class="flex ai-cntr gap-1 bg-acnt-lightblue">
-                    <img src="../assets/dashboard/food_list.svg" width="20" alt="">
-                    <a href="/foodlist">Food List</a>
-                </li>
-                <li class="flex ai-cntr gap-1 bg-acnt-purple">
-                    <img src="../assets/dashboard/recipes.svg" width="20" alt="">
-                    <a href="/recipes">Recipes</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-
-    <div class="main bg-ntrl-20 shad">
-        <div class="section-title">
-            <h2 class="fs-28 fw-b line-ht-1 ">Today</h2>
-            <p class="text-ntrl-60">Feb 11, 2025</p>
-            <img class="title-dropdown" src="../assets/dashboard/dropdown.svg" width="15" alt="">
-        </div>
-        <div class="today-section">
-            <div class="today__calories bg-ntrl-10 shad-2">
-                <h3 class="sub-section-title">Calories</h3>
-                <!-- TODO: Temp place to display calories! -->
-                <p id="calories_today">0</p>
-<!--                 <svg class="svg" width="100" height="100">
-                    <path class="progress-track" d="
-                      M 15 80
-                      A 43 43, 0 1 1, 85 80
-                    " stroke="#ddd" stroke-width="7" fill="transparent" stroke-linecap="round"/>
-            
-                    <path class="progress-bar" stroke-dashoffset="189.5" stroke-dasharray="189.5"  d="
-                      M 15 80
-                      A 43.1 43.1, 0 1 1, 85 80
-                    " stroke-width="7" fill="transparent" stroke-linecap="round"/>
-            
-                    <path class="indicator-pointer" d="
-                      M 20 55
-                      A 30 30, 0 0 1, 47 25
-                      L 50 21
-                      L 53 25
-                      A 30 30, 0 0 1, 80 55
-                      A 2 2, 0 0 1, 20 55
-                    " fill="#ddd"/>
-                    <text class="indicator-text" x="50%" y="54%" dominant-baseline="central" text-anchor="middle" fill="black">0</text>
-                </svg> -->
-            </div>
-            <div class="today__calorie-info bg-ntrl-10 shad-2">
-                <h3 class="sub-section-title">Today's Calorie Info</h3>
-                <div class="flex gap-5">
-                    <div>
-                        <div class="flex gap-1">
-                            <p class="fs-20 text-ntrl-30">Your Goal</p>
-                            <img src="../assets/dashboard/edit_icon.svg" alt="">
-                        </div>
-                        <p id="user-cal-goal" class="fs-40 fw-b letter-sp-1 text-prim-blue">0</p>
-                    </div>
-                    <div class="flex-col ai-cntr">
-                        <p id="calories_remaining" class="fs-20 text-ntrl-30">Remaining</p>
-                        <p class="fs-40 fw-b letter-sp-1 text-acnt-orange">0</p>
-                    </div>
-                    <div class="calorie-info__over flex-col ai-cntr">
-                        <p id="calories_over" class="fs-20 text-ntrl-30">Over</p>
-                        <p class="fs-40 fw-b letter-sp-1 text-prim-red">0</p>
-                    </div>
-                </div>
-            </div>
-            <div class="today__macro-info bg-ntrl-10 shad-2">
-                <h3 class="sub-section-title">Today's Macros</h3>
-                <div class="macro-info__cards-section">
-                    <div class="cards-section__card">
-                        <p class="fs-20 fw-b text-acnt-yellow">Fat</p>
-                        <p class="fs-20 fw-b text-acnt-yellow">____</p>
-                        <p id="fat_today" class="fs-24 fw-b text-ntrl-70">0g</p>
-                    </div>
-                    <div class="cards-section__card">
-                        <p class="fs-20 fw-b text-acnt-lightblue">Carbs</p>
-                        <p class="fs-20 fw-b text-acnt-lightblue">____</p>
-                        <p id="carbs_today" class="fs-24 fw-b text-ntrl-70">0g</p>
-                    </div>
-                    <div class="cards-section__card">
-                        <p class="fs-20 fw-b text-acnt-purple">Protein</p>
-                        <p class="fs-20 fw-b text-acnt-purple">____</p>
-                        <p id="protein_today" class="fs-24 fw-b text-ntrl-70">0g</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="section-title">
-            <h2 class="fs-28 fw-b line-ht-1">My Week</h2>
-            <p class="text-ntrl-60">Feb 9 - Feb 15</p>
-        </div>
-        <div class="week-section">
-            <div class="week__calories bg-ntrl-10 shad-2">
-                <h3 class="sub-section-title">Calories</h3>
-                <div class="flex jc-btwn">
-                    <div class="">
-                        <p class="fs-20 text-ntrl-30">This Week's Average</p>
-                        <p class="fs-40 fw-b letter-sp-1 text-prim-green">0</p>
-                    </div>
-                    <div class="bars">
-                        <img src="../assets/dashboard/cal_bar.svg" width=75% alt="">
-                    </div>
-                </div>
-            </div>
-            <div class="week__macros bg-ntrl-10 shad-2">
-                <h3 class="sub-section-title">Macros</h3>
-                <div class="flex jc-btwn">
-                    <div>
-                        <div class="pie">
-                            <img src="../assets/dashboard/piechart.svg" alt="">
-                        </div>
-                        <div class="flex-col">
-                            <div class="flex">
-                                <p class="fw-b text-acnt-yellow">Fat</p>
-                                <p>___</p>
-                            </div>
-                            <div class="flex">
-                                <p class="fw-b text-acnt-lightblue">Carbs</p>
-                                <p>___</p>
-                            </div>
-                            <div class="flex">
-                                <p class="fw-b text-acnt-purple">Protein</p>
-                                <p>____</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bars">
-                        <img src="../assets/dashboard/mac_bar.svg" width=75% alt="">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="food-list bg-ntrl-80 shad">
-        <div class="breakfast">
-            <div class="flex jc-btwn">
-                <div class="flex gap-2 left">
-                    <button type="button" data-meal="breakfast" class="add-food icon-button">
-                        <img src="../assets/dashboard/plus_icon.svg" width=20 alt="">
-                    </button>
-                    <p class="food-list__title">Breakfast</p>
-                </div>
-                <div class="flex gap-2 text-ntrl-70">
-                    <p><span id="calories_breakfast" class="fs-20">0</span>cal</p>
-                    <p><span id="fat_breakfast" class="fs-20">0</span>g</p>
-                    <p><span id="carbs_breakfast" class="fs-20">0</span>g</p>
-                    <p><span id="protein_breakfast" class="fs-20">0</span>g</p>
-                </div>
-            </div>
-            <ul class="food-list__list">
-            </ul>
-        </div>
-        <div class="lunch">
-            <div class="flex jc-btwn">
-                <div class="flex gap-2 left">
-                    <button type="button" data-meal="lunch" class="add-food icon-button">
-                        <img src="../assets/dashboard/plus_icon.svg" width=20 alt="">
-                    </button>
-                    <p class="food-list__title">Lunch</p>
-                </div>
-                <div class="flex gap-2 text-ntrl-70">
-                    <p><span id="calories_lunch" class="fs-20">0</span>cal</p>
-                    <p><span id="fat_lunch" class="fs-20">0</span>g</p>
-                    <p><span id="carbs_lunch" class="fs-20">0</span>g</p>
-                    <p><span id="protein_lunch" class="fs-20">0</span>g</p>
-                </div>
-            </div>
-            <ul class="food-list__list">
-            </ul>
-        </div>
-        <div class="dinner">
-            <div class="flex jc-btwn">
-                <div class="flex gap-2 left">
-                    <button type="button" data-meal="dinner" class="add-food icon-button">
-                        <img src="../assets/dashboard/plus_icon.svg" width=20 alt="">
-                    </button>
-                    <p class="food-list__title">Dinner</p>
-                </div>
-                <div class="flex gap-2 text-ntrl-70">
-                    <p><span id="calories_dinner" class="fs-20">0</span>cal</p>
-                    <p><span id="fat_dinner" class="fs-20">0</span>g</p>
-                    <p><span id="carbs_dinner" class="fs-20">0</span>g</p>
-                    <p><span id="protein_dinner" class="fs-20">0</span>g</p>
-                </div>
-            </div>
-            <ul class="food-list__list">
-            </ul>
-        </div>
-        <div class="snacks">
-            <div class="flex jc-btwn">
-                <div class="flex gap-2 left">
-                    <button type="button" data-meal="snacks" class="add-food icon-button">
-                        <img src="../assets/dashboard/plus_icon.svg" width=20 alt="">
-                    </button>
-                    <p class="food-list__title">Snacks</p>
-                </div>
-                <div class="flex gap-2 text-ntrl-70">
-                    <p><span id="calories_snack" class="fs-20">0</span>cal</p>
-                    <p><span id="fat_snack" class="fs-20">0</span>g</p>
-                    <p><span id="carbs_snack" class="fs-20">0</span>g</p>
-                    <p><span id="protein_snack" class="fs-20">0</span>g</p>
-                </div>
-            </div>
-            <ul class="food-list__list">
-            </ul>
-        </div>
-    </div>
-
-    <dialog id="set-goal-dialog" class="set-calorie-goal">
-        <form id="set-goal-form">
-            <h3 class="sub-section-title">Set Your Goal</h3>
-            <input type="number" name="calorie_goal" id="calorie-goal" placeholder="0" required>
-            <button type="button" data-action="/api/users/set-goal" class="bg-prim-green px-5 py-2">Let's Go!</button>
-        </form>
-    </dialog>
-
-    <dialog id="search-food" class="search-food">
-        <button type="button" aria-label="Cancel" class="icon-button | cancel">
-            <img src="../assets/foodlist/cancel_button.svg" alt="">
-        </button>
-        <div class="searchbar">
-            <img src="../assets/foodlist/search_icon.png" width="20" alt="">
-            <input type="text" name="searchbar" placeholder="Search your foods" id="searchbar">
-        </div>
-        <ul id="search-food-list" class="food-list__list">
-<!--        <li class="food-list__item clickable" data-id="-1">
-                <p>Dot’s Homestyle Snacks Baked Cheese Curls</p>
-            </li> -->
+            </li>
+            <li class="bg-acnt-lblue">
+                <a href="/foodlist">
+                    <img src="../assets/shared/sidebar/foodlist.svg" alt="">
+                    <p>Food List</p>
+                </a>
+            </li>
+            <li class="bg-acnt-purple">
+                <a href="/recipes">
+                    <img src="../assets/shared/sidebar/recipes.svg" alt="">
+                    <p>Recipes</p>
+                </a>
+            </li>
         </ul>
-    </dialog>
+    </div>
 
-    <dialog id="set-serving" class="set-serving">
-        <form id="form-add-food">
-            <input type="hidden" name="id">
-            <input type="hidden" name="date-eaten">
-            <input type="hidden" name="meal">
-            <input type="number" name="serving-size" step="0.01" placeholder="0" required id="serving-size">
-            <div class="flex-col">
-                <select name="serving-unit" id="serving-unit">
-                    <option value="g">grams(g)</option>
-                    <option value="x">quantity(x)</option>
-                    <option value="oz">ounces(oz)</option>
-                    <option value="ml">milliliters(mL)</option>
-                </select>
+    <div class="left shadow">
+        <div>
+            <div class="flex ai-end gap-1_0 section-title">
+                <p id="main_date">Today</p>
+                <p id="sub_date" class="section-title__subtitle"></p>
+                <div class="flex">
+                    <button type="button" id="date_dropdown" class="icon_button">
+                        <svg width="24px" height="24px">
+                            <use href="../assets/icons.svg#chevron-down"/>
+                        </svg>
+                    </button>
+                    <input id="date_input" class="date_input" type="date">
+                </div>
+                <button type="button" id="date_arrow_l" class="icon_button">
+                    <svg width="24px" height="24px">
+                        <use href="../assets/icons.svg#arrow-l"/>
+                    </svg>
+                </button>
+                <button type="button" id="date_arrow_r" class="icon_button">
+                    <svg width="24px" height="24px">
+                        <use href="../assets/icons.svg#arrow-r"/>
+                    </svg>
+                </button>
             </div>
-            <button type="button" data-action="/api/users/add-food-day" class="bg-prim-green px-5 py-2">Done</button>
-        </form>
-    </dialog>
+            <div class="section top">
+                <div class="subsection top_a">
+                    <p class="subsection-title">Calories</p>
+                    <div class="wrapper">
+                        <svg viewBox="0 5 100 89" width="100%" height="100%">
+                            <path class="progress-track" d="
+                                M 15 80
+                                A 43 43, 0 1 1, 85 80"
+                            stroke="#ddd" stroke-width="12" fill="transparent" stroke-linecap="round"/>
+                            
+                            <path id="progress_bar" class="progress-bar" stroke-dasharray="189.5" stroke-dashoffset="189.5" d="
+                                M 15 80
+                                A 43 43, 0 1 1, 85 80"
+                            stroke-width="12" fill="transparent" stroke-linecap="round"/>
+                            
+                            <path id="indicator_pointer" class="indicator-pointer" d="
+                                M 25 55 
+                                A 25 25 0 0 1 48 30.09
+                                L 50 27
+                                L 52 30.09
+                                A 25 25 0 0 1 75 55
+                                A 25 25 0 1 1 25 55
+                            " fill="#ddd"/>
+                            <text id="indicator_text" class="indicator-text" x="50%" y="60%" dominant-baseline="central" text-anchor="middle">0</text>
+                            <text class="text" x="50%" y="70%" dominant-baseline="central" text-anchor="middle">Eaten</text>
+                        </svg>
+                    </div>
+                </div>
+                <div class="subsection top_b">
+                    <p class="subsection-title">Calorie Breakdown</p>
+                    <div class="flex gap-2_5">
+                        <div>
+                            <div class="flex gap-1_0">
+                                <p class="txt-ntrl-40">Your Goal</p>
+                                <button type="button" id="edit_goal_btn" class="icon_button">
+                                    <img src="../assets/shared/icons/edit.svg" alt="">
+                                </button>
+                            </div>
+                            <div class="calorie-goal-container cal-value txt-prim-blue">
+                                <input id="goal_calories_input" class="goal_calories_input" type="number" min="1" step="1" required>
+                                <span id="goal_calories">0</span>
+                            </div>
+                        </div>
+                        <div class="flex-col ai-cntr">
+                            <p class="txt-ntrl-40">Remaining</p>
+                            <span id="remaining_calories" class="cal-value txt-acnt-orange">0</span>
+                        </div>
+                        <div class="flex-col ai-cntr">
+                            <p class="txt-ntrl-40">Over</p>
+                            <span id="over_calories" class="cal-value txt-prim-red">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="subsection top_c">
+                    <p class="subsection-title">Today's Macros</p>
+                    <div class="cardsection">
+                        <div class="card txt-acnt-yellow">
+                            <p class="card__title">Fat</p>
+                            <svg width="100%" height="2">
+                                <use href="../assets/icons.svg#line-divider"/>
+                            </svg>
+                            <span id="main_fat" class="card__value off">0</span>
+                        </div>
+                        <div class="card txt-acnt-lightblue">
+                            <p class="card__title">Carbs</p>
+                            <svg width="100%" height="2">
+                                <use href="../assets/icons.svg#line-divider"/>
+                            </svg>
+                            <span id="main_carb" class="card__value off">0</span>
+                        </div>
+                        <div class="card txt-acnt-purple">
+                            <p class="card__title">Protein</p>
+                            <svg width="100%" height="2">
+                                <use href="../assets/icons.svg#line-divider"/>
+                            </svg>
+                            <span id="main_prot" class="card__value off">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>   
+        <div>
+            <div class="flex ai-end gap-1_25 section-title">
+                <p>My week</p>
+                <p id="week_date" class="section-title__subtitle"></p>
+            </div>
+            <div class="section bot">
+                <div class="subsection">
+                    <p class="subsection-title">Calories</p>
+                    <div class="subsection__week">
+                        <div>
+                            <p class="txt-ntrl-40">This Week's Average</p>
+                            <span id="average_calories" class="cal-value txt-prim-green">0</span>
+                        </div>
+                        <div id="calorie-bar-graph" class="bar-graph">
+                            <div class="bar-dow-container sun-bar">
+                                <svg viewBox="0 0 18 100" width="100%" height="100%">
+                                    <line class="goal-progress-track"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="goal_progress_bar" class="goal-progress-bar"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="56" stroke-dashoffset="56"
+                                    />
+                                
+                                    <line class="over-progress-track"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="over_progress_bar" class="over-progress-bar"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="9" stroke-dashoffset="9"
+                                    />
+                                </svg>
+                                <p>S</p>
+                            </div>
+                            <div class="bar-dow-container mon-bar">
+                                <svg viewBox="0 0 18 100" width="100%" height="100%">
+                                    <line class="goal-progress-track"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="goal_progress_bar" class="goal-progress-bar"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="56" stroke-dashoffset="56"
+                                    />
+                                
+                                    <line class="over-progress-track"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="over_progress_bar" class="over-progress-bar"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="9" stroke-dashoffset="9"
+                                    />
+                                </svg>
+                                <p>M</p>
+                            </div>
+                            <div class="bar-dow-container tue-bar">
+                                <svg viewBox="0 0 18 100" width="100%" height="100%">
+                                    <line class="goal-progress-track"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="goal_progress_bar" class="goal-progress-bar"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="56" stroke-dashoffset="56"
+                                    />
+                                
+                                    <line class="over-progress-track"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="over_progress_bar" class="over-progress-bar"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="9" stroke-dashoffset="9"
+                                    />
+                                </svg>
+                                <p>T</p>
+                            </div>
+                            <div class="bar-dow-container wed-bar">
+                                <svg viewBox="0 0 18 100" width="100%" height="100%">
+                                    <line class="goal-progress-track"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="goal_progress_bar" class="goal-progress-bar"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="56" stroke-dashoffset="56"
+                                    />
+                                
+                                    <line class="over-progress-track"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="over_progress_bar" class="over-progress-bar"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="9" stroke-dashoffset="9"
+                                    />
+                                </svg>
+                                <p>W</p>
+                            </div>
+                            <div class="bar-dow-container thu-bar">
+                                <svg viewBox="0 0 18 100" width="100%" height="100%">
+                                    <line class="goal-progress-track"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="goal_progress_bar" class="goal-progress-bar"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="56" stroke-dashoffset="56"
+                                    />
+                                
+                                    <line class="over-progress-track"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="over_progress_bar" class="over-progress-bar"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="9" stroke-dashoffset="9"
+                                    />
+                                </svg>
+                                <p>T</p>
+                            </div>
+                            <div class="bar-dow-container fri-bar">
+                                <svg viewBox="0 0 18 100" width="100%" height="100%">
+                                    <line class="goal-progress-track"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="goal_progress_bar" class="goal-progress-bar"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="56" stroke-dashoffset="56"
+                                    />
+                                
+                                    <line class="over-progress-track"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="over_progress_bar" class="over-progress-bar"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="9" stroke-dashoffset="9"
+                                    />
+                                </svg>
+                                <p>F</p>
+                            </div>
+                            <div class="bar-dow-container sat-bar">
+                                <svg viewBox="0 0 18 100" width="100%" height="100%">
+                                    <line class="goal-progress-track"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="goal_progress_bar" class="goal-progress-bar"
+                                    x1="50%" y1="92" x2="50%" y2="36"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="56" stroke-dashoffset="56"
+                                    />
+                                
+                                    <line class="over-progress-track"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="over_progress_bar" class="over-progress-bar"
+                                    x1="50%" y1="17" x2="50%" y2="8"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="9" stroke-dashoffset="9"
+                                    />
+                                </svg>
+                                <p>S</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="subsection">
+                    <p class="subsection-title">Macros</p>
+                    <div class="subsection__week">
+                        <div>
+                            <p class="txt-ntrl-40">This Week's Average</p>
+                            <div>
+                                <div class="flex jc-btwn">
+                                    <p class="fw-b txt-acnt-yellow">Fat</p>
+                                    <span id="average_fat">0</span>
+                                </div>
+                                <div class="flex jc-btwn">
+                                    <p class="fw-b txt-acnt-lightblue">Carbs</p>
+                                    <span id="average_carb">0</span>
+                                </div>
+                                <div class="flex jc-btwn">
+                                    <p class="fw-b txt-acnt-purple">Protein</p>
+                                    <span id="average_prot">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="macro-bar-graph" class="bar-graph">
+                            <div class="bar-dow-container sun-bar">
+                                <svg viewBox="0 0 18 100" width="100%" height="100%">
+                                    <line class="goal-progress-track" 
+                                    x1="50%" y1="92" x2="50%" y2="8"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="null-progress-bar" class="null-progress-bar"
+                                    x1="50%" y1="92" x2="50%" y2="8"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="84" stroke-dashoffset="84"
+                                    />
+                                    <line id="fat-progress-bar" class="fat-progress-bar"
+                                    x1="50%" y1="0" x2="50%" y2="0"
+                                    stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="carb-progress-bar" class="carb-progress-bar"
+                                    x1="50%" y1="0" x2="50%" y2="0"
+                                    stroke-width="16" stroke-linecap="round"
+                                    />
+                                     <line id="prot-progress-bar" class="prot-progress-bar"
+                                    x1="50%" y1="0" x2="50%" y2="0"
+                                    stroke-width="16" stroke-linecap="round"
+                                    />
+                                </svg>
+                                <p>S</p>
+                            </div> 
+                            <div class="bar-dow-container mon-bar">
+                                <svg viewBox="0 0 18 100" width="100%" height="100%">
+                                    <line class="goal-progress-track" 
+                                    x1="50%" y1="92" x2="50%" y2="8"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="null-progress-bar" class="null-progress-bar"
+                                    x1="50%" y1="92" x2="50%" y2="8"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="84" stroke-dashoffset="84"
+                                    />
+                                    <line id="fat-progress-bar" class="fat-progress-bar"
+                                    x1="50%" y1="0" x2="50%" y2="0"
+                                    stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="carb-progress-bar" class="carb-progress-bar"
+                                    x1="50%" y1="0" x2="50%" y2="0"
+                                    stroke-width="16" stroke-linecap="round"
+                                    />
+                                     <line id="prot-progress-bar" class="prot-progress-bar"
+                                    x1="50%" y1="0" x2="50%" y2="0"
+                                    stroke-width="16" stroke-linecap="round"
+                                    />
+                                </svg>
+                                <p>M</p>
+                            </div> 
+                            <div class="bar-dow-container tue-bar">
+                                <svg viewBox="0 0 18 100" width="100%" height="100%">
+                                    <line class="goal-progress-track" 
+                                    x1="50%" y1="92" x2="50%" y2="8"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="null-progress-bar" class="null-progress-bar"
+                                    x1="50%" y1="92" x2="50%" y2="8"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="84" stroke-dashoffset="84"
+                                    />
+                                    <line id="fat-progress-bar" class="fat-progress-bar"
+                                    x1="50%" y1="0" x2="50%" y2="0"
+                                    stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="carb-progress-bar" class="carb-progress-bar"
+                                    x1="50%" y1="0" x2="50%" y2="0"
+                                    stroke-width="16" stroke-linecap="round"
+                                    />
+                                     <line id="prot-progress-bar" class="prot-progress-bar"
+                                    x1="50%" y1="0" x2="50%" y2="0"
+                                    stroke-width="16" stroke-linecap="round"
+                                    />
+                                </svg>
+                                <p>T</p>
+                            </div> 
+                            <div class="bar-dow-container wed-bar">
+                                <svg viewBox="0 0 18 100" width="100%" height="100%">
+                                    <line class="goal-progress-track" 
+                                    x1="50%" y1="92" x2="50%" y2="8"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="null-progress-bar" class="null-progress-bar"
+                                    x1="50%" y1="92" x2="50%" y2="8"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="84" stroke-dashoffset="84"
+                                    />
+                                    <line id="fat-progress-bar" class="fat-progress-bar"
+                                    x1="50%" y1="0" x2="50%" y2="0"
+                                    stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="carb-progress-bar" class="carb-progress-bar"
+                                    x1="50%" y1="0" x2="50%" y2="0"
+                                    stroke-width="16" stroke-linecap="round"
+                                    />
+                                     <line id="prot-progress-bar" class="prot-progress-bar"
+                                    x1="50%" y1="0" x2="50%" y2="0"
+                                    stroke-width="16" stroke-linecap="round"
+                                    />
+                                </svg>
+                                <p>W</p>
+                            </div> 
+                            <div class="bar-dow-container thu-bar">
+                                <svg viewBox="0 0 18 100" width="100%" height="100%">
+                                    <line class="goal-progress-track" 
+                                    x1="50%" y1="92" x2="50%" y2="8"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="null-progress-bar" class="null-progress-bar"
+                                    x1="50%" y1="92" x2="50%" y2="8"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="84" stroke-dashoffset="84"
+                                    />
+                                    <line id="fat-progress-bar" class="fat-progress-bar"
+                                    x1="50%" y1="0" x2="50%" y2="0"
+                                    stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="carb-progress-bar" class="carb-progress-bar"
+                                    x1="50%" y1="0" x2="50%" y2="0"
+                                    stroke-width="16" stroke-linecap="round"
+                                    />
+                                     <line id="prot-progress-bar" class="prot-progress-bar"
+                                    x1="50%" y1="0" x2="50%" y2="0"
+                                    stroke-width="16" stroke-linecap="round"
+                                    />
+                                </svg>
+                                <p>T</p>
+                            </div> 
+                            <div class="bar-dow-container fri-bar">
+                                <svg viewBox="0 0 18 100" width="100%" height="100%">
+                                    <line class="goal-progress-track" 
+                                    x1="50%" y1="92" x2="50%" y2="8"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="null-progress-bar" class="null-progress-bar"
+                                    x1="50%" y1="92" x2="50%" y2="8"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="84" stroke-dashoffset="84"
+                                    />
+                                    <line id="fat-progress-bar" class="fat-progress-bar"
+                                    x1="50%" y1="0" x2="50%" y2="0"
+                                    stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <line id="carb-progress-bar" class="carb-progress-bar"
+                                    x1="50%" y1="0" x2="50%" y2="0"
+                                    stroke-width="16" stroke-linecap="round"
+                                    />
+                                     <line id="prot-progress-bar" class="prot-progress-bar"
+                                    x1="50%" y1="0" x2="50%" y2="0"
+                                    stroke-width="16" stroke-linecap="round"
+                                    />
+                                </svg>
+                                <p>F</p>
+                            </div> 
+                            <div class="bar-dow-container sat-bar">
+                                <svg viewBox="0 0 18 100" width="100%" height="100%">
+                                    <!-- This is the track still -->
+                                    <line class="goal-progress-track" 
+                                    x1="50%" y1="92" x2="50%" y2="8"
+                                    stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <!-- This is the progress bar for a day that wasnt logged -->
+                                    <line id="null-progress-bar" class="null-progress-bar"
+                                    x1="50%" y1="92" x2="50%" y2="8"
+                                    stroke-width="16" stroke-linecap="round"
+                                    stroke-dasharray="84" stroke-dashoffset="84"
+                                    />
+                                    <!-- Fat progress -->
+                                    <line id="fat-progress-bar" class="fat-progress-bar"
+                                    x1="50%" y1="0" x2="50%" y2="0"
+                                    stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <!-- Carbs progress -->
+                                    <line id="carb-progress-bar" class="carb-progress-bar"
+                                    x1="50%" y1="0" x2="50%" y2="0"
+                                    stroke-width="16" stroke-linecap="round"
+                                    />
+                                    <!-- Protein progress -->
+                                     <line id="prot-progress-bar" class="prot-progress-bar"
+                                    x1="50%" y1="0" x2="50%" y2="0"
+                                    stroke-width="16" stroke-linecap="round"
+                                    />
+                                </svg>
+                                <p>S</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="diary" class="right">
+        <div class="meal-section">
+            <div class="meal-header">
+                <div class="flex gap-1_0">
+                    <button type="button" data-meal_type="1" class="icon_button addfood_btn">
+                        <img src="../assets/shared/icons/add.svg" alt="">
+                    </button>
+                    <p class="meal-title">Breakfast</p>
+                </div>
+                <div id="breakfast_numbers" class="meal__numbers">
+                    <p><span class="cal fs-24">0</span>cal</p>
+                    <p><span class="fat fs-24">0</span>g</p>
+                    <p><span class="carb fs-24">0</span>g</p>
+                    <p><span class="prot fs-24">0</span>g</p>
+                </div>
+            </div>
+            <ul id="breakfast_list" data-meal_type="1">
+            </ul>
+        </div>
+        <div class="meal-section">
+            <div class="meal-header">
+                <div class="flex gap-1_0">
+                    <button type="button" data-meal_type="2" class="icon_button addfood_btn">
+                        <img src="../assets/shared/icons/add.svg" alt="">
+                    </button>
+                    <p class="meal-title">Lunch</p>
+                </div>
+                <div id="lunch_numbers" class="meal__numbers">
+                    <p><span class="cal fs-24">0</span>cal</p>
+                    <p><span class="fat fs-24">0</span>g</p>
+                    <p><span class="carb fs-24">0</span>g</p>
+                    <p><span class="prot fs-24">0</span>g</p>
+                </div>
+            </div>
+            <ul id="lunch_list" data-meal_type="2">
+            </ul>
+        </div>
+        <div class="meal-section">
+            <div class="meal-header">
+                <div class="flex gap-1_0">
+                    <button type="button" data-meal_type="3" class="icon_button addfood_btn">
+                        <img src="../assets/shared/icons/add.svg" alt="">
+                    </button>
+                    <p class="meal-title">Dinner</p>
+                </div>
+                <div id="dinner_numbers" class="meal__numbers">
+                    <p><span class="cal fs-24">0</span>cal</p>
+                    <p><span class="fat fs-24">0</span>g</p>
+                    <p><span class="carb fs-24">0</span>g</p>
+                    <p><span class="prot fs-24">0</span>g</p>
+                </div>
+            </div>
+            <ul id="dinner_list" data-meal_type="3">
+            </ul>
+        </div>
+        <div class="meal-section">
+            <div class="meal-header">
+                <div class="flex gap-1_0">
+                    <button type="button" data-meal_type="4" class="icon_button addfood_btn">
+                        <img src="../assets/shared/icons/add.svg" alt="">
+                    </button>
+                    <p class="meal-title">Snacks</p>
+                </div>
+                <div id="snacks_numbers" class="meal__numbers">
+                    <p><span class="cal fs-24">0</span>cal</p>
+                    <p><span class="fat fs-24">0</span>g</p>
+                    <p><span class="carb fs-24">0</span>g</p>
+                    <p><span class="prot fs-24">0</span>g</p>
+                </div>
+            </div>
+            <ul id="snacks_list" data-meal_type="4">
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div id="searchbar_target"></div>
 </body>
 </html>

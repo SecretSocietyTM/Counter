@@ -1,0 +1,28 @@
+.wrapper {
+    margin-inline: auto;
+}
+
+.progress-bar {
+    stroke: var(--clr-primary-green);
+    transition: stroke-dashoffset 800ms ease-in;
+}
+
+.indicator-pointer {
+    fill: var(--clr-neutral-10);
+    filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.4));
+    transform-origin: 50px 55px;
+    transform: rotate(-128deg);
+
+    transition: transform 800ms ease-in;
+}
+
+.indicator-text {
+    font-weight: var(--fw-bold);
+    font-size: 0.8rem;
+    fill: var(--clr-primary-green);
+}
+
+.text {
+    font-size: 0.3rem;
+    fill: var(--clr-neutral-40); 
+}

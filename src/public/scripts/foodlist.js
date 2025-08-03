@@ -1,328 +1,249 @@
-import { FoodManager } from "./foodmanager.js";
+import * as ui from "./ui/foodlistUI.js";
+import * as api from "./api/foodlistAPI.js";
+import { FoodManager } from "./util/shared/foodmanager.js";
 
-// manage food list
-const food_list_arr = new FoodManager();
-let total_food_count;
-let prev_index = 0;
+const foodlist_array = new FoodManager()
+const s_foodlist_array = new FoodManager()
 
-// dialogs 
-const dialog_add_food = document.getElementById("dialog-add-food");
-const dialog_edit_food = document.getElementById("dialog-edit-food");
+let total_count;
+let s_total_count;
 
-// forms
-const form_add_food = document.getElementById("form-add-food");
-const form_edit_food = document.getElementById("form-edit-food");
+let cur_listitem = null;
+let cur_observed_listitem = null;
+let glob_searchterm;
 
-// icon buttons
-const add_food_button = document.getElementById("add-new-food");
-const cancel_buttons = document.querySelectorAll(".cancel");
+// flags
+let flag_searching = false;
 
-// elements to append to
-const food_list = document.querySelector(".food-list");
+// buttons
+const addfood_btn = document.getElementById("addfood_btn");
+const cancel_btn = document.getElementById("cancel_btn");
 
-// TODO: remove
-/* const test_item = {
-        food_id: -1,
-        user_id: 1,
-        name: "Dot’s Homestyle Snacks Baked Cheese Curls",
-        serving_size: 28,
-        unit: "g",
-        calories: 100,
-        fats: 8,
-        carbs: 15,
-        protein: 2
-    }
-food_list_arr.addFood(test_item); */
+// pseudo button selector
+const foodlist = document.getElementById("foodlist");
 
-// DOM functions
-function createSpan(text, class_list = []) {
-    const span = document.createElement("span");
-    span.innerText = text;
-    span.classList.add(...class_list);
-    return span;
+// dialog elements
+const dialog = document.querySelector("dialog");
+const dlg_title = document.getElementById("dialog_title");
+const delete_btn = document.getElementById("delete_btn");
+const editfood_submit_btn = document.getElementById("editfood_submit_btn");
+const addfood_submit_btn = document.getElementById("addfood_submit_btn");
+const foodform = document.getElementById("foodform");
+const error_message = document.getElementById("error_message");
+
+const DIALOG_UI = Object.freeze({
+    dialog: dialog,
+    title: dlg_title,
+    open_btn: addfood_btn,
+    delete_btn: delete_btn,
+    edit_btn: editfood_submit_btn,
+    add_btn: addfood_submit_btn,
+    form: foodform,
+    err_msg: error_message
+});
+
+const search_input = document.getElementById("searchbar_input");
+
+
+function getActiveFoodList() {
+    return flag_searching ? s_foodlist_array : foodlist_array;
 }
 
-function createServingUnit(value, unit, value_class = [], unit_class = []) {
-    const p = document.createElement("p");
-    const span1 = createSpan(value, value_class);
-    const span2 = createSpan(unit, unit_class);
-    p.appendChild(span1);
-    p.appendChild(span2);
-    return p;
+function getActiveTotalCount() {
+    return flag_searching ? s_total_count : total_count;
 }
 
-function createMetricP(value, unit = "g", span_classes = []) {
-    const p = document.createElement("p");
-    const span = createSpan(value, span_classes);
-    p.appendChild(span);
-    p.append(unit);
-    return p;
-}
 
-function createDotP() {
-    const p = document.createElement("p");
-    p.className = "text-ntrl-80";
-    p.innerHTML = "&#9679;";
-    return p;
-}
+const observer = new IntersectionObserver(async entries => {
+    const last_entry = entries[0];
+    const active_foodlist_array = getActiveFoodList();
 
-function createFoodListItem(form_obj) {
-    const li = document.createElement("li");
-    li.className = "food-list__item";
-    li.dataset.id = form_obj.food_id;
+    if (!last_entry.isIntersecting || 
+        (active_foodlist_array.size() == getActiveTotalCount())) return;
 
-    const name = document.createElement("p");
-    name.className = "name";
-    name.innerText = form_obj.name;
+    observer.unobserve(last_entry.target);
+    cur_observed_listitem = null;
 
-    const div = document.createElement("div");
-    div.className = "flex jc-btwn gap-5";
-
-    const text_section = document.createElement("div");
-    text_section.className = "text-section";
-
-    const servingsize_p = createServingUnit(
-        form_obj.serving_size,
-        form_obj.unit,
-        ["fw-b", "text-ntrl-80", "serving-size"],
-        ["unit"]
-    );
-
-    const cal_p = createMetricP(
-        form_obj.calories,
-        "cal",
-        ["fw-b", "text-prim-green", "calories"]
-    );
-    
-    const fat_p = createMetricP(
-        form_obj.fats,
-        undefined,
-        ["fw-b", "text-acnt-yellow", "fat"]
-    );
-
-    const carbs_p = createMetricP(
-        form_obj.carbs,
-        undefined,
-        ["fw-b", "text-acnt-lightblue", "carb"]
-    );
-
-    const prot_p = createMetricP(
-        form_obj.protein,
-        undefined,
-        ["fw-b", "text-acnt-purple", "prot"]
-    );
-
-    const dot_p = createDotP();
-
-    const edit_btn = document.createElement("button");
-    edit_btn.type = "button";
-    edit_btn.className = "edit-food icon-button";
-
-    const edit_img = document.createElement("img");
-    edit_img.src = "../assets/foodlist/edit_icon.svg";
-    edit_btn.appendChild(edit_img);
-
-    text_section.append(servingsize_p, dot_p, cal_p, fat_p, carbs_p, prot_p);
-    div.append(text_section, edit_btn);
-    li.append(name, div);
-
-    return li;
-}
-
-function deleteFoodListItem(id) {
-    const food_items_arr = document.querySelectorAll(".food-list__item");
-    console.log(food_items_arr);
-    for (let i = 0; i < food_items_arr.length; i++) {
-        if (food_items_arr[i].dataset.id == id) {
-            food_items_arr[i].remove();
-            return;
-        }
-    }
-}
-
-function updateFoodListItem(form_obj) {
-    const food_items_arr = document.querySelectorAll(".food-list__item");
-    console.log(food_items_arr);
-    for (let i = 0; i < food_items_arr.length; i++) {
-        let cur_li = food_items_arr[i]
-        if (cur_li.dataset.id == form_obj.food_id) {
-            cur_li.querySelector(".name").innerText = form_obj.name;
-            cur_li.querySelector(".serving-size").innerText = form_obj.serving_size;
-            cur_li.querySelector(".unit").innerText = form_obj.unit;
-            cur_li.querySelector(".calories").innerText = form_obj.calories;
-            cur_li.querySelector(".fat").innerText = form_obj.fats;
-            cur_li.querySelector(".carb").innerText = form_obj.carbs;
-            cur_li.querySelector(".prot").innerText = form_obj.protein;
-            return;
-        }
-    }
-}
-
-/* function loadFoodListItems() {
-
-}
- */
-
-// load on scroll
-const observer = new IntersectionObserver(entries => {
-    const last_fooditem = entries[0];
-    if(!last_fooditem.isIntersecting) return;
-    fetchMoreFood();
-    console.log("THE EVENT HAS BEEN TRIGGERED");
-    observer.unobserve(last_fooditem.target);
-    if (prev_index !== total_food_count) {
-        observer.observe(document.querySelector(".food-list").lastElementChild);
+    await fetchMoreFood(glob_searchterm);
+    if (active_foodlist_array.size() !== getActiveTotalCount()) {
+        observer.observe(foodlist.lastElementChild);
+        cur_observed_listitem = foodlist.lastElementChild;
     }
 });
 
-// page init functions
-async function fetchFoodList() {
-    const res = await fetch("/api/users/get-foods?last_item=0");
-    const data = await res.json();
-    if (!data.success) {
-        alert("fail");
-    }
-    for (let i = 0; i < data.query_res.length; i++) {
-        food_list_arr.addFood(data.query_res[i]);
-        food_list.appendChild(createFoodListItem(data.query_res[i]));
-    }
-    observer.observe(document.querySelector(".food-list").lastElementChild);
-    total_food_count = data.total_count.count;
-    prev_index = data.query_res.length;
-}
-
-async function fetchMoreFood() {
-    let last_item_loaded = food_list_arr.foodItems[prev_index - 1];
-    console.log(last_item_loaded);
-    const res = await fetch(`api/users/get-foods?last_item=${last_item_loaded.food_id}`);
-    const data = await res.json();
-    for (let i = 0; i < data.query_res.length; i++) {
-        food_list_arr.addFood(data.query_res[i]);
-        food_list.appendChild(createFoodListItem(data.query_res[i]));
-    }
-    prev_index += data.query_res.length;
-}
 
 
-// icon button events
-add_food_button.addEventListener("click", (e) => {
-    dialog_add_food.show();
+// add food button event
+addfood_btn.addEventListener("click", () => {
+    ui.showDialogAddMode(DIALOG_UI);
 });
 
-// edit food button pressed
-food_list.addEventListener("click", (e) => {
-    const edit_button = e.target.closest(".edit-food");
-    if (edit_button) {
-        const form = form_edit_food;
+// edit button event
+foodlist.addEventListener("click", (e) => {
+    const editfood_btn = e.target.closest(".editfood_btn");
+    if (editfood_btn) {
         const li = e.target.closest("li");
-        const food_item = food_list_arr.getFoodById(li.dataset.id);
-        form.querySelector("[name='id']").value = food_item.food_id;
-        form.querySelector("[name='food-name']").value = food_item.name;
-        form.querySelector("[name='serving-size']").value = food_item.serving_size;
-        form.querySelector("[name='serving-unit']").value = food_item.unit;
-        form.querySelector("[name='calories']").value = food_item.calories;
-        form.querySelector("[name='fat']").value = food_item.fats;
-        form.querySelector("[name='carbs']").value = food_item.carbs;
-        form.querySelector("[name='protein']").value = food_item.protein;
-        dialog_edit_food.show();
+        const item = getActiveFoodList().getFoodById(li.dataset.id, "food_id");
+        cur_listitem = li;
+        ui.setFormUI(foodform, item);
+        ui.showDialogEditMode(DIALOG_UI);
     }
-    return;
 });
 
-cancel_buttons.forEach(button => {
-    button.addEventListener("click", (e) => {
-        const dialog = button.closest("dialog");
-        if (dialog) {
-            dialog.close();
-            dialog.querySelector("form").reset();
-        }
-    });
+// cancel dialog event (cancel button)
+cancel_btn.addEventListener("click", () => {
+    ui.closeDialog(DIALOG_UI);
 });
 
-
-// form submissions
-dialog_add_food.addEventListener("click", async (e) => {
-    let action = e.target.dataset.action;
-
-    if (!action) {
-        return;
+// cancel dialog event (click outside of dialog)
+dialog.addEventListener("click", (e) => {
+    if (ui.isClickingOutside(e, dialog)) {
+        ui.closeDialog(DIALOG_UI);
     }
+});
 
-    const form = form_add_food;
-    const form_data = new FormData(form);
-    const form_obj = Object.fromEntries(form_data.entries());
+/* form button events */
+addfood_submit_btn.addEventListener("click", async (e) => {
+    const food_data = ui.checkFormValidity(foodform)
+    if (!food_data) return;
 
-    if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-    }
+    const data = await api.addFood(food_data);
 
-    const res = await fetch(action, {
-        method: "POST",
-        headers: { "Content-Type" : "application/json" },
-        body: JSON.stringify(form_obj)
-    });
-
-    const data = await res.json();
-    console.log(data);
-    console.log(data.query_res);
     if (data.success) {
-        food_list_arr.addFood(data.query_res);
-        food_list.appendChild(createFoodListItem(data.query_res));
-        dialog_add_food.close();
-        form.reset();
+        if (!flag_searching) {
+            if (foodlist_array.size() == total_count) {
+                foodlist_array.add(data.food);
+                foodlist.appendChild(ui.createFood(data.food));
+            }
+        } else {
+            if (data.food.name.includes(glob_searchterm) 
+                && s_foodlist_array.size() == s_total_count) {
+                s_foodlist_array.add(data.food);
+                foodlist.appendChild(ui.createFood(data.food));
+                s_total_count++;
+            }
+        }
+        total_count++;
+        ui.closeDialog(DIALOG_UI);
+    } else {
+        error_message.textContent = data.errmsg;
     }
 });
 
-dialog_edit_food.addEventListener("click", async (e) => {
-    let action = e.target.dataset.action;
-    let id = e.target.id;
-    const form = form_edit_food;
-    const food_id = form.querySelector("[name='id']").value;
+editfood_submit_btn.addEventListener("click", async (e) => {
+    const food_id = cur_listitem.dataset.id;
+    const food_data = ui.checkFormValidity(foodform);
+    if (!food_data) return;
 
-    if (!action) return;
+    const data = await api.editFood(food_id, food_data);
 
-    if (id === "delete") {
-        const res = await fetch(action, {
-            method: "DELETE",
-            headers: { "Content-Type" : "application/json" },
-            body: JSON.stringify( { id: food_id } )
-        });
-
-        let data = await res.json();
-        if (!data.success) {
-            return;
+    if (data.success) {
+        getActiveFoodList().updateFood(data.food.food_id, data.food);
+        if (foodlist_array.getFoodById(data.food.food_id, "food_id")) { 
+            foodlist_array.updateFood(data.food.food_id, data.food);
         }
-        food_list_arr.deleteFood(food_id);
-        deleteFoodListItem(food_id);
-        dialog_edit_food.close();
-    } 
-    else {
-        const form = form_edit_food;
-        const form_data = new FormData(form);
-        const form_obj = Object.fromEntries(form_data.entries());
-    
-        if (!form.checkValidity()) {
-            form.reportValidity();
-            return;
+        ui.setFoodUI(cur_listitem, data.food);
+        ui.closeDialog(DIALOG_UI); 
+    } else {
+        error_message.textContent = data.errmsg;
+    }
+});
+
+delete_btn.addEventListener("click", async () => {
+    const food_id = cur_listitem.dataset.id;
+
+    const data = await api.deleteFood(food_id);
+
+    if (data.success) {
+        let total = getActiveTotalCount(); 
+        total--;
+        getActiveFoodList().delete(data.food.food_id, "food_id");
+        cur_listitem.remove();
+        if (flag_searching) {
+            if (foodlist_array.getFoodById(data.food.food_id, "food_id")) {
+                foodlist_array.delete(data.food.food_id, "food_id");
+                total_count--;
+            }
         }
-    
-        const res = await fetch(action, {
-            method: "PATCH",
-            headers: { "Content-Type" : "application/json" },
-            body: JSON.stringify( form_obj )
-        });
-    
-        const data = await res.json();
-        if (!data.success) return;
-        console.log(data.query_res);
-        food_list_arr.updateFood(data.query_res.food_id, data.query_res);
-        console.log(food_list_arr);
-        updateFoodListItem(data.query_res);
-        dialog_edit_food.close();
+        ui.closeDialog(DIALOG_UI);
+    } else {
+        error_message.textContent = data.errmsg;
     }
 });
 
 
+// fetch food 
+async function fetchInitFood() {
+    const data = await api.getFoods(0, undefined);
 
-fetchFoodList();
+    if (data.success) {
+        if (data.foods.length == 0) {
+            total_count = 0;
+            return;
+        }
+        for (let i = 0; i < data.foods.length; i++) {
+            foodlist_array.add(data.foods[i]);
+            foodlist.appendChild(ui.createFood(data.foods[i]));
+        }
+        observer.observe(foodlist.lastElementChild);
+        cur_observed_listitem = foodlist.lastElementChild;
+        total_count = data.count;
+    } else {
+        alert(data.errmsg);
+    }
+}
+
+async function fetchMoreFood(searchterm = undefined) {
+    let activelist = getActiveFoodList();
+    let last_listitem = activelist.foods[activelist.size() - 1];
+    
+    const data = await api.getFoods(last_listitem.food_id, searchterm);
+
+    if (data.success) {
+        for (let i = 0; i < data.foods.length; i++) {
+            activelist.add(data.foods[i]);
+            foodlist.appendChild(ui.createFood(data.foods[i]));
+        }
+    } else {
+        alert(data.errmsg);
+    }
+}
+
+search_input.addEventListener("input", async (e) => {
+    let searchterm = glob_searchterm = e.target.value;
+    foodlist.replaceChildren();
+    if (cur_observed_listitem) {
+        observer.unobserve(cur_observed_listitem);
+        cur_observed_listitem = null;
+    }
+    s_foodlist_array.deleteAll();
+
+    if (searchterm.length == 0) { // resets state of page to "init" state
+        flag_searching = false;
+        glob_searchterm = undefined;
+        for (let i = 0; i < foodlist_array.foods.length; i++) {
+            foodlist.appendChild(ui.createFood(foodlist_array.foods[i]));
+        }
+        observer.observe(foodlist.lastElementChild);
+        cur_observed_listitem = foodlist.lastElementChild;
+        foodlist.scrollTop = 0;
+    } else {
+        const data = await api.getFoods(0, searchterm);
+
+        if (data.success) {
+            if (data.count == 0) return;
+            flag_searching = true;
+            for (let i = 0; i < data.foods.length; i++) {
+                s_foodlist_array.add(data.foods[i]);
+                foodlist.appendChild(ui.createFood(data.foods[i]));
+            }
+            observer.observe(foodlist.lastElementChild);
+            cur_observed_listitem = foodlist.lastElementChild;
+            s_total_count = data.count;
+        } else {
+            alert(data.errmsg);
+        }
+    }
+});
+
+fetchInitFood();

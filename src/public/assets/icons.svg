@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="line-divider" viewBox="0 0 100 1" preserveAspectRatio="none">
+        <line x1="0" y1="1" x2="100" y2="1" stroke="currentColor" stroke-width="2" />
+    </symbol>
+
+    <symbol id="chevron-down" viewBox="0 0 10 10" preserveAspectRatio="xMidYMid meet">
+        <path d="M2,2 L5,8 L8,2" fill="currentColor"/>
+    </symbol>
+
+    <symbol id="plus" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+        <line x1="12" y1="2" x2="12" y2="22" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+        <line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="arrow-l" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="m8 12 8 8m-8-8 8-8"/>
+    </symbol>
+
+    <symbol id="arrow-r" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="m16 12-8 8m8-8L8 4"/>
+    </symbol>
+</svg>
