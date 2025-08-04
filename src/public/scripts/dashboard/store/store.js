@@ -1,21 +1,13 @@
 import PubSub from "../lib/pubsub.js";
 
-// status
-const IDLE = "idle";
-const ACTION = "action";
-const MUTATION = "mutation";
-
 export default class Store {
     constructor(params) {
         let self = this;
 
+        self.events = new PubSub();
         self.state = (params.hasOwnProperty("state")) ? params.state : {};
         self.actions = (params.hasOwnProperty("actions")) ? params.actions : {};
         self.mutations = (params.hasOwnProperty("mutations")) ? params.mutations : {};
-
-        self.status = IDLE;
-
-        self.events = new PubSub();
     }
 
     dispatch(action_key, payload) {
@@ -27,7 +19,6 @@ export default class Store {
             return false;
         }
 
-        self.status = ACTION;
         action(self, payload);
         return true;
     }
@@ -41,12 +32,10 @@ export default class Store {
             return false;
         }
 
-        self.status = MUTATION;
         const { events, data } = mutation(self.state, payload);
         for (const event of events) {
             self.events.publish(event, data);
         }
-
         return true;
     }
 }

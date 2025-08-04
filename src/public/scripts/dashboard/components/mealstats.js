@@ -9,7 +9,8 @@ export default class MealStats extends Component {
             element: document.getElementById(id),
             events: {
                 [`add${meal_name}Entry`]: (data) => this.render(data),
-                [`delete${meal_name}Entry`]: (data) => this.render(data)
+                [`delete${meal_name}Entry`]: (data) => this.render(data),
+                "dayChange": () => this.clear()
             }
         });
     }
@@ -20,9 +21,15 @@ export default class MealStats extends Component {
 
         setMealStatsUI(this.element, stats);
     }
+
+    clear() {
+        setMealStatsUI(this.element, {cal: 0, fat: 0, carb: 0, prot: 0});
+    }
 }
 
-export function setMealStatsUI(ui, obj) {
+
+// helper ui functions
+function setMealStatsUI(ui, obj) {
     const text_colors = {
         cal: "txt-prim-green",
         fat: "txt-acnt-yellow",

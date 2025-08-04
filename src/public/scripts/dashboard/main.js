@@ -1,33 +1,8 @@
 import store from "./store/index.js";
-import * as api from "./api.js"
+import components from "./components/index.js";
+
 import * as searchbar from "../../components/searchbar.js";
 import * as dateUtil from "../util/shared/date.js";
-
-import MealList from "./uicomponents/meallists.js";
-import MealStats from "./uicomponents/mealstats.js";
-import CalorieStats from "./uicomponents/caloriestats.js";
-import CalorieGoal from "./uicomponents/caloriegoal.js";
-import Macros from "./uicomponents/macros.js";
-import BarGraphs from "./uicomponents/bargraphs.js";
-import Averages from "./uicomponents/averages.js";
-import HeaderDate from "./uicomponents/headerdate.js";
-import PageInitializer from "./component/PageInitializer.js";
-
-const breakfast_list = new MealList("Breakfast");
-const lunch_list = new MealList("Lunch");
-const dinner_list = new MealList("Dinner");
-const snacks_list = new MealList("Snacks");
-const breakfast_stats = new MealStats("Breakfast");
-const lunch_stats = new MealStats("Lunch");
-const dinner_stats = new MealStats("Dinner");
-const snacks_stats = new MealStats("Snacks");
-const calorie_stats = new CalorieStats();
-const calorie_goal = new CalorieGoal();
-const macros = new Macros();
-const bargraphs = new BarGraphs();
-const averages = new Averages();
-const headerdate = new HeaderDate();
-const page = new PageInitializer();
 
 const diary = document.getElementById("diary");
 const add_food_btns = document.querySelectorAll(".addfood_btn");
@@ -89,39 +64,7 @@ date_right_btn.addEventListener("click", (e) => {
 });
 
 
-/* // page init functions
-async function initCalorieGoal() {
-    const data = await api.getCalorieGoal();
-
-    if (data.success) {
-        store.dispatch("loadCalorieGoal", data.goal);
-    } else {
-        alert(data.errmsg);
-    }
-}
-
-async function initDiary(date) {
-    const data = await api.getDiary(date);
-
-    if (data.success) {
-        for (let i = 0; i < data.entries.length; i++) {
-            store.dispatch("loadEntry", data.entries[i]);
-        }
-    } else {
-        alert(data.errmsg);
-    }
-}
-
-async function initWeeklySummary(date) {
-    const data = await api.getWeeklySummary(date);
-    if (data.success) {
-        store.dispatch("loadSummaries", data.summaries);
-    }
-}
- */
-
-
-headerdate.render();
-page.initCalorieGoal();
-page.initDiary(store.state.now);
-page.initWeeklySummary(store.state.now);
+components.headerdate.render();
+components.dashboard.initCalorieGoal();
+components.dashboard.initDiary();
+components.dashboard.initWeeklySummary();

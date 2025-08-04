@@ -7,14 +7,13 @@ export default class CalorieGoal extends Component {
             store, 
             element: document.getElementById("goal_calories"),
             events: {
-                "stateChange": () => this.render()
+                "goalChange": () => this.render()
             }
         });
     }
 
     render() {
         const stats = store.state.caloriestats;
-
         this.element.textContent = stats.goal;
     }
 }

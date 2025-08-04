@@ -20,7 +20,11 @@ export default class CalorieStats extends Component {
 
             },
             events: {
-                "stateChange": () => this.render(),
+                // TODO: can probably do diaryChange now
+                "addEntry": () => this.render(),
+                "deleteEntry": () => this.render(),
+                "loadEntry": () => this.render(),
+                "dayChange": () => this.render(),
                 "goalChange": () => this.render()
             }
         });
@@ -28,12 +32,13 @@ export default class CalorieStats extends Component {
 
     render() {
         const stats = store.state.caloriestats;
-
         renderCalorieDial(this.element.dial, stats);
         renderCalorieStats(this.element.stats, stats);
     }
 }
 
+
+// helper ui functions
 function renderCalorieStats(ui, obj) {
     for (const key in ui) {
         ui[key].textContent = obj[key];

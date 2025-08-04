@@ -13,10 +13,11 @@ export default class BarGraphs extends Component {
                 macro_bars: []
             },
             events: {
-                "loadSummaries": () => this.loadSummaries(), // do something to all graphs
-                "goalChange": () => this.loadSummaries(),
-                "addEntry": () => this.stateChange("addEntry"),   // do something to one graph (of specific day)
-                "deleteEntry": () => this.stateChange("deleteEntry"),
+                "totalsChange": () => this.renderAllBars(),
+                "goalChange": () => this.renderAllBars(),
+                // TODO: can probably do diaryChange now
+                "addEntry": () => this.renderBar(),
+                "deleteEntry": () => this.renderBar(),
             }
         });
 
@@ -24,52 +25,40 @@ export default class BarGraphs extends Component {
         this.element.macro_bars = getDayBars(this.element.macro_bargraph);
     }
 
-    loadSummaries() {
-        let summaries = store.state.daily_summaries;
+    renderAllBars() {
         let WEEK_RANGE = store.state.WEEK_RANGE;
         let NOW = store.state.NOW;
-        let now = store.state.now;
 
-        for (let i = 0; i < summaries.length; i++) {
-            if (!summaries[i]) {
-                if (now < WEEK_RANGE.start ||
-                   (!(now >WEEK_RANGE.end) && i < NOW.getDay())) {
-                    setCalorieBarNull(this.element.cal_bars[i]);
-                    setMacroBarNull(this.element.macro_bars[i]);
-                }
-            } else {
-                let macro_percentages = generatePercentagesObj(summaries[i]);
-                let value = summaries[i].cal / store.state.caloriestats.goal * 100;
-                setCalorieGraphBar(this.element.cal_bars[i], value, this.element.dashoffsets)
-                setMacroGraphBar(this.element.macro_bars[i], macro_percentages);                
-            }
+        let dates = getWeek(store.state.week_range);
+
+        for (const day of dates) {
+            let summary = store.state.daily_summaries[day.getDay()];
+            setBar(this.element, day, summary, NOW, WEEK_RANGE);
         }
     }
 
-    stateChange(flag) {
-        let summaries = store.state.daily_summaries;
+    renderBar() {
         let WEEK_RANGE = store.state.WEEK_RANGE;
         let NOW = store.state.NOW;
         let now = store.state.now;
+        let summary = store.state.daily_summaries[now.getDay()];
 
-        if (flag === "deleteEntry") {
-            if (!summaries[now.getDay()]) {
-                if (now < WEEK_RANGE.start ||
-                (!(now >WEEK_RANGE.end) && now < NOW.getDay())) {
-                    setCalorieBarNull(this.element.cal_bars[now.getDay()]);
-                    setMacroBarNull(this.element.macro_bars[now.getDay()]);
-                }
-                resetCalorieGraphBar(this.element.cal_bars[now.getDay()], this.element.dashoffsets);
-                resetMacroGraphBar(this.element.macro_bars[now.getDay()]);
-                return;
-            }
-        }
-
-        let macro_percentages = generatePercentagesObj(summaries[now.getDay()]);
-        let value = summaries[now.getDay()].cal / store.state.caloriestats.goal * 100;
-        setCalorieGraphBar(this.element.cal_bars[now.getDay()], value, this.element.dashoffsets);
-        setMacroGraphBar(this.element.macro_bars[now.getDay()], macro_percentages);
+        setBar(this.element, store.state.now, summary, NOW, WEEK_RANGE);
     }
+}
+
+
+// helper util functions
+function getWeek(range) {
+    const dateList = [];
+    const current = new Date(range.start); // clone to avoid mutating original
+
+    while (current <= range.end) {
+        dateList.push(new Date(current)); // clone again to store
+        current.setDate(current.getDate() + 1);
+    }
+
+    return dateList;
 }
 
 function generatePercentagesObj(summary) {
@@ -87,6 +76,27 @@ function getDayBars(parent) {
     return ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].map(
         day => parent.querySelector(`.${day}-bar`)
     );
+}
+
+
+// helper ui functions
+function setBar(ui, day, summary, NOW, WEEK_RANGE) {
+    resetCalorieGraphBar(ui.cal_bars[day.getDay()], ui.dashoffsets);
+    resetMacroGraphBar(ui.macro_bars[day.getDay()], ui.dashoffsets);
+    if (!summary) {
+        if (day < WEEK_RANGE.start ||
+        (!(day >WEEK_RANGE.end) && day < NOW.getDay())) {
+            setCalorieBarNull(ui.cal_bars[day.getDay()]);
+            setMacroBarNull(ui.macro_bars[day.getDay()]);
+            return;
+        }
+        return;
+    }
+
+    let macro_percentages = generatePercentagesObj(summary);
+    let value = summary.cal / store.state.caloriestats.goal * 100;
+    setCalorieGraphBar(ui.cal_bars[day.getDay()], value, ui.dashoffsets);
+    setMacroGraphBar(ui.macro_bars[day.getDay()], macro_percentages);
 }
 
 function setCalorieBarNull(bar) {
@@ -151,7 +161,9 @@ export function resetCalorieGraphBar(bar, dashoffsets) {
     over.style.strokeDashoffset = dashoffsets.over;
 }
 
-export function resetMacroGraphBar(bar) {
+export function resetMacroGraphBar(bar, dashoffsets) {
+    const nill = bar.querySelector(".null-progress-bar");
+    nill.style.strokeDashoffset = dashoffsets.null;
     const macros = {
         fat: bar.querySelector(".fat-progress-bar"),
         carb: bar.querySelector(".carb-progress-bar"),

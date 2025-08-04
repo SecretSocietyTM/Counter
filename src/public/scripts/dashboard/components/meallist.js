@@ -11,7 +11,8 @@ export default class MealList extends Component {
             element: document.getElementById(id),
             events: {
                 [`add${meal_name}Entry`]: (data) => this.addEntry(data),
-                [`delete${meal_name}Entry`]: (data) => this.deleteEntry(data)
+                [`delete${meal_name}Entry`]: (data) => this.deleteEntry(data),
+                "dayChange": () => this.clear()
             }
         });
     }
@@ -26,10 +27,14 @@ export default class MealList extends Component {
             find(el => el.dataset.id == target_id);
         match.remove();
     }
+
+    clear() {
+        this.element.replaceChildren();
+    }
 }
 
 
-// helper functions
+// helper ui functions
 function createEntry(entry) {
     const li = document.createElement("li");
     li.className = "whole-item";

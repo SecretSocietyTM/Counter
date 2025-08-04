@@ -12,20 +12,23 @@ export default class Averages extends Component {
                 prot: document.getElementById("average_prot"),
             },
             events: {
-                "loadSummaries": () => this.render(),
-                "stateChange": () => this.render()
+                "totalsChange": () => this.render(),
+                // TODO: can probably do diaryChange now
+                "addEntry": () => this.render(),
+                "deleteEntry": () => this.render(),
             }
         });
     }
 
     render() {
         const totals = store.state.week_totals;
-
         const avgs = initWeeklyAverage(totals, store.state.days_logged);
         setWeeklyAveragesUI(this.element, avgs);
     }
 }
 
+
+// helper util functions
 function initWeeklyAverage(obj, days_logged) {
     let averages = {};
     if (days_logged === 0) days_logged = 1;
@@ -35,6 +38,7 @@ function initWeeklyAverage(obj, days_logged) {
     return averages;
 }
 
+// helper ui functions
 function setWeeklyAveragesUI(ui, obj) {
     for (const key in ui) { ui[key].textContent = obj[key]};
 }
