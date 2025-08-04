@@ -1,0 +1,47 @@
+import Component from "../lib/components.js";
+import store from "../store/index.js";
+
+export default class MealStats extends Component {
+    constructor(meal_name) {
+        const id = `${meal_name.toLowerCase()}_numbers`;
+        super({ 
+            store, 
+            element: document.getElementById(id),
+            events: {
+                [`add${meal_name}Entry`]: (data) => this.render(data),
+                [`delete${meal_name}Entry`]: (data) => this.render(data)
+            }
+        });
+    }
+
+    render(entry) {
+        let meal_type = entry.meal_type;
+        const stats = store.state.mealstats[meal_type];
+
+        setMealStatsUI(this.element, stats);
+    }
+}
+
+export function setMealStatsUI(ui, obj) {
+    const text_colors = {
+        cal: "txt-prim-green",
+        fat: "txt-acnt-yellow",
+        carb: "txt-acnt-lightblue",
+        prot: "txt-acnt-purple"
+    }
+
+    const mealstats = {
+        cal: ui.querySelector(".cal"),
+        fat: ui.querySelector(".fat"),
+        carb: ui.querySelector(".carb"),
+        prot: ui.querySelector(".prot")
+    }
+
+    const is_active = obj.cal > 0 || obj.fat > 0 || obj.carb > 0 || obj.prot > 0;
+    
+    for (const key in mealstats) {
+        mealstats[key].classList.toggle("fw-b", is_active);
+        mealstats[key].classList.toggle(text_colors[key], is_active);
+        mealstats[key].textContent = obj[key];
+    }
+}

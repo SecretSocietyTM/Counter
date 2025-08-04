@@ -20,6 +20,7 @@ function mapFoods(foods) {
     return mapped_foods;
 }
 
+// TODO: don't need food_id or date on frontend.
 function mapEntry(entry) {
     if (!entry) return undefined;
     return {

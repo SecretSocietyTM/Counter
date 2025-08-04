@@ -39,7 +39,7 @@ export function getWeekRange(date) {
     return { start, end };
 }
 
-export function getNewNowDate(date_value) {
+export function inputToDate(date_value) {
     let [year, month, day] = date_value.split("-").map(Number);
     let date = new Date(year, month - 1, day); // Note: month is 0-indexed in JS Date
     date.setHours(0, 0, 0, 0);  
