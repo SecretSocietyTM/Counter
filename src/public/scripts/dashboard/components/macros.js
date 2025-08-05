@@ -20,7 +20,7 @@ export default class Macros extends Component {
     }
 
     render() {
-        const stats = store.state.macrostats;
+        const stats = store.state.macro_stats;
         renderMacroStats(this.element, stats);
     }
 }

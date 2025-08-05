@@ -32,7 +32,7 @@ export default class BarGraphs extends Component {
         let dates = getWeek(store.state.week_range);
 
         for (const day of dates) {
-            let summary = store.state.daily_summaries[day.getDay()];
+            let summary = store.state.summaries[day.getDay()];
             setBar(this.element, day, summary, NOW, WEEK_RANGE);
         }
     }
@@ -41,7 +41,7 @@ export default class BarGraphs extends Component {
         let WEEK_RANGE = store.state.WEEK_RANGE;
         let NOW = store.state.NOW;
         let now = store.state.now;
-        let summary = store.state.daily_summaries[now.getDay()];
+        let summary = store.state.summaries[now.getDay()];
 
         setBar(this.element, store.state.now, summary, NOW, WEEK_RANGE);
     }
@@ -94,7 +94,7 @@ function setBar(ui, day, summary, NOW, WEEK_RANGE) {
     }
 
     let macro_percentages = generatePercentagesObj(summary);
-    let value = summary.cal / store.state.caloriestats.goal * 100;
+    let value = summary.cal / store.state.calorie_stats.goal * 100;
     setCalorieGraphBar(ui.cal_bars[day.getDay()], value, ui.dashoffsets);
     setMacroGraphBar(ui.macro_bars[day.getDay()], macro_percentages);
 }

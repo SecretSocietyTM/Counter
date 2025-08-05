@@ -31,7 +31,7 @@ export default class CalorieStats extends Component {
     }
 
     render() {
-        const stats = store.state.caloriestats;
+        const stats = store.state.calorie_stats;
         renderCalorieDial(this.element.dial, stats);
         renderCalorieStats(this.element.stats, stats);
     }

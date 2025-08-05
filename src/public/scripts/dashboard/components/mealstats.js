@@ -17,7 +17,7 @@ export default class MealStats extends Component {
 
     render(entry) {
         let meal_type = entry.meal_type;
-        const stats = store.state.mealstats[meal_type];
+        const stats = store.state.meal_stats[meal_type];
 
         setMealStatsUI(this.element, stats);
     }
@@ -37,7 +37,7 @@ function setMealStatsUI(ui, obj) {
         prot: "txt-acnt-purple"
     }
 
-    const mealstats = {
+    const meal_stats = {
         cal: ui.querySelector(".cal"),
         fat: ui.querySelector(".fat"),
         carb: ui.querySelector(".carb"),
@@ -46,9 +46,9 @@ function setMealStatsUI(ui, obj) {
 
     const is_active = obj.cal > 0 || obj.fat > 0 || obj.carb > 0 || obj.prot > 0;
     
-    for (const key in mealstats) {
-        mealstats[key].classList.toggle("fw-b", is_active);
-        mealstats[key].classList.toggle(text_colors[key], is_active);
-        mealstats[key].textContent = obj[key];
+    for (const key in meal_stats) {
+        meal_stats[key].classList.toggle("fw-b", is_active);
+        meal_stats[key].classList.toggle(text_colors[key], is_active);
+        meal_stats[key].textContent = obj[key];
     }
 }

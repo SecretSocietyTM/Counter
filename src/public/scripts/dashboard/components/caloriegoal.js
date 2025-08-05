@@ -13,7 +13,7 @@ export default class CalorieGoal extends Component {
     }
 
     render() {
-        const stats = store.state.caloriestats;
+        const stats = store.state.calorie_stats;
         this.element.textContent = stats.goal;
     }
 }
