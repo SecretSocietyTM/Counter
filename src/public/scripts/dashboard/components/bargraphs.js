@@ -61,23 +61,6 @@ function getWeek(range) {
     return dateList;
 }
 
-function generatePercentagesObj(summary) {
-    const macros_sum = summary.fat + summary.carb + summary.prot;
-    if (!macros_sum) macros_sum = 1;
-    const macro_percentages = {};
-    for (const key of ["fat", "carb", "prot"]) {
-        macro_percentages[key] = summary[key] / macros_sum;
-    }
-    
-    return macro_percentages;
-}
-
-function getDayBars(parent) {
-    return ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].map(
-        day => parent.querySelector(`.${day}-bar`)
-    );
-}
-
 
 // helper ui functions
 function setBar(ui, day, summary, NOW, WEEK_RANGE) {
@@ -151,7 +134,7 @@ function setMacroGraphBar(bar, percentages) {
     }
 }
 
-export function resetCalorieGraphBar(bar, dashoffsets) {
+function resetCalorieGraphBar(bar, dashoffsets) {
     const goal = bar.querySelector(".goal-progress-bar");
     const over = bar.querySelector(".over-progress-bar");
     
@@ -161,7 +144,7 @@ export function resetCalorieGraphBar(bar, dashoffsets) {
     over.style.strokeDashoffset = dashoffsets.over;
 }
 
-export function resetMacroGraphBar(bar, dashoffsets) {
+function resetMacroGraphBar(bar, dashoffsets) {
     const nill = bar.querySelector(".null-progress-bar");
     nill.style.strokeDashoffset = dashoffsets.null;
     const macros = {
@@ -176,4 +159,22 @@ export function resetMacroGraphBar(bar, dashoffsets) {
         macros[key].style.strokeDasharray = 0;
         macros[key].style.strokeDashoffset = 0;
     }
+}
+
+
+function generatePercentagesObj(summary) {
+    const macros_sum = summary.fat + summary.carb + summary.prot;
+    if (!macros_sum) macros_sum = 1;
+    const macro_percentages = {};
+    for (const key of ["fat", "carb", "prot"]) {
+        macro_percentages[key] = summary[key] / macros_sum;
+    }
+    
+    return macro_percentages;
+}
+
+function getDayBars(parent) {
+    return ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].map(
+        day => parent.querySelector(`.${day}-bar`)
+    );
 }

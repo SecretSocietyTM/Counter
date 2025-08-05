@@ -4,7 +4,7 @@ import * as stateUtil from "../store/stateUtil.js";
 export default {
     loadCalorieGoal(state, goal) {
         const events = [
-            "goalChange", // TODO: might separate loadingGoal and changingGoal to prevent rerender of graphs (graphs render twice, once for goalChange and another for totalsChange)
+            "goalLoad",
         ];
 
         state.calorie_stats.goal = goal;  
@@ -70,6 +70,17 @@ export default {
         return { events, data: entry };
     },
 
+    goalChange(state, goal) {
+        const events = [
+            "goalChange"
+        ];
+
+        state.calorie_stats.goal = goal;  
+        stateUtil.updateCalorieStats(state.calorie_stats);
+
+        return { events, data: null };
+    },
+
     addEntry(state, payload) {
         const entry = payload.entry;
         const summary = payload.summary;
@@ -121,6 +132,4 @@ export default {
 
         return { events, data: entry };
     }
-}
-
-// commit moved functions to another file.
+};

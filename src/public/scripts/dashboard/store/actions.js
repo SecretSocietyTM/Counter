@@ -29,6 +29,14 @@ export default {
             alert(data.errmsg);
     },
 
+    async goalChange(context, goal) {
+        const data = await api.updateCalorieGoal(goal);
+
+        data.success ?
+            context.commit("goalChange", data.goal) :
+            alert(data.errmsg);
+    },
+
     async addEntry(context, entry) {
         const data = await api.addToDiary(entry);
 

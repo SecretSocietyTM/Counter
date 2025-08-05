@@ -7,6 +7,7 @@ export default class CalorieGoal extends Component {
             store, 
             element: document.getElementById("goal_calories"),
             events: {
+                "goalLoad": () => this.render(),
                 "goalChange": () => this.render()
             }
         });

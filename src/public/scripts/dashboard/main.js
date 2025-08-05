@@ -1,16 +1,22 @@
 import store from "./store/index.js";
 import components from "./components/index.js";
 
+import * as dateUtil from "../util/shared/date.js"
 import * as searchbar from "../../components/searchbar.js";
-import * as dateUtil from "../util/shared/date.js";
 
 const diary = document.getElementById("diary");
-const add_food_btns = document.querySelectorAll(".addfood_btn");
 const searchbar_target = document.getElementById("searchbar_target");
-const date_input = document.getElementById("date_input");
+
+// buttons
+const add_food_btns = document.querySelectorAll(".addfood_btn");
+const edit_goal_btn = document.getElementById("edit_goal_btn");
 const date_left_btn = document.getElementById("date_arrow_l");
 const date_right_btn = document.getElementById("date_arrow_r");
 
+// inputs
+const date_input = document.getElementById("date_input");
+const goal_input = document.getElementById("goal_calories_input");
+const goal_span = document.getElementById("goal_calories");
 
 let meal_type = null;
 
@@ -39,6 +45,41 @@ diary.addEventListener("click", (e) => {
     const entry_id = e.target.closest("li").dataset.id;
     
     store.dispatch("deleteEntry", entry_id);
+});
+
+
+// calorie goal events
+edit_goal_btn.addEventListener("click", (e) => {
+    goal_span.style.display = "none";
+    goal_input.style.display = "inline-block";
+    goal_input.value = store.state.calorie_stats.goal;
+    goal_input.select();
+    goal_input.focus();
+});
+
+goal_input.addEventListener("keydown", async (e) => {
+    if (e.key === "Escape") {
+        goal_span.style.display = "inline";
+        goal_input.style.display = "none";
+        goal_input.value = "";   
+    } else if (e.key === "Enter") {
+        goal_input.blur();
+    }
+});
+
+goal_input.addEventListener("blur", async (e) => {
+    if (goal_input.style.display == "none") {
+        return;
+    }
+    
+    let value = goal_input.value;
+
+    goal_span.style.display = "inline";
+    goal_input.style.display = "none";
+    goal_input.value = "";   
+    
+    if (value < 1 || value % 1 > 1) return;
+    store.dispatch("goalChange", value);
 });
 
 

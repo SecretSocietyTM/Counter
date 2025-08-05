@@ -1,3 +1,4 @@
+// helper functions
 export function getMealNameByType(meal_type) {
     switch(+meal_type) {
         case 1: 
@@ -15,6 +16,15 @@ export function dayIsEmpty(day) {
     return !day.cal && !day.fat && !day.carb && !day.prot
 }
 
+export function roundMacros(obj) {
+    for (let key of ["fat", "carb", "prot"]) {
+        obj[key] = Math.round(obj[key] * 10) / 10;
+    }    
+}
+
+
+
+// updaters
 export function updateWeekTotals(obj, input, flag="add") {
     const sign = flag === "sub" ? -1 : 1;
     for (const key in obj) {
@@ -50,14 +60,9 @@ export function updateCalorieStats(obj) {
     }   
 }
 
-export function roundMacros(obj) {
-    for (let key of ["fat", "carb", "prot"]) {
-        obj[key] = Math.round(obj[key] * 10) / 10;
-    }    
-}
 
 
-
+// resetters
 export function resetAll(meal_lists, meal_stats, calstats, macros) {
     resetAllMealLists(meal_lists);
     resetAllMealStats(meal_stats);

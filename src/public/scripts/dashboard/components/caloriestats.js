@@ -20,12 +20,12 @@ export default class CalorieStats extends Component {
 
             },
             events: {
-                // TODO: can probably do diaryChange now
-                "addEntry": () => this.render(),
-                "deleteEntry": () => this.render(),
                 "loadEntry": () => this.render(),
                 "dayChange": () => this.render(),
-                "goalChange": () => this.render()
+                "goalChange": () => this.render(),
+                // TODO: can probably do diaryChange now
+                "addEntry": () => this.render(),
+                "deleteEntry": () => this.render()
             }
         });
     }
