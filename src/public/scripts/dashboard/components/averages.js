@@ -13,9 +13,7 @@ export default class Averages extends Component {
             },
             events: {
                 "totalsChange": () => this.render(),
-                // TODO: can probably do diaryChange now
-                "addEntry": () => this.render(),
-                "deleteEntry": () => this.render(),
+                "diaryChange": () => this.render()
             }
         });
     }

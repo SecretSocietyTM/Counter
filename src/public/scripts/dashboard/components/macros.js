@@ -11,10 +11,8 @@ export default class Macros extends Component {
                 prot: document.getElementById("main_prot")
             },
             events: {
-                // TODO: can probably do diaryChange now
-                "addEntry": () => this.render(),
-                "deleteEntry": () => this.render(),
                 "loadEntry": () => this.render(),
+                "diaryChange": () => this.render()
             }
         });
     }

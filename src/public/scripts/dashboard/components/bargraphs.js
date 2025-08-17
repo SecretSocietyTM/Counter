@@ -15,9 +15,7 @@ export default class BarGraphs extends Component {
             events: {
                 "totalsChange": () => this.renderAllBars(),
                 "goalChange": () => this.renderAllBars(),
-                // TODO: can probably do diaryChange now
-                "addEntry": () => this.renderBar(),
-                "deleteEntry": () => this.renderBar(),
+                "diaryChange": () => this.renderBar()
             }
         });
 

@@ -89,7 +89,7 @@ export default {
         let meal_name = stateUtil.getMealNameByType(meal_type);
         const events = [
             `add${meal_name}Entry`,
-            "addEntry",
+            "diaryChange",
         ];
 
         let meal_list = state.meal_lists[meal_type];
@@ -115,7 +115,7 @@ export default {
         let meal_name = stateUtil.getMealNameByType(meal_type);
         const events = [
             `delete${meal_name}Entry`,
-            "deleteEntry",
+            "diaryChange",
         ];
 
         let meal_list = state.meal_lists[meal_type];
